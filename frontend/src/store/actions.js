@@ -1,6 +1,7 @@
 import axios from 'axios'
+import router from '../router'
 
-const API_URL = 'http://localhost:5000/api/user'
+const API_URL = 'http://localhost:5000/api'
 
 const beginLoading = (commit, add) => {
   add ? commit('loadMoreToggle', true) : commit('isLoadingToggle', true)
@@ -15,7 +16,7 @@ const endLoading = (commit, startTime, toggle) => {
 export default {
   async login ({ commit }, payload) {
     try {
-      return await axios.post(API_URL + '/login', payload)
+      return await axios.post(`${API_URL}/login`, payload)
     } catch (err) {
       console.log(err)
     }
@@ -28,7 +29,7 @@ export default {
 
   async signUp({ commit }, payload) {
     try {
-      await axios.post(API_URL + '/sign-up', payload)
+      await axios.post(`${API_URL}/sign-up`, payload)
       return await this.login({ commit }, { userId: payload.userId, password: payload.password })
     } catch (err) {
       console.log(err)
@@ -37,8 +38,7 @@ export default {
 
   async editAccount ({ commit }, payload) {
     try {
-      await axios.post(API_URL, payload)
-      return this.logout({ commit })
+      return await axios.put(`${API_URL}/user`, payload)
     } catch (err) {
       console.log(err)
     }
@@ -46,24 +46,23 @@ export default {
 
   async delAccount({ commit }, payload) {
     try {
-      await axios.delete(API_URL, { data: payload })
-      return this.logout({ commit })
+      return await axios.delete(`${API_URL}/user`, { data: payload })
     } catch (err) {
       console.log(err.message)
     }
   },
 
-  async saveDiary ({ state, commit }, payload) {
+  async saveDiary ({ state, commit }, id) {
     try {
       commit('isSavingToggle', false)
-      if (payload) {
-        const response = await axios.put(`${API_URL}/diary/${payload}`, state.diary)
+      if (id) {
+        const response = await axios.put(`${API_URL}/diary/${id}`, state.diary)
         commit('isSavingToggle', true)
-        return response.data
+        return response
       } else {
         const response = await axios.post(`${API_URL}/diary`, state.diary)
         commit('isSavingToggle', true)
-        return response.data
+        return response
       }
     } catch (err) {
       console.log(err)
@@ -77,7 +76,7 @@ export default {
       if (payload.value) {
         commit('isLoadingToggle', false)
       }
-      const response = await axios.get(API_URL + '/diaries', { params: { payload } })
+      const response = await axios.get(`${API_URL}/diaries`, { params: { payload } })
       if (!response.data.diaries.length) {
         commit('moreDiaryToggle', false)
         commit('noMoreDiaryToggle', true)
@@ -91,6 +90,68 @@ export default {
         commit('setDiaries', response.data.diaries)
         endLoading(commit, startTime, 'isLoadingToggle')
       }
+    } catch (err) {
+      console.log(err)
+    }
+  },
+
+  async getDiary ({ commit, state }, id) {
+    try {
+      const startTime = beginLoading(commit, false)
+      if (router.currentRoute.value.hash) {
+        commit('isLoadingToggle', false)
+      }
+      document.title = '일기 저장중...'
+      const response = await axios.get(`${API_URL}/diary/${id}`)
+      commit('setDiary', response.data)
+      commit('setHeadline', { content: state.diary.title, animation: 'animiated rotateIn' })
+      document.title = state.diary.title
+      endLoading(commit, startTime, 'isLoadingToggle')
+    } catch (err) {
+      console.log(err)
+    }
+  },
+
+  async delDiary ({ dispatch }, payload) {
+    try {
+      const response = await axios.delete(`${API_URL}/diary/${payload.id}`)
+      dispatch('getDiaries', { page: payload.page, limit: 10 })
+      return response
+    } catch (err) {
+      console.log(err)
+    }
+  },
+
+  async searchDiaries ({ commit }, payload) {
+    try {
+      document.title = '검색중...'
+      commit('moreDiaryToggle', true)
+      const startTime = beginLoading(commit, payload.id)
+      const response = await axios.get(`${API_URL}/someDiaries`, { params: { payload } })
+      if (!response.data.diaries.length) {
+        commit('moreDiaryToggle', false)
+        commit('noMoreDiaryToggle', true)
+      } else {
+        commit('noMoreDiaryToggle', false)
+      }
+      if (payload.add) {
+        commit('addDiaries', response.data.diaries)
+        endLoading(commit, startTime, 'loadMoreToggle')
+      } else {
+        commit('setDiaries', response.data.diaries)
+        endLoading(commit, startTime, 'isLoadingToggle')
+      }
+      document.title = '검색 완료!'
+    } catch (err) {
+      console.log(err)
+    }
+  },
+
+  async getTags ({ commit }) {
+    try {
+      const response = await axios.get(`${API_URL}/tags`)
+      commit('setTags', response.data)
+      return response
     } catch (err) {
       console.log(err)
     }

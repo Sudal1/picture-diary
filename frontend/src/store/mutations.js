@@ -3,7 +3,7 @@ export default {
   setUser: (state, data) => {
     localStorage.setItem('access_token', data.token.accessToken)
     localStorage.setItem('refresh_token', data.token.refreshToken)
-    localStorage.setItem('user_name', data.user.name)
+    localStorage.setItem('user_id', data.user.userId)
 
     state.user = data.user
   },

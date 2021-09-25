@@ -4,13 +4,12 @@ import getters from './getters.js'
 import mutations from './mutations.js'
 
 export default createStore({
+  strict: true,
   state: {
     user: {},
     diary: {},
     diaries: [],
     comments: [],
-    draft: {},
-    drafts: {},
     tag: '',
     tags: [],
     isLoading: false,
@@ -29,5 +28,5 @@ export default createStore({
   },
   getters,
   actions,
-  mutations  
+  mutations
 })
