@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <p>COPYRIGHT <span>DINGGUL</span> 2021~</p>
+    <p>COPYRIGHT <span>PictureDiary</span> 2021~</p>
   </div>
 </template>
 

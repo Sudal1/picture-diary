@@ -26,7 +26,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  name: 'userEdit',
+  name: 'accountEditor',
   data() {
     return {
       userId: '',

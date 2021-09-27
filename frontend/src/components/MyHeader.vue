@@ -12,6 +12,13 @@
       <input type="search">
       <button><i class="far fa-search"></i></button>
     </div>
+    <nav>
+      <ul class="catalog">
+        <router-link to="/home" tag="li">홈</router-link>
+        <router-link to="/about" tag="li">내정보</router-link>
+        <router-link to="/articles" tag="li">일기 보기</router-link>
+      </ul>
+    </nav>
 
   </div>
 </template>

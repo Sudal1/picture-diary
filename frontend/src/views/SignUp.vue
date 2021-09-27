@@ -49,7 +49,7 @@ import { mapActions } from 'vuex'
 import { defineComponent } from 'vue'
 import { Form } from 'vee-validate'
 import * as Yup from 'yup'
-import SignInput from '../../components/SignInput.vue'
+import SignInput from '../components/SignInput.vue'
 
 export default defineComponent({
   name: 'signUp',

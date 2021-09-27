@@ -3,7 +3,7 @@
     <p> <label for="user_id">아이디</label>{{ getUser.userId }} </p>
     <p> <label for="user_name">닉네임</label>{{ getUser.name }} </p>
     <p> <label for="user_mail">이메일</label>{{ getUser.email }} </p>
-    <router-link :to="{ name: 'userEdit' }">
+    <router-link :to="{ name: 'accountEditor' }">
       <button type="submit">회원정보 변경</button>
     </router-link>
     <br><br>
@@ -15,7 +15,7 @@
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'info',
+  name: 'account',
   computed: {
     ...mapGetters('auth', ['getUser', 'getLoginStatus'])
   },

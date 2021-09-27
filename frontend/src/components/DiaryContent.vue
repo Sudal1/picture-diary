@@ -44,19 +44,19 @@ export default {
     ...mapMutations(['set_dialog']),
     nextPage() {
       this.page++
-      this.$emit('addPage') // 传递给父组件
+      this.$emit('addPage')
     },
     prePage() {
       if (!(this.page - 1)) {
-        alert('已经到第一页咯')
+        alert('첫 페이지 입니다.')
       } else {
         this.page--
-        this.$emit('dropPage') // 传递给父组件
+        this.$emit('dropPage')
       }
     },
     deleteConfirm(aid) {
       this.set_dialog({
-        info: '确认删除(⊙o⊙)？',
+        info: '일기를 삭제하시겠습니까？',
         hasTwoBtn: true,
         show: true
       })

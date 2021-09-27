@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper">
     <p>다이어리</p>
-    <diary-content @addPage="nextPage" @prePage="prePage"></diary-content>
+    <diary-content @addPage="nextPage" @dropPage="prePage"></diary-content>
     <router-link :to="{ name: 'editor' }" class="addPost" tag="button">
       <span>일기 쓰기</span>
     </router-link>
@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex"
-import DiaryContent from "./DiaryContent"
+import { mapActions, mapState } from 'vuex'
+import DiaryContent from './DiaryContent'
 
 export default {
   data() {
@@ -20,10 +20,10 @@ export default {
     this.getDiaries({ page: this.page, limit: 10 })
   },
   components: {
-    DiaryContent,
+    DiaryContent
   },
   computed: {
-    ...mapState(['diaries']),
+    ...mapState(['diaries'])
   },
   methods: {
     ...mapActions(['getDiaries']),

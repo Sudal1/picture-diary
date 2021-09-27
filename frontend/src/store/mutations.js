@@ -26,11 +26,16 @@ export default {
     state.diaries = state.diaries.concat(diaries)
   },
 
-  updateDiary: (state, data) => {
-    const newDiaries = [...state.diaries]
-    const idx = state.diaries.findIndex((diary) => diary.id === data.id)
-    if (idx !== -1) { newDiaries[idx] = data }
-    state.diaries = newDiaries
+  updateDiaryTitle: (state, title) => {
+    state.diary.title = title
+  },
+  
+  updateDiaryContent: (state, content) => {
+    state.diary.content = content
+  },
+
+  updateDiaryTags: (state, tags) => {
+    state.diary.tags = tags
   },
 
   unsetDiary: (state, data) => {
@@ -72,12 +77,7 @@ export default {
   setHeadline: (state, data) => {
     state.headline = data
   },
-
-  // comment
-  setComments: (state, data) => {
-    state.comments = [...data]
-  },
-
+  
   // dialog
   setDialog: (state, data) => {
     state.dialog = data
