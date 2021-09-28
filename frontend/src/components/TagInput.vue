@@ -21,19 +21,18 @@ export default {
   computed: {
     tagContent: {
       get() { return this.tags[this.index] },
-      set(value) { this.tags[this.index] = value.trim() }
+      set(value) { this.$emit('update:tags', value) }
     }
   },
   methods: {
     ...mapMutations(['setDialog']),
 
     delTag() {
-      this.tags.splice(this.index, 1)
-      console.log(this.tags)
+      this.$emit('delTag:tags', this.index)
     },
 
     addTag() {
-      this.tags.push('') 
+      this.$emit('addTag:tags', '')
       setTimeout(() => {
         document.getElementsByClassName('newInput')[this.index + 1].focus() 
       }, 0)
@@ -49,7 +48,8 @@ export default {
             hasTwoBtn: false,
             show: true
           })
-          this.tags.splice(this.index, 1, '')
+          this.$emit('is-repeated:tags', this.index)
+          // this.tags.splice(this.index, 1, '')
           break
         } else {
           currentIndex--

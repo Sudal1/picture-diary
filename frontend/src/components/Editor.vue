@@ -5,7 +5,13 @@
         v-model="title">
     </div>
     <div id="tags">
-      <tag-input v-for="(item, index) in tags" :tags="tags" :index="index" :key="index"></tag-input>
+      <tag-input
+        v-for="(item, index) in tags"
+        :tags="tags"
+        :index="index"
+        :key="index"
+        @update:tags="value => updateDiaryTags(value)"
+      ></tag-input>
     </div>
     <div class="content">
       <textarea id="editor" spellcheck="false" v-model="content" v-focus></textarea>
@@ -62,10 +68,7 @@ export default {
       set (value) { this.updateDiaryContent(value) }
     },
 
-    tags: {
-      get () { return this.diary.tags },
-      set (value) { this.updateDiaryTags(value) }
-    }
+    tags () { return this.diary.tags }
   },
   methods: {
     ...mapMutations(['setDiary', 'updateDiaryContent', 'updateDiaryTitle', 'updateDiaryTags', 'isSavingToggle', 'setDialog']),
