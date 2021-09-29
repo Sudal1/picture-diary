@@ -1,5 +1,5 @@
 export default {
-  reducedDiaries: (state) => {
+  getReducedDiaries: (state) => {
     const diaries = state.diaries.map(diary => {
       const newDiary = {}
       for (const p in diary) {
@@ -11,7 +11,7 @@ export default {
     return diaries
   },
   
-  allTags: (state) => {
+  getTags: (state) => {
     state.tags.unshift('all')
     return state.tags
   }

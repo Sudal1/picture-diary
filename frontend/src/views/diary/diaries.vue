@@ -1,24 +1,32 @@
 <template>
   <div class="diaryContent">
     <div id="diaries">
+
       <div class="tags">
         <div class="tagFlex">
-          <button v-for="(tag, index) in allTags" :class="{activeBtn: selectIndex === index}" @click="switchTag({value: tag, page: 1}, index, tag)" :key="index">
-            <span>{{ tag }}</span>
-          </button>
+          <button v-for="(tag, index) in getTags"
+            :class="{activeBtn: selectIndex === index}"
+            @click="switchTag({value: tag, page: 1}, index, tag)"
+            :key="index"
+          >{{ tag }}</button>
         </div>
       </div>
-      <div v-for="(diary, index) in reducedDiaries" id="diary" :key="index">
+
+      <div v-for="(diary, index) in getReducedDiaries" id="diary" :key="index">
         <h2>{{ diary.title }}</h2>
-        <time>{{ diary.date }}</time>
-        <span class="diaryTag">{{ diary.tags }}</span>
+        <time>{{ diary.createdAt }}</time>
+        <time>{{ diary.updatedAt }}</time>
         <p>{{ diary.content }}</p>
-        <router-link :to="{ name: 'diary', params: { id: diary.aid, index: index, page: page }, hash: '#diary' }" tag="button" exact>
+        <router-link :to="{ name: 'diary', params: { id: diary.id, index: index, page: page }, hash: '#diary' }"
+          tag="button" exact>
           <span>Continue reading</span>
         </router-link>
+        <span class="diaryTag">{{ diary.tags }}</span>
       </div>
+
       <p v-if="!loadMore" v-show="!noMoreDiary" class="noMore">Scroll down to load</p>
       <p v-if="noMoreDiary" class="noMore">No more content</p>
+
     </div>
     <spinner v-show="loadMore" class="spinner"></spinner>
   </div>
@@ -39,19 +47,15 @@ export default {
     window.addEventListener('scroll', this.handleScroll)
   },
   created() {
-    this.setHeadline({
-      content: '일기 목록'
-    })
-    this.getDiaries({
-      page: 1
-    })
+    this.setHeadline({ content: '일기 목록' })
+    this.getDiaries({ page: 1 })
     this.getTags()
   },
   components: {
     Spinner
   },
   computed: {
-    ...mapGetters(['reducedDiaries', 'allTags']),
+    ...mapGetters(['getReducedDiaries', 'getTags']),
     ...mapState(['tag', 'loadMore', 'moreDiary', 'noMoreDiary', 'isLoading'])
   },
   methods: {

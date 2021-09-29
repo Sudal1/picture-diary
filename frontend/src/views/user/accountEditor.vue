@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'accountEditor',
@@ -36,24 +36,24 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('auth', ['getUser', 'getLoginStatus'])
+    ...mapState(['user'])
   },
   created() {
-    this.userId = this.getUser.userId
-    this.name = this.getUser.name
-    this.email = this.getUser.email
+    this.userId = this.user.userId
+    this.name = this.user.name
+    this.email = this.user.email
   },
   methods: {
-    ...mapActions('auth', ['userEdit']),
+    ...mapActions(['editAccount']),
   
     async actionEdit() {
-      await this.userEdit({
+      const res = await this.editAccount({
         userId: this.userId,
         newPassword: this.password,
         name: this.name,
         email: this.email
       })
-      if (!this.getLoginStatus) {
+      if (res.data) {
         alert('회원정보 변경 완료! 다시 로그인해주세요.')
         this.$router.push({ name: 'login' })
       } else {

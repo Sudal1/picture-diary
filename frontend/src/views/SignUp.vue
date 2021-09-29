@@ -30,6 +30,13 @@
         success-message=""
       />
       <SignInput
+        name="name"
+        type="text"
+        label="Name"
+        placeholder="Name"
+        success-message=""
+      />
+      <SignInput
         name="email"
         type="email"
         label="E-mail"
@@ -70,6 +77,9 @@ export default defineComponent({
       dob: Yup.string()
         .required('Date of Birth is required')
         .matches(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/, 'Date of Birth must be a valid date in the format YYYY-MM-DD'),
+      name: Yup.string()
+        .required('Name is required.')
+        .matches(/^[가-힣a-zA-Z\s]+$/, 'Name can only be a combination of English, Korean, and space.'),
       email: Yup.string()
         .required('Email is required')
         .email()
@@ -78,7 +88,7 @@ export default defineComponent({
     const onSubmit = async (values) => {
       try {
         const res = await this.signUp(values)
-        res.data ? this.$router.push({ name: 'info' }) : alert('Sign up failed.')
+        res.data ? this.$router.push({ name: 'account' }) : alert('Sign up failed.')
       } catch (err) {
         console.log(err)
       }

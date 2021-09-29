@@ -2,8 +2,8 @@
   <div class="tag_div" v-if="show">
     <input type="text" class="newInput" placeholder="Tag" v-model="tagContent" onfocus="this.placeholder=''"
       @blur="isRepeated" @keydown.enter="addTag" />
-    <button class="submit-btn" @click="delTag">태그 제거</button>
-    <button class="submit-btn" @click="addTag" v-if="index === tags.length - 1">태그 추가</button>
+    <button class="submit-btn" @click="delTag">Del Tag</button>
+    <button class="submit-btn" @click="addTag" v-if="index === tags.length - 1">Add Tag(Enter)</button>
   </div>
 </template>
 

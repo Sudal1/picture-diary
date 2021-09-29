@@ -36,6 +36,14 @@ export default {
     }
   },
 
+  async getAccount({ commit }, uid) {
+    try {
+      return await axios.get(`${API_URL}/user/${uid}`)
+    } catch (err) {
+      console.log(err)
+    }
+  },
+  
   async editAccount ({ commit }, payload) {
     try {
       return await axios.put(`${API_URL}/user`, payload)

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import DialogBox from '@/components/Dialog.vue'
+import DialogBox from './components/Dialog.vue'
 import { mapState } from 'vuex'
 
 export default {

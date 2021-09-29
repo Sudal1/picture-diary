@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import store from '../store/index'
+
 import index    from '../views/index.vue'
 import Home     from '../views/Home.vue'
 import About    from '../views/About.vue'
@@ -15,17 +17,17 @@ const routes = [
     redirect: 'home',
     component: index,
     children: [
-      { path: 'home', name: 'home', component: Home, meta: { title: 'Home - 그림일기' } },
-      { path: 'about', name: 'about', component: About, meta: { title: 'About - 그림일기' } },
-      { path: '/account', name: 'account', component: account, meta: { requiredAuth: true } },
-      { path: '/account/editor', name: 'accountEditor', component: accountEditor, meta: { requiredAuth: true } },
-      { path: '/diaries', name: 'diaries', component: diaries, meta: { requiredAuth: true } },
-      { path: '/editor', name: 'editor', component: editor, meta: { requireAuth: true } }
+      { path: 'home', name: 'home', component: Home, meta: { title: 'Home' } },
+      { path: 'about', name: 'about', component: About, meta: { title: 'About' } },
+      { path: '/account', name: 'account', component: account, meta: { title: 'Account' } },
+      { path: '/account/editor', name: 'accountEditor', component: accountEditor, meta: { title: 'Account Editor' } },
+      { path: '/diaries', name: 'diaries', component: diaries, meta: { title: 'Diaries' } },
+      { path: '/editor', name: 'editor', component: editor, meta: { title: 'Diary Editor' } }
     ]
   },
 
-  { path: '/login', name: 'login', component: Login, meta: { title: 'Login - 그림일기' } },
-  { path: '/sign-up', name: 'signUp', component: SignUp, meta: { title: 'Sign Up - 그림일기' } }
+  { path: '/login', name: 'login', component: Login, meta: { title: 'Login' } },
+  { path: '/sign-up', name: 'signUp', component: SignUp, meta: { title: 'Sign Up' } }
 ]
 
 const router = createRouter({
@@ -37,6 +39,17 @@ const router = createRouter({
     } else {
       return { x: 0, y: 0 }
     }
+  }
+})
+
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title
+  if (store.state.user.token && (to.name === 'login' || to.name === 'signUp')) {
+    next({ name: 'diaries' })
+  } else if (!store.state.user.token && to.meta.requiredAuth) {
+    next({ name: 'login' })
+  } else {
+    next()
   }
 })
 

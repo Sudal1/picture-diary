@@ -1,37 +1,48 @@
 <template>
   <div class="info">
-    <p> <label for="user_id">아이디</label>{{ getUser.userId }} </p>
-    <p> <label for="user_name">닉네임</label>{{ getUser.name }} </p>
-    <p> <label for="user_mail">이메일</label>{{ getUser.email }} </p>
+    <p> <label for="user_id">User ID</label>{{ user.userId }} </p>
+    <p> <label for="user_name">Name</label>{{ user.name }} </p>
+    <p> <label for="user_mail">E-mail</label>{{ user.email }} </p>
     <router-link :to="{ name: 'accountEditor' }">
-      <button type="submit">회원정보 변경</button>
+      <button type="submit">Edit Account</button>
     </router-link>
     <br><br>
-    <button @click="actionDel()">회원 탈퇴</button>
+    <button @click="actionDel()">Delete Account</button>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
   name: 'account',
   computed: {
-    ...mapGetters('auth', ['getUser', 'getLoginStatus'])
+    ...mapState(['user', 'dialog'])
   },
   methods: {
-    ...mapActions('auth', ['userDel']),
+    ...mapActions(['delAccount']),
+    ...mapMutations(['setDialog']),
     
-    async actionDel() {
-      if (confirm('회원탈퇴를 하시겠습니까?')) {
-        await this.userDel(this.getUser.userId)
-        if (!this.getLoginStatus) {
-          alert('회원탈퇴가 완료되었습니다. 로그인 화면으로 돌아갑니다')
-          this.$router.push({ name: 'login' })
-        } else {
-          alert('회원탈퇴가 완료되지 않았습니다.')
-        }
-      }
+    actionDel() {
+      this.setDialog({
+        info: 'Are you sure you want to delete your account?\n(Deleted account cannot be returned.)',
+        hasTwoBtn: true,
+        show: true
+      })
+      new Promise((resolve, reject) => {
+        this.dialog.resolveFn = resolve
+        this.dialog.rejectFn = reject
+      }).then(
+        async () => {
+          try {
+            const res = await this.delAccount(this.user.userId)
+            if (res.status === '200') { this.$router.push({ name: 'login' }) }
+          } catch(err) {
+            console.log(err)
+          }
+        },
+        () => {}
+      ).catch((err) => { console.log(err) })
     }
   }
 }

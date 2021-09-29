@@ -40,8 +40,8 @@ export default {
     ...mapState(['diaries', 'dialog'])
   },
   methods: {
-    ...mapActions(['deldiary']),
-    ...mapMutations(['set_dialog']),
+    ...mapActions(['delDiary']),
+    ...mapMutations(['setDialog']),
     nextPage() {
       this.page++
       this.$emit('addPage')
@@ -54,8 +54,8 @@ export default {
         this.$emit('dropPage')
       }
     },
-    deleteConfirm(aid) {
-      this.set_dialog({
+    deleteConfirm(id) {
+      this.setDialog({
         info: '일기를 삭제하시겠습니까？',
         hasTwoBtn: true,
         show: true
@@ -64,8 +64,8 @@ export default {
         this.dialog.resolveFn = resolve
         this.dialog.rejectFn = reject
       }).then(() => {
-        this.deldiary({
-          aid: aid,
+        this.delDiary({
+          id: id,
           page: this.page,
           route: this.$route
         })
