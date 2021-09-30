@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="signUp">
     <Form @submit.prevent="onSubmit" :validation-schema="schema">
       <SignInput
         name="userId"
@@ -26,7 +26,7 @@
         name="dob"
         type="text"
         label="Date of Birth"
-        placeholder="Number"
+        placeholder="Date (YYYY-MM-DD)"
         success-message=""
       />
       <SignInput
@@ -43,11 +43,9 @@
         placeholder="Email address (aaa@example.com)"
         success-message="E-mail is verified"
       />
-
-      <button class="submit-btn" @click="$router.go(-1)">Back</button>
-      <button class="submit-btn" type="submit">Sign Up</button>
-
-    </form>
+      <button type="submit">Sign Up</button>
+      <button @click="$router.go(-1)">Back</button>
+    </Form>
   </div>
 </template>
 
@@ -87,8 +85,9 @@ export default defineComponent({
 
     const onSubmit = async (values) => {
       try {
-        const res = await this.signUp(values)
-        res.data ? this.$router.push({ name: 'account' }) : alert('Sign up failed.')
+        console.log('v: ', JSON.stringify(values))
+        // const res = await this.signUp(values)
+        // res.data ? this.$router.push({ name: 'account' }) : alert('Sign up failed.')
       } catch (err) {
         console.log(err)
       }
@@ -118,45 +117,21 @@ export default defineComponent({
   --success-bg-color: #e0eee4;
 }
 
-html,
-body {
+.signUp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
-  height: 100%;
+  height: 100vh;
 }
 
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin-top: 60px;
-
-  width: 100%;
-  height: 100%;
-}
-
-form {
+.signUp > form {
   width: 300px;
   margin: 0px auto;
   padding-bottom: 60px;
 }
 
-.submit-btn {
-  background: var(--primary-color);
-  outline: none;
-  border: none;
-  color: #fff;
-  font-size: 18px;
-  padding: 10px 15px;
-  display: block;
+.signUp > button {
   width: 100%;
-  border-radius: 7px;
-  margin-top: 40px;
-  transition: transform 0.3s ease-in-out;
-  cursor: pointer;
-}
-
-.submit-btn:hover {
-  transform: scale(1.1);
 }
 </style>

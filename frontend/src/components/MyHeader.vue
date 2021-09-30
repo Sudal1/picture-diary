@@ -1,22 +1,32 @@
 <template>
   <div class="header">
 
-    <router-link :to="{ name: 'home' }">
-      <div class="title">
+    <div class="title">
+      <router-link :to="{ name: 'home' }">
         <h2>그림<span>일기</span></h2>
         <p><span>Picture</span>Diary</p>
-      </div>
-    </router-link>
+      </router-link>
+    </div>
 
     <nav>
       <ul class="catalog">
         <span>Welcome {{ userId }}.</span>
-        <router-link to="/home" tag="li">Home</router-link>
-        <router-link to="/about" tag="li">About</router-link>
-        <router-link to="/account" tag="li">Account</router-link>
-        <router-link to="/diaries" tag="li">Diary</router-link>
+        <li>
+          <router-link to="/home">Home</router-link>
+        </li>
+        <li>
+          <router-link to="/about">About</router-link>
+        </li>
+        <li>
+          <router-link to="/account">Account</router-link>
+        </li>
+        <li>
+          <router-link to="/diaries">Diary</router-link>
+        </li>
         <li v-show="userId" @click="actionLogout">Logout</li>
-        <router-link to='/login' tag="li" v-show="!userId">Login</router-link>
+        <li>
+          <router-link to='/login' v-show="!userId">Login</router-link>
+        </li>
       </ul>
     </nav>
 
@@ -49,15 +59,13 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 h2 {
-  position: relative;
-  left: 5px;
   color: #c5c5c5;
   letter-spacing: 3px;
   font-size: 28px;
   font-weight: bold;
 }
 
-h2>span {
+h2 > span {
   margin-left: 15px;
   color: #c2c4ff;
 }
@@ -68,9 +76,10 @@ p {
   font-size: 11px;
   letter-spacing: 3px;
   margin-top: 10px;
+  margin-left:3px;
 }
 
-p>span {
+p > span {
   margin-right: 13px;
   color: #c2c4ff;
 }
@@ -88,48 +97,19 @@ p>span {
   flex-grow: 1;
 }
 
-.header .search {
-  flex-shrink: 1;
-  margin-top: 3px;
-}
-
-.header .search input {
-  border: 0 !important;
-  padding: 0px 0 5px !important;
-  font-size: 16px !important;
-  width: 150px;
-}
-
-.header .search button {
-  border: 0 !important;
-  padding: 0px 0 5px !important;
-  margin-left: 5px;
-  position: relative;
-  top: 1px;
-  background: transparent !important;
-}
-
-.header .search button i {
-  font-size: 24px;
-  color: #c5c5c5;
-}
-
 .header nav {
-  float: right;
-  position: relative;
   color: #000;
-  ul {
-    padding-left: 0;
-    list-style: none;
-    li {
-      text-align: center;
-      cursor: pointer;
-      transition: 1s;
-      &:hover {
-        transition: 1s;
-        color: rgb(87, 87, 87)
-      }
-    }
-  }
+  flex-shrink: 1;
 }
+
+.header nav > ul {  
+  list-style: none;
+}
+
+.header nav > ul li {
+  margin-left: 20px;
+  display:inline-block;
+}
+
+
 </style>
