@@ -42,6 +42,15 @@ export default {
   margin: 0;
   padding: 0;
   outline: none;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary-color: #0071fe;
+  --error-color: #f23648;
+  --error-bg-color: #fff;
+  --success-color: #21a67a;
+  --success-bg-color: #e0eee4;
 }
 
 #app {

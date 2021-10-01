@@ -17,6 +17,5 @@ export default {
 .home {
   letter-spacing: 1px;
   text-align: center;
-  padding-bottom: 30px;
 }
 </style>

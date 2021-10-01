@@ -1,11 +1,11 @@
 <template>
   <div class="dialog">
     <div class="center">
-      <i class="iconfont icon-icon13" @click="close"></i>
-      <p><span>{{dialog.info}}</span></p>
+      <button @click="close">Close</button>
+      <p><span>{{ dialog.info }}</span></p>
       <div class="choice">
-        <button class="sure" @click="confirm">확인</button>
-        <button class="cancel" v-if="dialog.hasTwoBtn" @click="cancel">취소</button>
+        <button class="sure" @click="confirm">Sure</button>
+        <button class="cancel" v-if="dialog.hasTwoBtn" @click="cancel">Cancle</button>
       </div>
     </div>
   </div>
@@ -27,11 +27,17 @@ export default {
       })
     },
     confirm() {
-      this.dialog.show = false
+      this.setDialog({
+        info: '',
+        show: false
+      })
       this.dialog.resolveFn()
     },
     cancel() {
-      this.dialog.show = false
+      this.setDialog({
+        info: '',
+        show: false
+      })
       this.dialog.rejectFn()
     }
   }

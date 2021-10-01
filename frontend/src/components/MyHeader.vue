@@ -10,7 +10,7 @@
 
     <nav>
       <ul class="catalog">
-        <span>Welcome {{ userId }}.</span>
+        <span v-show="userId">Welcome {{ userId }}.</span>
         <li>
           <router-link to="/home">Home</router-link>
         </li>
@@ -76,7 +76,7 @@ p {
   font-size: 11px;
   letter-spacing: 3px;
   margin-top: 10px;
-  margin-left:3px;
+  margin-left: 0px;
 }
 
 p > span {
