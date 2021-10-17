@@ -46,11 +46,11 @@ export default {
 }
 
 :root {
-  --primary-color: #0071fe;
+  --primary-color: #838383;
   --error-color: #f23648;
   --error-bg-color: #fff;
   --success-color: #21a67a;
-  --success-bg-color: #e0eee4;
+  --success-bg-color: #ffffff;
 }
 
 #app {
@@ -62,9 +62,9 @@ export default {
 }
 
 #app a { font-size:14px; text-decoration: none; color:#888; }
-#app input,button,textarea,select { font-size:14px; border: 1px solid #838383; background:#fff; color:#666; }
+#app input,button,textarea,select { font-size:14px; border: 1px solid #838383; background:#fff; color:#666; font-family: 'Roboto', 'Noto Sans KR', sans-serif !important; }
 #app input,textarea,select { padding:15px; }
-#app button { padding:15px 30px; font-weight:bold; cursor: pointer; background: #e9eaff; }
+#app button { padding:15px 30px ; font-weight:bold; cursor: pointer; background: #e9eaff; }
 #app label { font-weight:bold; width:60px; display: inline-block; color:#666; }
 
 i { font-size:26px; position:relative; top:5px; }

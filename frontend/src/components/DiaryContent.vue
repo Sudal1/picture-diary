@@ -1,138 +1,153 @@
 <template>
-  <table>
-    <thead>
-      <tr>
-        <th>제목</th>
-        <th>태그</th>
-        <th>날짜</th>
-        <th>내용</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(diary, idx) in diaries" :key="idx">
-        <router-link :to="{ name: 'editor', params: { id: diary.id } }" tag="td" class="title">{{ diary.title }}</router-link>
-        <td>{{ diary.tags }}</td>
-        <td>{{ diary.createdAt }}</td>
-        <td>
-          <router-link :to="{ name: 'editor', params: { id: diary.id } }" tag="i"></router-link>
-          <i class="icon" @click="deleteConfirm(diary.id)"></i>
-        </td>
-      </tr>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td @click="prePage">이전 페이지</td>
-        <td colspan="2">{{page}} p</td>
-        <td @click="nextPage">다음 페이지</td>
-      </tr>
-    </tfoot>
-  </table>
+  <div class="diaryContent">
+
+    <form class="bg-white shadow-md rounded" @submit.prevent>
+      <div class="mb-4">
+        <v-date-picker v-model="range" :masks="masks" is-range>
+          <template v-slot="{ inputValue, inputEvents, isDragging }">
+            <div class="calendar">
+              <div class="relative flex-grow">
+                <i class="xi-calendar"></i>
+                <input class="flex-grow bg-gray-100 border rounded w-full"
+                  :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.start"
+                  v-on="inputEvents.start" />
+              </div>
+              <span class="flex-shrink-0 m-2">
+                <i class="xi-long-arrow-right"></i>
+              </span>
+              <div class="relative flex-grow">
+                <i class="xi-calendar"></i>
+                <input class="flex-grow bg-gray-100 border rounded w-full"
+                  :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.end"
+                  v-on="inputEvents.end" />
+              </div>
+            </div>
+          </template>
+        </v-date-picker>
+      </div>
+    </form>
+
+    <div id="diaries">
+
+      <div v-for="(diary, index) in getReducedDiaries" :key="index">
+        <h2>{{ diary.title }}</h2>
+        <time>{{ diary.createdAt }}</time>
+        <time>{{ diary.updatedAt }}</time>
+        <p>{{ diary.content }}</p>
+      </div>
+
+      <p v-if="!loadMore" v-show="!noMoreDiary" class="noMore"></p>
+      <p v-if="noMoreDiary" class="noMore">No more content</p>
+
+    </div>
+    <spinner v-show="loadMore" class="spinner"></spinner>
+  </div>
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+import Spinner from './Spinner.vue'
 
 export default {
   data() {
-    return { page: 1 }
+    return {
+      range: {
+        start: new Date(2021, 0, 1),
+        end: new Date(2021, 11, 31)
+      },
+      masks: {
+        input: 'YYYY-MM-DD'
+      }
+    }
+  },
+  mounted() {
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  components: {
+    Spinner
   },
   computed: {
-    ...mapState(['diaries', 'dialog'])
+    ...mapGetters(['getReducedDiaries']),
+    ...mapState(['loadMore', 'moreDiary', 'noMoreDiary', 'isLoading'])
   },
   methods: {
-    ...mapActions(['delDiary']),
-    ...mapMutations(['setDialog']),
-    nextPage() {
-      this.page++
-      this.$emit('addPage')
-    },
-    prePage() {
-      if (!(this.page - 1)) {
-        alert('첫 페이지 입니다.')
-      } else {
-        this.page--
-        this.$emit('dropPage')
+    ...mapMutations(['moreDiaryToggle']),
+    ...mapActions(['requestDiaries']),
+
+    handleScroll() {
+      if (!this.isLoading && this.$route.name === 'diaries') {
+        const body = document.body
+        const totalHeight = body.scrollHeight
+        const scrollTop = body.scrollTop
+        const clientHeight = window.innerHeight
+        if (totalHeight - scrollTop - clientHeight === 0 && this.moreDiary) {
+          this.requestDiaries({
+            value: this.tag,
+            add: true,
+            page: ++this.page
+          })
+        }
+        if (!this.moreDiary) {
+          this.page = 1
+        }
       }
-    },
-    deleteConfirm(id) {
-      this.setDialog({
-        info: '일기를 삭제하시겠습니까？',
-        hasTwoBtn: true,
-        show: true
-      })
-      new Promise((resolve, reject) => {
-        this.dialog.resolveFn = resolve
-        this.dialog.rejectFn = reject
-      }).then(() => {
-        this.delDiary({
-          id: id,
-          page: this.page,
-          route: this.$route
-        })
-      }).catch((err) => {
-        console.log(err)
-      })
     }
+  },
+  
+  beforeRouteLeave(to, from, next) {
+    window.removeEventListener('scroll', this.handleScroll)
+    next()
   }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+.diaryContent {
+  .calendar {
+    display:flex;
+    flex-direction: row;
+    padding-bottom:2rem;
+    justify-content: center;
+    margin-left:-1.5px;
 
-table {
-  border-left: 0.1875rem solid rgb(129, 216, 208);
-  border-right: 0.1875rem solid rgb(129, 216, 208);
-  margin: 0 auto;
-  text-align: center;
-  max-height: 25rem;
-  min-width: 70%;
-
-  th,
-  td {
-    width: 25%;
+    i { margin:1rem 1rem 0 0; }
+    .xi-long-arrow-right { margin:1rem 2.5rem 1rem 3rem; }
   }
+  #diaries {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+      div {
+      width:40%;
+      background: #d9daff;
+      border-radius: 15px;
+      margin-bottom: 1.875rem;
+      padding: 1.7rem 1.7rem;
+      h2 {
+        margin-bottom: 1.25rem;
+      }
 
-  thead,
-  tfoot {
-    color: darkturquoise;
-  }
+      time {
+        margin-top: 0.625rem;
+        margin-right: 0.625rem;
+      }
 
-  tbody {
-    color: #ffffff;
-  }
-
-  tr {
-    height: 2.5rem;
-    line-height: 1.875rem;
-  }
-
-  i {
-    font-size: 1.25rem;
-    margin-right: 0.625rem;
-    color: rgb(129, 216, 208);
-    cursor: pointer;
-
-    &:hover {
-      color: #ffc520;
+      p {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        margin-top: 1.875rem;
+      }
     }
-  }
 
-  tfoot tr td:nth-child(1),
-  tfoot tr td:nth-child(3) {
-    cursor: pointer;
-
-    &:hover {
-      color: #ffc520;
+    p.noMore {
+      width: 100%;
+      height: 1.5rem;
+      line-height: 1.5rem;
+      color: #000000;
+      margin-top: 1.875rem;
+      margin-bottom: 1.875rem;
+      text-align: center;
     }
   }
 }
-
-.title {
-  cursor: pointer;
-
-  &:hover {
-    color: #ffc520;
-  }
-}
-
 </style>

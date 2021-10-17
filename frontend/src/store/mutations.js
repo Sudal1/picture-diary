@@ -73,15 +73,16 @@ export default {
   noMoreDiaryToggle: (state, flag) => {
     state.noMoreDiary = flag
   },
-
-  setHeadline: (state, data) => {
-    state.headline = data
-  },
   
   // dialog
   setDialog: (state, data) => {
     state.dialog = data
     state.dialog.resolveFn = () => {}
     state.dialog.rejectFn = () => {}
+  },
+
+  setDialogFn: (state, resolve, reject) => {
+    state.dialog.resolveFn = resolve
+    state.dialog.rejectFn = reject
   }
 }

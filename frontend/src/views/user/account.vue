@@ -4,10 +4,9 @@
     <p> <label for="user_name">Name</label>{{ user.name }} </p>
     <p> <label for="user_mail">E-mail</label>{{ user.email }} </p>
     <router-link :to="{ name: 'accountEditor' }">
-      <button type="submit">Edit Account</button>
+      <button type="submit">Edit</button>
     </router-link>
-    <br><br>
-    <button @click="actionDel()">Delete Account</button>
+    <button @click="actionDel()">Delete</button>
   </div>
 </template>
 
@@ -21,27 +20,20 @@ export default {
   },
   methods: {
     ...mapActions(['delAccount']),
-    ...mapMutations(['setDialog']),
+    ...mapMutations(['setDialog', 'setDialogFn']),
     
     actionDel() {
       this.setDialog({
-        info: 'Are you sure you want to delete your account?\n(Deleted account cannot be returned.)',
+        info: 'Are you sure you want to delete your account?',
         hasTwoBtn: true,
         show: true
       })
       new Promise((resolve, reject) => {
-        this.dialog.resolveFn = resolve
-        this.dialog.rejectFn = reject
-      }).then(
-        async () => {
-          try {
-            const res = await this.delAccount(this.user.userId)
-            if (res.status === '200') { this.$router.push({ name: 'login' }) }
-          } catch(err) {
-            console.log(err)
-          }
-        },
-        () => {}
+        this.setDialogFn(resolve, reject)
+      }).then(() => {
+          console.log('resolve')
+          // this.delAccount(this.user.userId)
+        }
       ).catch((err) => { console.log(err) })
     }
   }
@@ -49,10 +41,13 @@ export default {
 </script>
 
 <style scoped>
-p,h2 {
+p,
+h2 {
   color: #838383;
-  margin: 30px 0; 
+  margin: 30px 0;
 }
 
-.info {text-align:center;}
+.info {
+  text-align: center;
+}
 </style>

@@ -6,9 +6,97 @@ import mutations from './mutations.js'
 export default createStore({
   strict: true,
   state: {
-    user: {},
-    diary: {},
-    diaries: [],
+    user: {
+      userId: 'hihi',
+      name: 'test',
+      email: 'eee@email.com'
+    },
+    diary: {
+      title: 'testDiary1',
+      content: 'testContent',
+      author: 'author',
+      createdAt: Date.now(),
+      updatedAt: Date.now()
+    },
+    diaries: [
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      },
+      {
+        title: 'testDiary1',
+        content: 'testContent',
+        author: 'author',
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }
+    ],
     comments: [],
     tag: '',
     tags: [],
@@ -17,11 +105,10 @@ export default createStore({
     loadMore: false,
     moreDiary: true,
     noMoreDiary: false,
-    headline: {},
     dialog: {
       show: false,
       hasTwoBtn: false,
-      info: 'Loading...',
+      info: '',
       resolveFn: () => {},
       rejectFn: () => {}
     }

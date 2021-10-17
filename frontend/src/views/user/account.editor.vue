@@ -1,19 +1,18 @@
 <template>
-  <div class="signUp">
+  <div class="accountEditor">
     <Form @submit="onSubmit" :validation-schema="schema">
       <TextInput
         name="userId"
         type="text"
         label="User ID"
         placeholder="User ID"
-        success-message=""
+        disabled="false"
       />
       <TextInput
         name="password"
         type="password"
         label="Password"
         placeholder="Password"
-        success-message=""
       />
       <TextInput
         name="confirmPassword"
@@ -26,15 +25,11 @@
         name="dob"
         type="date"
         label="Date of Birth"
-        placeholder=""
-        success-message=""
       />
       <TextInput
         name="name"
-        type="text"
         label="Name"
         placeholder="Name"
-        success-message=""
       />
       <TextInput
         name="email"
@@ -43,8 +38,10 @@
         placeholder="Email address (aaa@example.com)"
         success-message="E-mail is verified"
       />
-      <button type="submit">Sign Up</button>
-      <button @click="$router.go(-1)">Back</button>
+      <div class="btnWrap">
+        <router-link class="submit-btn" :to="{ name: 'account' }"><i class="xi-long-arrow-left"></i></router-link>
+        <button class="submit-btn" type="submit">Edit</button>
+      </div>
     </Form>
   </div>
 </template>
@@ -54,10 +51,10 @@ import { defineComponent } from 'vue'
 import { useStore } from 'vuex'
 import { Form } from 'vee-validate'
 import * as Yup from 'yup'
-import TextInput from '../components/TextInput.vue'
+import TextInput from '../../components/TextInput.vue'
 
 export default defineComponent({
-  name: 'signUp',
+  name: 'accountEditor',
   components: {
     Form,
     TextInput
@@ -66,8 +63,7 @@ export default defineComponent({
     const store = useStore()
 
     const schema = Yup.object().shape({
-      userId: Yup.string()
-        .required('User ID is required'),
+      userId: Yup.string(),
       password: Yup.string()
         .required('Password is required')
         .min(4, 'Password must be at least 4 characters'),
@@ -79,7 +75,7 @@ export default defineComponent({
         .matches(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/, 'Please select one'),
       name: Yup.string()
         .required('Name is required.')
-        .matches(/^[가-힣a-zA-Z\s]+$/, 'Name must be a combination of characters'),
+        .matches(/^[가-힣a-zA-Z\s]+$/, 'Must be a combination of characters'),
       email: Yup.string()
         .required('E-mail is required')
         .email()
@@ -87,9 +83,9 @@ export default defineComponent({
 
     async function onSubmit(values) {
       try {
-        console.log(values)
-        const res = await store.dispatch('signUp', values)
-        res.data ? this.$router.push({ name: 'account' }) : alert('Sign up failed.')
+        alert(JSON.stringify(values))
+        const res = await store.dispatch('editAccount', values)
+        res.data ? store.dispatch('logout') : alert('Edit failed.')
       } catch (err) {
         console.log(err)
       }
@@ -103,12 +99,25 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-.signUp {
+<style lang="scss" rel="stylesheet/scss" scoped>
+.accountEditor {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100vh;
+}
+
+.btnWrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+
+.btnWrap .submit-btn:nth-child(2) {
+  position: relative;
+  top: 3px;
+  margin-left: auto; 
 }
 </style>

@@ -1,28 +1,22 @@
 <template>
   <div class="wrapper">
+
     <div class="title">
       <input type="text" placeholder="Title" onfocus="this.placeholder=''" onblur="this.placeholder='Title'"
         v-model="title">
     </div>
-    <div id="tags">
-      <tag-input
-        v-for="(item, index) in tags"
-        :tags="tags"
-        :index="index"
-        :key="index"
-        @update:tags="value => updateDiaryTags(value)"
-      ></tag-input>
-    </div>
+
     <div class="content">
       <textarea id="editor" spellcheck="false" v-model="content" v-focus></textarea>
     </div>
-    <button class="publish" @click="saveDiary($route.params.id)">작성 완료</button>
+    
+    <button class="submit-btn" @click="saveDiary($route.params.id)">Write!</button>
+
   </div>
 </template>
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-import TagInput from './TagInput.vue'
 
 export default {
   name: 'editor',
@@ -41,15 +35,12 @@ export default {
   },
   created() {
     const id = this.$route.params.id
-    this.isSaving_toggle(false)
+    this.isSavingToggle(false)
     if (id) { return this.getDiary(id) }
     this.setDiary({
       content: '',
-      title: '',
-      tags: ['']
+      title: ''
     })
-  },
-  mounted() {
   },
   updated() {
     if (this.firstUpdate) { this.isChange = false }
@@ -66,25 +57,17 @@ export default {
     content: {
       get () { return this.diary.content },
       set (value) { this.updateDiaryContent(value) }
-    },
-
-    tags () { return this.diary.tags }
+    }
   },
   methods: {
-    ...mapMutations(['setDiary', 'updateDiaryContent', 'updateDiaryTitle', 'updateDiaryTags', 'isSavingToggle', 'setDialog']),
+    ...mapMutations(['setDiary', 'updateDiaryContent', 'updateDiaryTitle', 'isSavingToggle', 'setDialog']),
     ...mapActions(['saveDiary', 'getDiary'])
-  },
-  components: {
-    TagInput
   },
   watch: {
     title() {
       this.isChange = true
     },
     content() {
-      this.isChange = true
-    },
-    tags() {
       this.isChange = true
     }
   },
@@ -115,85 +98,44 @@ export default {
 <style lang="scss" rel="stylesheet/scss" scoped>
 
 .wrapper {
-  position: relative;
-  padding: 0 3.125rem 0;
+  display: flex;
+  width: 40%;
+  align-items: center;
+  margin: 0 auto;
+  flex-direction: column;
 
-  input {
-    border: none;
-    border-bottom: 0.125rem solid rgb(129, 216, 208);
-    outline: none;
-    background: transparent;
-    color: #ffffff;
-    margin-bottom: 0.625rem;
-    text-align: center;
+  .title {
+    width: 100%;
+    margin-top: 50px;
   }
-
   .title input {
     width: 100%;
     height: 3.125rem;
-    font-size: 1.875rem;
-  }
-
-  #tags {
-    input {
-      width: 6.25rem;
-      height: 1.875rem;
-      font-size: 1rem;
-      margin-right: 0.125rem;
-    }
+    margin-bottom: 20px;
+    font-size:16px;
   }
 
   .content {
-    border: 0.125rem solid rgb(129, 216, 208);
-    position: relative;
-    height: 29.375rem;
+    border: 0.5px solid rgb(0, 0, 0);
+    width: 100%;
+    height: 45rem;
+    margin-bottom: 20px;
 
     #editor {
       width: 100%;
-      height: 29.375rem;
+      height: 45rem;
       border: none;
       background: transparent;
       resize: none;
       outline: none;
-      font-size: 1rem;
       overflow-y: auto;
       white-space: pre-wrap;
-      font-family: Georgia, "Times New Roman", "Microsoft YaHei", "微软雅黑", STXihei, "华文细黑", serif;
-      color: #E5E9F2;
     }
   }
-}
 
-.publish {
-  width: 6.25rem;
-  position: fixed;
-  left: 1rem;
-  bottom: 32.5rem;
-  background: rgb(129, 216, 208);
-  color: #000;
-}
-
-.active {
-  background: rgb(129, 216, 208);
-  color: #111111;
-}
-
-@media screen and (max-width: 440px) {
-  .wrapper {
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-    margin-bottom: 5rem;
-  }
-
-  .publish {
-    position: absolute !important;
-    bottom: -3rem !important;
-    left: 1rem !important;
-  }
-
-  #tags {
-    width: 13.7rem !important;
+  .submit-btn {
+    margin-left: auto;
+    margin-bottom: 50px;
   }
 }
-
 </style>

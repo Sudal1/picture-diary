@@ -1,8 +1,8 @@
 <template>
   <div class="TextInput" :class="{ 'has-error': !!errorMessage, success: meta.valid }">
     <label :for="name">{{ label }}</label>
-    <input :name="name" :id="name" :type="type" :value="inputValue" :placeholder="placeholder" @input="handleChange"
-      @blur="handleBlur" />
+    <input :name="name" :id="name" :type="type" :value="inputValue" :placeholder="placeholder" :disabled="disabled"
+      @input="handleChange" @blur="handleBlur" />
 
     <p class="help-message" v-show="errorMessage || meta.valid">
       {{ errorMessage || successMessage }}
@@ -12,6 +12,7 @@
 
 <script>
 import { useField } from 'vee-validate'
+import { useStore } from 'vuex'
 
 export default {
   props: {
@@ -38,9 +39,15 @@ export default {
     placeholder: {
       type: String,
       default: ''
+    },
+    disabled: {
+      validator(value) {
+        return ['false'].includes(value)
+      }
     }
   },
   setup(props) {
+    const store = useStore()
     const {
       value: inputValue,
       errorMessage,
@@ -48,7 +55,7 @@ export default {
       handleChange,
       meta
     } = useField(props.name, undefined, {
-      initialValue: props.value
+      initialValue: store.state.user ? store.state.user[props.name] : ''
     })
 
     return {
@@ -65,7 +72,7 @@ export default {
 <style scoped>
 .TextInput {
   position: relative;
-  margin-bottom: calc(1em * 1.5);
+  margin-bottom: calc(1em * 2.0);
   width: 100%;
 }
 
@@ -73,6 +80,7 @@ label {
   display: block;
   margin-bottom: 4px;
   width: 100%;
+  white-space: nowrap;
 }
 
 input {
@@ -80,7 +88,7 @@ input {
   border: 2px solid transparent;
   padding: 15px 10px;
   outline: none;
-  background-color: #f2f5f7;
+  background-color: #ffffff;
   width: 100%;
   transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out,
     background-color 0.3s ease-in-out;

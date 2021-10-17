@@ -67,19 +67,6 @@ export default {
     background: #C0CCDA;
     border-radius: 0.5rem;
 
-    i {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      color: #fc8c84;
-      font-size: 1rem;
-      cursor: pointer;
-
-      &:hover {
-        color: darkturquoise;
-      }
-    }
-
     p {
       height: calc(100% - 4rem);
       width: calc(100% - 2rem);

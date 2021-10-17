@@ -1,15 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import store from '../store/index'
 
-import index    from '../views/index.vue'
-import Home     from '../views/Home.vue'
-import About    from '../views/About.vue'
-import Login    from '../views/Login.vue'
-import SignUp   from '../views/SignUp.vue'
-import account  from '../views/user/account.vue'
-import accountEditor from '../views/user/accountEditor.vue'
-import diaries  from '../components/Diaries.vue'
-import editor   from '../components/Editor.vue'
+import index         from '../views/index.vue'
+import Home          from '../views/Home.vue'
+import About         from '../views/About.vue'
+import login         from '../views/user/login.vue'
+import signUp        from '../views/user/signUp.vue'
+import account       from '../views/user/account.vue'
+import accountEditor from '../views/user/account.editor.vue'
+import diaries       from '../views/diary/diaries.vue'
+import diaryEditor   from '../views/diary/diary.editor.vue'
 
 const routes = [
   {
@@ -22,12 +22,12 @@ const routes = [
       { path: '/account', name: 'account', component: account, meta: { title: 'Account' } },
       { path: '/account/editor', name: 'accountEditor', component: accountEditor, meta: { title: 'Account Editor' } },
       { path: '/diaries', name: 'diaries', component: diaries, meta: { title: 'Diaries' } },
-      { path: '/editor', name: 'editor', component: editor, meta: { title: 'Diary Editor' } }
+      { path: '/editor', name: 'editor', component: diaryEditor, meta: { title: 'Diary Editor' } }
     ]
   },
 
-  { path: '/login', name: 'login', component: Login, meta: { title: 'Login' } },
-  { path: '/sign-up', name: 'signUp', component: SignUp, meta: { title: 'Sign Up' } }
+  { path: '/login', name: 'login', component: login, meta: { title: 'Login' } },
+  { path: '/sign-up', name: 'signUp', component: signUp, meta: { title: 'Sign Up' } }
 ]
 
 const router = createRouter({

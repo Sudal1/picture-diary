@@ -25,6 +25,7 @@ export default {
   logout({ commit }) {
     localStorage.clear()
     commit('unsetUser')
+    router.push({ name: 'login' })
   },
 
   async signUp({ commit }, payload) {
@@ -77,7 +78,7 @@ export default {
     }
   },
 
-  async getDiaries ({ commit }, payload) {
+  async requestDiaries ({ commit }, payload) {
     try {
       commit('moreDiaryToggle', true)
       const startTime = beginLoading(commit, payload.add)
@@ -103,13 +104,13 @@ export default {
     }
   },
 
-  async getDiary ({ commit, state }, id) {
+  async requestDiary ({ commit, state }, id) {
     try {
       const startTime = beginLoading(commit, false)
       if (router.currentRoute.value.hash) {
         commit('isLoadingToggle', false)
       }
-      document.title = '일기 저장중...'
+      document.title = 'Loading...'
       const response = await axios.get(`${API_URL}/diary/${id}`)
       commit('setDiary', response.data)
       commit('setHeadline', { content: state.diary.title, animation: 'animiated rotateIn' })
@@ -132,7 +133,7 @@ export default {
 
   async searchDiaries ({ commit }, payload) {
     try {
-      document.title = '검색중...'
+      document.title = 'Searching...'
       commit('moreDiaryToggle', true)
       const startTime = beginLoading(commit, payload.id)
       const response = await axios.get(`${API_URL}/someDiaries`, { params: { payload } })
@@ -149,13 +150,13 @@ export default {
         commit('setDiaries', response.data.diaries)
         endLoading(commit, startTime, 'isLoadingToggle')
       }
-      document.title = '검색 완료!'
+      document.title = 'Searched diaries'
     } catch (err) {
       console.log(err)
     }
   },
 
-  async getTags ({ commit }) {
+  async requestTags ({ commit }) {
     try {
       const response = await axios.get(`${API_URL}/tags`)
       commit('setTags', response.data)
