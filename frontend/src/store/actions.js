@@ -78,7 +78,7 @@ export default {
     }
   },
 
-  async requestDiaries ({ commit }, payload) {
+  async getDiaries ({ commit }, payload) {
     try {
       commit('moreDiaryToggle', true)
       const startTime = beginLoading(commit, payload.add)
@@ -104,7 +104,7 @@ export default {
     }
   },
 
-  async requestDiary ({ commit, state }, id) {
+  async getDiary ({ commit, state }, id) {
     try {
       const startTime = beginLoading(commit, false)
       if (router.currentRoute.value.hash) {
@@ -113,7 +113,7 @@ export default {
       document.title = 'Loading...'
       const response = await axios.get(`${API_URL}/diary/${id}`)
       commit('setDiary', response.data)
-      commit('setHeadline', { content: state.diary.title, animation: 'animiated rotateIn' })
+
       document.title = state.diary.title
       endLoading(commit, startTime, 'isLoadingToggle')
     } catch (err) {
@@ -151,16 +151,6 @@ export default {
         endLoading(commit, startTime, 'isLoadingToggle')
       }
       document.title = 'Searched diaries'
-    } catch (err) {
-      console.log(err)
-    }
-  },
-
-  async requestTags ({ commit }) {
-    try {
-      const response = await axios.get(`${API_URL}/tags`)
-      commit('setTags', response.data)
-      return response
     } catch (err) {
       console.log(err)
     }

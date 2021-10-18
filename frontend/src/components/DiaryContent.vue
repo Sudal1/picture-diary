@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     ...mapMutations(['moreDiaryToggle']),
-    ...mapActions(['requestDiaries']),
+    ...mapActions(['getDiaries']),
 
     handleScroll() {
       if (!this.isLoading && this.$route.name === 'diaries') {
@@ -81,14 +81,9 @@ export default {
         const scrollTop = body.scrollTop
         const clientHeight = window.innerHeight
         if (totalHeight - scrollTop - clientHeight === 0 && this.moreDiary) {
-          this.requestDiaries({
-            value: this.tag,
-            add: true,
-            page: ++this.page
+          this.getDiaries({
+            add: true
           })
-        }
-        if (!this.moreDiary) {
-          this.page = 1
         }
       }
     }
@@ -118,7 +113,7 @@ export default {
     flex-direction:column;
     align-items:center;
       div {
-      width:40%;
+      width:50%;
       background: #d9daff;
       border-radius: 15px;
       margin-bottom: 1.875rem;

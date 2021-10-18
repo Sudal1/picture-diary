@@ -1,123 +1,90 @@
 <template>
-  <div class="dialog">
-    <div class="center">
-      <button @click="close">Close</button>
-      <p><span>{{ dialog.info }}</span></p>
-      <div class="choice">
-        <button class="sure" @click="confirm">Sure</button>
-        <button class="cancel" v-if="dialog.hasTwoBtn" @click="cancel">Cancle</button>
-      </div>
+  <popup-modal ref="popup">
+    <h2 style="margin-top: 0">{{ title }}</h2>
+    <p>{{ message }}</p>
+    <div class="btns">
+      <button class="cancel-btn" @click="_cancel">{{ cancelButton }}</button>
+      <span class="ok-btn" @click="_confirm">{{ okButton }}</span>
     </div>
-  </div>
+  </popup-modal>
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex'
+import PopupModal from './PopupModal.vue'
 
 export default {
-  computed: {
-    ...mapState(['dialog'])
+  name: 'Dialog',
+
+  components: {
+    PopupModal
   },
+
+  data: () => ({
+    title: undefined,
+    message: undefined, // Main text content
+    okButton: undefined, // Text for confirm button; leave it empty because we don't know what we're using it for
+    cancelButton: 'Go Back', // text for cancel button
+
+    // Private variables
+    resolvePromise: undefined,
+    rejectPromise: undefined
+  }),
+
   methods: {
-    ...mapMutations(['setDialog']),
-    close() {
-      this.setDialog({
-        info: '',
-        show: false
+    show(opts = {}) {
+      this.title = opts.title
+      this.message = opts.message
+      this.okButton = opts.okButton
+      if (opts.cancelButton) {
+        this.cancelButton = opts.cancelButton
+      }
+      // Once we set our config, we tell the popup modal to open
+      this.$refs.popup.open()
+      // Return promise so the caller can get results
+      return new Promise((resolve, reject) => {
+        this.resolvePromise = resolve
+        this.rejectPromise = reject
       })
     },
-    confirm() {
-      this.setDialog({
-        info: '',
-        show: false
-      })
-      this.dialog.resolveFn()
+
+    _confirm() {
+      this.$refs.popup.close()
+      this.resolvePromise(true)
     },
-    cancel() {
-      this.setDialog({
-        info: '',
-        show: false
-      })
-      this.dialog.rejectFn()
+
+    _cancel() {
+      this.$refs.popup.close()
+      this.resolvePromise(false)
+      // Or you can throw an error
+      // this.rejectPromise(new Error('User cancelled the dialogue'))
     }
   }
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
-
-.dialog {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background: rgba(2, 2, 2, 0.8);
-
-  div.center {
-    position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-    width: 30%;
-    height: 35%;
-    overflow: auto;
-    margin: auto;
-    background: #C0CCDA;
-    border-radius: 0.5rem;
-
-    p {
-      height: calc(100% - 4rem);
-      width: calc(100% - 2rem);
-      text-align: center;
-      display: table;
-      padding: 0 1rem;
-
-      span {
-        display: table-cell;
-        vertical-align: middle;
-      }
-    }
-  }
+<style scoped>
+.btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-.choice {
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: nowrap;
-  color: #00193a;
-  width: 100%;
-
-  .sure {
-    width: 30%;
-    padding: 0 1rem;
-
-    &:hover {
-      color: #ffffff;
-    }
-  }
-
-  .cancel {
-    width: 30%;
-    background: #fc8c84;
-    padding: 0 1rem;
-
-    &:hover {
-      color: #ffffff;
-    }
-  }
+.ok-btn {
+    color: red;
+    text-decoration: underline;
+    line-height: 2.5rem;
+    cursor: pointer;
 }
 
-button {
-  margin-top: 0;
+.cancel-btn {
+    padding: 0.5em 1em;
+    background-color: #d5eae7;
+    color: #35907f;
+    border: 2px solid #0ec5a4;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 16px;
+    text-transform: uppercase;
+    cursor: pointer;
 }
-
-@media screen and (max-width: 440px) {
-  .center {
-    width: 90% !important;
-    height: 35% !important;
-  }
-}
-
 </style>
