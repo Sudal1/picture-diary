@@ -20,9 +20,8 @@ span {
 .footer {
   display: flex;
   justify-content: center;
-  padding: 30px 0;
+  padding: 40px 0;
   border-top: 1px dashed #dfdfdf;
-  margin-top: 30px;
   letter-spacing: 3px;
   font-size: 12px;
   font-weight: bold;

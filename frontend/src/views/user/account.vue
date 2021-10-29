@@ -1,18 +1,22 @@
 <template>
   <div class="wrapper">
+
     <p> <label for="user_id">User ID</label>{{ user.userId }} </p>
     <p> <label for="user_name">Name</label>{{ user.name }} </p>
     <p> <label for="user_mail">E-mail</label>{{ user.email }} </p>
+
     <router-link :to="{ name: 'accountEditor' }">
       <button type="submit">Edit</button>
     </router-link>
+    <br><br>
     <button @click="actionDel()">Delete</button>
+
     <Dialog ref="Dialog"></Dialog>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import Dialog from '../../components/Dialog.vue'
 
 export default {
@@ -21,11 +25,10 @@ export default {
     Dialog
   },
   computed: {
-    ...mapState(['user', 'dialog'])
+    ...mapState(['user'])
   },
   methods: {
     ...mapActions(['delAccount']),
-    ...mapMutations(['setDialog', 'setDialogFn']),
 
     async actionDel() {
       try {
@@ -36,13 +39,7 @@ export default {
         })
         if (ok) {
           const response = await this.delAccount(this.user.userId)
-          if (response.data) {
-            this.$router.push({
-              name: 'login'
-            })
-          } else {
-            alert('Cannot delete account(Server error).')
-          }
+          response.data ? this.$router.push({ name: 'login' }) : alert('Cannot delete account(Server error).')
         }
       } catch (err) {
         console.log(err)
@@ -53,13 +50,19 @@ export default {
 </script>
 
 <style scoped>
+.wrapper {
+  text-align: center;
+}
+
 p,
 h2 {
+  word-break: keep-all;
   color: #838383;
   margin: 30px 0;
 }
 
-.wrapper {
-  text-align: center;
+button {
+  width: 200px;
+  padding: 15px 0 !important;
 }
 </style>

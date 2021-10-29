@@ -39,7 +39,7 @@
         success-message="E-mail is verified"
       />
       <div class="btnWrap">
-        <router-link class="submit-btn" :to="{ name: 'account' }"><i class="xi-long-arrow-left"></i></router-link>
+        <router-link :to="{ name: 'account' }"><i class="xi-long-arrow-left"></i></router-link>
         <button class="submit-btn" type="submit">Edit</button>
       </div>
     </Form>
@@ -100,22 +100,13 @@ export default defineComponent({
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-.accountEditor {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100vh;
-}
-
 .btnWrap {
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-
-.btnWrap .submit-btn:nth-child(2) {
+.btnWrap .submit-btn {
   position: relative;
   top: 3px;
   margin-left: auto; 

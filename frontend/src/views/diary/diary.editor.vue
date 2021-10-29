@@ -10,44 +10,46 @@
       <textarea id="editor" spellcheck="false" v-model="content" v-focus></textarea>
     </div>
     
-    <button class="submit-btn" @click="saveDiary($route.params.id)">Write!</button>
-
+    <button class="submit-btn" @click="submit()">Write!</button>
+    <Dialog ref="Dialog"></Dialog>
   </div>
 </template>
 
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
+import Dialog from '../../components/Dialog.vue'
 
 export default {
   name: 'editor',
-  data() {
-    return {
-      firstUpdate: true,
-      isChange: false
-    }
+  components: {
+    Dialog
   },
   directives: {
     focus: {
-      mounted (el) {
-        el.focus()
-      }
+      mounted (el) { el.focus() }
+    }
+  },
+  data() {
+    return {
+      firstUpdate: true,
+      canLeaveSite: true
     }
   },
   created() {
     const id = this.$route.params.id
     this.isSavingToggle(false)
-    if (id) { return this.getDiary(id) }
+    // if (id) { return this.getDiary(id) }
     this.setDiary({
-      content: '',
-      title: ''
+      title: '',
+      content: ''
     })
   },
   updated() {
-    if (this.firstUpdate) { this.isChange = false }
+    if (this.firstUpdate) { this.canLeaveSite = true }
     this.firstUpdate = false
   },
   computed: {
-    ...mapState(['diary', 'isSaving', 'dialog']),
+    ...mapState(['diary', 'isSaving']),
 
     title: {
       get () { return this.diary.title || '' },
@@ -60,36 +62,63 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setDiary', 'updateDiaryContent', 'updateDiaryTitle', 'isSavingToggle', 'setDialog']),
-    ...mapActions(['saveDiary', 'getDiary'])
-  },
-  watch: {
-    title() {
-      this.isChange = true
+    ...mapMutations(['setDiary', 'updateDiaryContent', 'updateDiaryTitle', 'isSavingToggle']),
+    ...mapActions(['saveDiary', 'getDiary']),
+
+    async submit() {
+      try {
+        const response = await this.saveDiary(this.$route.params.id)
+        if (response) {
+          this.canLeaveSite = true
+          this.changeCanLeaveSite()
+          this.$router.push({ name: 'diary', params: { id: response.id } })
+        } else {
+          alert('Cannot save diary(Server error).')
+        }
+      } catch (err) {
+        console.log(err)
+      }
     },
-    content() {
-      this.isChange = true
+
+    unLoadEvent (event) {
+      if (!this.canLeaveSite) {
+        event.preventDefault()
+        event.returnValue = ''        
+      }
+    },
+
+    changeCanLeaveSite () {
+      this.$emit('change-can-leave-site', this.canLeaveSite)
     }
   },
-  beforeRouteLeave(to, from, next) {
-    if (this.isChange && !this.isSaving) {
-      this.setDialog({
-        info: 'You have unsaved data. Are you sure you want to exit?\n(Unsaved data will be destroyed.)',
-        hasTwoBtn: true,
-        show: true
-      })
-      new Promise((resolve, reject) => {
-        this.dialog.resolveFn = resolve
-        this.dialog.rejectFn = reject
-      }).then(() => {
-        next()
-      }, () => {
-        next(false)
-      }).catch((err) => {
-        console.log(err)
-      })
-    } else {
+  watch: {
+    title: function() {
+      this.canLeaveSite = false
+      this.changeCanLeaveSite()
+    },
+    content: function () {
+      this.canLeaveSite = false
+      this.changeCanLeaveSite()
+    }
+  },
+  mounted() {
+    window.addEventListener('beforeunload', this.unLoadEvent)
+  },
+  beforeUnmount() {
+    window.removeEventListener('beforeunload', this.unLoadEvent)
+  },
+  async beforeRouteLeave (to, from, next) {
+    if (this.canLeaveSite) {
       next()
+    } else {
+      const ok = await this.$refs.Dialog.show({
+        title: 'Leave this page',
+        message: 'Are you sure you want to leave current page?',
+        okButton: 'Sure'
+      })
+      if (ok) {
+        next()
+      }
     }
   }
 }
@@ -99,43 +128,32 @@ export default {
 
 .wrapper {
   display: flex;
-  width: 40%;
-  align-items: center;
+  width: 30%;
   margin: 0 auto;
   flex-direction: column;
 
   .title {
     width: 100%;
-    margin-top: 50px;
   }
   .title input {
     width: 100%;
     height: 3.125rem;
-    margin-bottom: 20px;
     font-size:16px;
   }
 
   .content {
-    border: 0.5px solid rgb(0, 0, 0);
-    width: 100%;
-    height: 45rem;
-    margin-bottom: 20px;
+    margin: 2rem 0 1.5rem 0;
 
     #editor {
       width: 100%;
-      height: 45rem;
-      border: none;
-      background: transparent;
-      resize: none;
       outline: none;
-      overflow-y: auto;
       white-space: pre-wrap;
+      min-height: 30rem;
     }
   }
 
   .submit-btn {
     margin-left: auto;
-    margin-bottom: 50px;
   }
 }
 </style>

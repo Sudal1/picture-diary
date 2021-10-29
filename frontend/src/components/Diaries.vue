@@ -27,10 +27,17 @@
       </div>
     </form>
 
-    <div id="diaries">
+    <div class="btns">
+      <router-link :to="{ name: 'editor' }" class="write">
+        <button>Write</button>
+      </router-link>
+    </div>
 
+    <div id="diaries">
       <div v-for="(diary, index) in getReducedDiaries" :key="index">
-        <h2>{{ diary.title }}</h2>
+        <router-link :to="{ name: 'diary', params: { id: diary.id } }">
+          <h2>{{ diary.title }}</h2>
+        </router-link>
         <time>{{ diary.createdAt }}</time>
         <time>{{ diary.updatedAt }}</time>
         <p>{{ diary.content }}</p>
@@ -52,13 +59,16 @@ export default {
   data() {
     return {
       range: {
-        start: new Date(2021, 0, 1),
-        end: new Date(2021, 11, 31)
+        start: new Date().setMonth(new Date().getMonth() - 1),
+        end: Date.now()
       },
       masks: {
         input: 'YYYY-MM-DD'
       }
     }
+  },
+  created() {
+    // this.getDiaries()
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
@@ -99,25 +109,38 @@ export default {
 <style lang="scss" rel="stylesheet/scss" scoped>
 .diaryContent {
   .calendar {
-    display:flex;
+    display: flex;
     flex-direction: row;
-    padding-bottom:2rem;
+    padding-bottom: 2rem;
     justify-content: center;
-    margin-left:-1.5px;
+    margin-left: -1.5px;
 
-    i { margin:1rem 1rem 0 0; }
-    .xi-long-arrow-right { margin:1rem 2.5rem 1rem 3rem; }
+    i {
+      margin: 1rem 1rem 0 0;
+    }
+
+    .xi-long-arrow-right {
+      margin: 1rem 2.5rem 1rem 3rem;
+    }
   }
+
+  .btns {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 2rem;
+  }
+
   #diaries {
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-      div {
-      width:50%;
+    flex-direction: row;
+
+    div {
+      width: 100%;
       background: #d9daff;
       border-radius: 15px;
       margin-bottom: 1.875rem;
       padding: 1.7rem 1.7rem;
+
       h2 {
         margin-bottom: 1.25rem;
       }

@@ -78,6 +78,7 @@ export default {
 
 label {
   display: block;
+  padding-left: 4px;
   margin-bottom: 4px;
   width: 100%;
   white-space: nowrap;
@@ -90,45 +91,39 @@ input {
   outline: none;
   background-color: #ffffff;
   width: 100%;
-  transition: border-color 0.3s ease-in-out, color 0.3s ease-in-out,
-    background-color 0.3s ease-in-out;
-}
-
-input:focus {
-  border-color: var(--primary-color);
 }
 
 .help-message {
   position: absolute;
   bottom: calc(-1.5 * 1em);
-  left: 0;
+  padding-left: 4px;
   margin: 0;
   font-size: 14px;
 }
 
 .TextInput.has-error input {
-  background-color: var(--error-bg-color);
-  color: var(--error-color);
+  background-color: #fff;
+  color: #f23648;
 }
 
 .TextInput.has-error input:focus {
-  border-color: var(--error-color);
+  border-color: #f23648;
 }
 
 .TextInput.has-error .help-message {
-  color: var(--error-color);
+  color: #f23648;
 }
 
 .TextInput.success input {
-  background-color: var(--success-bg-color);
-  color: var(--success-color);
+  background-color: #fff;
+  color: #21a67a;
 }
 
 .TextInput.success input:focus {
-  border-color: var(--success-color);
+  border-color: #21a67a;
 }
 
 .TextInput.success .help-message {
-  color: var(--success-color);
+  color: #21a67a;
 }
 </style>

@@ -87,6 +87,7 @@ p > span {
   border-top: 7px solid #c2c4ff;
   padding: 30px 30px 33px;
   align-items: center;
+  z-index:100;
 }
 
 .header .title {

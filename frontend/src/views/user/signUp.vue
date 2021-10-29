@@ -5,7 +5,7 @@
         name="userId"
         type="text"
         label="User ID"
-        placeholder="User ID"
+        placeholder="ID"
       />
       <TextInput
         name="password"

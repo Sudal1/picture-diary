@@ -1,14 +1,10 @@
 <template>
   <div id="app">
     <router-view></router-view>
-    <transition enter-active-class="animated fadeIn" leave-active-class="animated fadeOut">
-      <dialog-box v-if="dialog.show"></dialog-box>
-    </transition>
   </div>
 </template>
 
 <script>
-import DialogBox from './components/PopupModal.vue'
 import { mapState } from 'vuex'
 
 export default {
@@ -16,11 +12,8 @@ export default {
   mounted () {
     document.addEventListener('visibilitychange', this.changeTitle, false)
   },
-  components: {
-    DialogBox
-  },
   computed: {
-    ...mapState(['isLoading', 'dialog'])
+    ...mapState(['isLoading'])
   },
   methods: {
     changeTitle () {
@@ -43,14 +36,6 @@ export default {
   padding: 0;
   outline: none;
   box-sizing: border-box;
-}
-
-:root {
-  --primary-color: #838383;
-  --error-color: #f23648;
-  --error-bg-color: #fff;
-  --success-color: #21a67a;
-  --success-bg-color: #ffffff;
 }
 
 #app {

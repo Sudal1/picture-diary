@@ -1,10 +1,12 @@
 <template>
   <popup-modal ref="popup">
-    <h2 style="margin-top: 0">{{ title }}</h2>
-    <p>{{ message }}</p>
+    <div class="massage">
+      <h2>{{ title }}</h2>
+      {{ message }}
+      </div>
     <div class="btns">
-      <button class="cancel-btn" @click="_cancel">{{ cancelButton }}</button>
-      <span class="ok-btn" @click="_confirm">{{ okButton }}</span>
+      <button @click="_cancel">{{ cancelButton }}</button>
+      <button @click="_confirm">{{ okButton }}</button>
     </div>
   </popup-modal>
 </template>
@@ -21,11 +23,10 @@ export default {
 
   data: () => ({
     title: undefined,
-    message: undefined, // Main text content
-    okButton: undefined, // Text for confirm button; leave it empty because we don't know what we're using it for
-    cancelButton: 'Go Back', // text for cancel button
+    message: undefined,
+    okButton: undefined,
+    cancelButton: 'Cancle',
 
-    // Private variables
     resolvePromise: undefined,
     rejectPromise: undefined
   }),
@@ -35,12 +36,9 @@ export default {
       this.title = opts.title
       this.message = opts.message
       this.okButton = opts.okButton
-      if (opts.cancelButton) {
-        this.cancelButton = opts.cancelButton
-      }
-      // Once we set our config, we tell the popup modal to open
+      if (opts.cancelButton) { this.cancelButton = opts.cancelButton }
       this.$refs.popup.open()
-      // Return promise so the caller can get results
+
       return new Promise((resolve, reject) => {
         this.resolvePromise = resolve
         this.rejectPromise = reject
@@ -55,36 +53,35 @@ export default {
     _cancel() {
       this.$refs.popup.close()
       this.resolvePromise(false)
-      // Or you can throw an error
-      // this.rejectPromise(new Error('User cancelled the dialogue'))
     }
   }
 }
 </script>
 
 <style scoped>
+.massage {
+  border-radius:10px;
+  padding:1rem;
+  min-width: 18rem;
+  min-height: 8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.massage h2 { margin-bottom:1rem; }
+
 .btns {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    margin-top:1rem;
 }
 
-.ok-btn {
-    color: red;
-    text-decoration: underline;
-    line-height: 2.5rem;
-    cursor: pointer;
-}
-
-.cancel-btn {
-    padding: 0.5em 1em;
-    background-color: #d5eae7;
-    color: #35907f;
-    border: 2px solid #0ec5a4;
-    border-radius: 5px;
-    font-weight: bold;
-    font-size: 16px;
-    text-transform: uppercase;
-    cursor: pointer;
+.btns button { 
+  width:10.45rem;
+  background: transparent;
+  border: 1px solid transparent;
 }
 </style>

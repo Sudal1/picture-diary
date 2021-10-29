@@ -8,6 +8,7 @@ import login         from '../views/user/login.vue'
 import signUp        from '../views/user/signUp.vue'
 import account       from '../views/user/account.vue'
 import accountEditor from '../views/user/account.editor.vue'
+import diary         from '../views/diary/diary.vue'
 import diaries       from '../views/diary/diaries.vue'
 import diaryEditor   from '../views/diary/diary.editor.vue'
 
@@ -21,6 +22,7 @@ const routes = [
       { path: 'about', name: 'about', component: About, meta: { title: 'About' } },
       { path: '/account', name: 'account', component: account, meta: { title: 'Account' } },
       { path: '/account/editor', name: 'accountEditor', component: accountEditor, meta: { title: 'Account Editor' } },
+      { path: '/diaries/:id', name: 'diary', component: diary, meta: { title: 'Diary' } },
       { path: '/diaries', name: 'diaries', component: diaries, meta: { title: 'Diaries' } },
       { path: '/editor', name: 'editor', component: diaryEditor, meta: { title: 'Diary Editor' } }
     ]

@@ -1,21 +1,18 @@
 <template>
   <div class="wrapper">
 
-    <div class="list">
+    <div class="content">
       <diary-content></diary-content>
     </div>
-
-    <router-link :to="{ name: 'editor' }" class="write" tag="button">
-      <span>Write</span>
-    </router-link>
 
   </div>
 </template>
 
 <script>
-import DiaryContent from '../../components/DiaryContent.vue'
+import DiaryContent from '../../components/Diaries.vue'
 
 export default {
+  name: 'diaries',
   data() {
     return {}
   },
@@ -25,13 +22,8 @@ export default {
 }
 </script>
 
-<style lang="scss" rel="stylesheet/scss" scoped>
-.wrapper {
-  position: relative;
-  padding-top: 0.625rem;
-
-  .list {
-    div { padding: 2rem 5rem 0; }
-  }
+<style scoped>
+.content {
+  padding: 2rem 5rem 0;
 }
 </style>

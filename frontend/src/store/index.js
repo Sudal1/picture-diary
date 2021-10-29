@@ -9,9 +9,10 @@ export default createStore({
     user: {
       userId: 'hihi',
       name: 'test',
-      email: 'eee@email.com'
+      email: 'emailemailmdskfgjns@email.com'
     },
     diary: {
+      id: 1,
       title: 'testDiary1',
       content: 'testContent',
       author: 'author',
@@ -20,6 +21,7 @@ export default createStore({
     },
     diaries: [
       {
+        id: 1,
         title: 'testDiary1',
         content: 'testContent',
         author: 'author',
@@ -27,69 +29,7 @@ export default createStore({
         updatedAt: Date.now()
       },
       {
-        title: 'testDiary1',
-        content: 'testContent',
-        author: 'author',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      },
-      {
-        title: 'testDiary1',
-        content: 'testContent',
-        author: 'author',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      },
-      {
-        title: 'testDiary1',
-        content: 'testContent',
-        author: 'author',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      },
-      {
-        title: 'testDiary1',
-        content: 'testContent',
-        author: 'author',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      },
-      {
-        title: 'testDiary1',
-        content: 'testContent',
-        author: 'author',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      },
-      {
-        title: 'testDiary1',
-        content: 'testContent',
-        author: 'author',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      },
-      {
-        title: 'testDiary1',
-        content: 'testContent',
-        author: 'author',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      },
-      {
-        title: 'testDiary1',
-        content: 'testContent',
-        author: 'author',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      },
-      {
-        title: 'testDiary1',
-        content: 'testContent',
-        author: 'author',
-        createdAt: Date.now(),
-        updatedAt: Date.now()
-      },
-      {
+        id: 2,
         title: 'testDiary1',
         content: 'testContent',
         author: 'author',
@@ -97,21 +37,11 @@ export default createStore({
         updatedAt: Date.now()
       }
     ],
-    comments: [],
-    tag: '',
-    tags: [],
     isLoading: false,
     isSaving: false,
     loadMore: false,
     moreDiary: true,
-    noMoreDiary: false,
-    dialog: {
-      show: false,
-      hasTwoBtn: false,
-      info: '',
-      resolveFn: () => {},
-      rejectFn: () => {}
-    }
+    noMoreDiary: false
   },
   getters,
   actions,

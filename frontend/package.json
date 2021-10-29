@@ -11,15 +11,14 @@
     "@popperjs/core": "^2.10.2",
     "axios": "^0.23.0",
     "core-js": "^3.18.3",
+    "dayjs": "^1.10.7",
     "jwt-decode": "^3.1.2",
     "path": "^0.12.7",
     "v-calendar": "^3.0.0-alpha.6",
     "vee-validate": "^4.4.11",
     "vue": "^3.2.20",
     "vue-router": "^4.0.0-0",
-    "vuejs-dialog": "^1.4.2",
     "vuex": "^4.0.2",
-    "vuex-persistedstate": "^4.1.0",
     "yup": "^0.32.11"
   },
   "devDependencies": {
