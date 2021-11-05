@@ -10,7 +10,7 @@
 
     <nav>
       <ul class="catalog">
-        <span v-show="userId">Welcome {{ userId }}.</span>
+        <span v-show="userId">Welcome {{ userId }}!</span>
         <li>
           <router-link to="/about">About</router-link>
         </li>
@@ -31,25 +31,28 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { computed, onBeforeUnmount, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import EventBus from '../common/EventBus'
 
 export default {
-  computed: {
-    ...mapState(['user']),
-    time () {
-      const hours = new Date().getHours()
-      return hours
-    },
-    userId () {
-      return localStorage.getItem('user_id')
+  setup() {
+    const store = useStore()
+    const userId = computed(() => localStorage.getItem('user'))
+
+    onMounted(() => {
+      EventBus.on('logout', () => store.dispatch('logout'))
+    })
+    
+    onBeforeUnmount(() => {
+      EventBus.remove('logout')
+    })
+
+    const actionLogout = () => {
+      store.dispatch('logout')
     }
-  },
-  methods: {
-    ...mapActions(['logout']),
-    actionLogout () {
-      this.logout()
-      this.$router.go({ name: 'login' })
-    }
+
+    return { userId, actionLogout }
   }
 }
 </script>

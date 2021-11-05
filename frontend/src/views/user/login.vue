@@ -37,7 +37,7 @@ export default {
     const actionLogin = async () => {
       try {
         const res = await store.dispatch('login', { userId: userId.value, password: password.value })
-        store.commit('setUser', res.data)
+        store.commit('setUser', JSON.stringify(res.data))
         router.push({ name: 'account' })
       } catch (err) {
         console.log(err)

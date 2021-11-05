@@ -46,9 +46,9 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   document.title = to.meta.title
-  if (store.state.user.token && (to.name === 'login' || to.name === 'signUp')) {
+  if (store.state.status.loggedIn && (to.name === 'login' || to.name === 'signUp')) {
     next({ name: 'diaries' })
-  } else if (!store.state.user.token && to.meta.requiredAuth) {
+  } else if (!store.state.status.loggedIn && to.meta.requiredAuth) {
     next({ name: 'login' })
   } else {
     next()

@@ -1,7 +1,5 @@
-import axios from 'axios'
+import axios from '../services/axios'
 import router from '../router'
-
-const API_URL = 'http://localhost:5000/api'
 
 const beginLoading = (commit, add) => {
   add ? commit('loadMoreToggle', true) : commit('isLoadingToggle', true)
@@ -16,21 +14,20 @@ const endLoading = (commit, startTime, toggle) => {
 export default {
   async login ({ commit }, payload) {
     try {
-      return await axios.post(`${API_URL}/login`, payload)
+      return await axios.post('/api/login', payload)
     } catch (err) {
       console.log(err)
     }
   },
 
   logout({ commit }) {
-    localStorage.clear()
     commit('unsetUser')
     router.push({ name: 'login' })
   },
 
   async signUp({ commit }, payload) {
     try {
-      await axios.post(`${API_URL}/sign-up`, payload)
+      await axios.post('/api/sign-up', payload)
       return await this.login({ commit }, { userId: payload.userId, password: payload.password })
     } catch (err) {
       console.log(err)
@@ -39,7 +36,7 @@ export default {
 
   async getAccount({ commit }, uid) {
     try {
-      return await axios.get(`${API_URL}/user/${uid}`)
+      return await axios.get(`/api/user/${uid}`)
     } catch (err) {
       console.log(err)
     }
@@ -47,7 +44,7 @@ export default {
   
   async editAccount ({ commit }, payload) {
     try {
-      return await axios.put(`${API_URL}/user`, payload)
+      return await axios.put('/api/user', payload)
     } catch (err) {
       console.log(err)
     }
@@ -55,21 +52,25 @@ export default {
 
   async delAccount({ commit }, payload) {
     try {
-      return await axios.delete(`${API_URL}/user`, { data: payload })
+      return await axios.delete('/api/user', { data: payload })
     } catch (err) {
       console.log(err.message)
     }
+  },
+
+  refreshToken({ commit }, accessToken) {
+    commit('refreshToken', accessToken)
   },
 
   async saveDiary ({ state, commit }, id) {
     try {
       commit('isSavingToggle', false)
       if (id) {
-        const response = await axios.put(`${API_URL}/diary/${id}`, state.diary)
+        const response = await axios.put(`/api/diary/${id}`, state.diary)
         commit('isSavingToggle', true)
         return response
       } else {
-        const response = await axios.post(`${API_URL}/diary`, state.diary)
+        const response = await axios.post('/api/diary', state.diary)
         commit('isSavingToggle', true)
         return response
       }
@@ -82,10 +83,9 @@ export default {
     try {
       commit('moreDiaryToggle', true)
       const startTime = beginLoading(commit, payload.add)
-      if (payload.value) {
-        commit('isLoadingToggle', false)
-      }
-      const response = await axios.get(`${API_URL}/diaries`, { params: { payload } })
+      if (payload.value) { commit('isLoadingToggle', false) }
+
+      const response = await axios.get('/api/diaries', { params: { payload } })
       if (!response.data.diaries.length) {
         commit('moreDiaryToggle', false)
         commit('noMoreDiaryToggle', true)
@@ -111,7 +111,7 @@ export default {
         commit('isLoadingToggle', false)
       }
       document.title = 'Loading...'
-      const response = await axios.get(`${API_URL}/diary/${id}`)
+      const response = await axios.get(`/api/diary/${id}`)
       commit('setDiary', response.data)
 
       document.title = state.diary.title
@@ -123,7 +123,7 @@ export default {
 
   async delDiary ({ dispatch }, payload) {
     try {
-      const response = await axios.delete(`${API_URL}/diary/${payload.id}`)
+      const response = await axios.delete(`/api/diary/${payload.id}`)
       dispatch('getDiaries', { page: payload.page, limit: 10 })
       return response
     } catch (err) {
@@ -136,7 +136,7 @@ export default {
       document.title = 'Searching...'
       commit('moreDiaryToggle', true)
       const startTime = beginLoading(commit, payload.id)
-      const response = await axios.get(`${API_URL}/someDiaries`, { params: { payload } })
+      const response = await axios.get('/api/someDiaries', { params: { payload } })
       if (!response.data.diaries.length) {
         commit('moreDiaryToggle', false)
         commit('noMoreDiaryToggle', true)

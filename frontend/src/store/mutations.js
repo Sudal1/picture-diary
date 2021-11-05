@@ -3,14 +3,20 @@ export default {
   setUser: (state, data) => {
     localStorage.setItem('access_token', data.token.accessToken)
     localStorage.setItem('refresh_token', data.token.refreshToken)
-    localStorage.setItem('user_id', data.user.userId)
+    localStorage.setItem('user', data.user)
 
     state.user = data.user
   },
 
   unsetUser: (state) => {
     localStorage.clear()
+    state.status.loggedIn = false
     state.user = {}
+  },
+
+  refreshToken(state, accessToken) {
+    state.status.loggedIn = true
+    state.user = { ...state.user, accessToken: accessToken }
   },
 
   // diary

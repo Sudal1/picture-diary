@@ -41,7 +41,7 @@ export default {
     const Dialog = ref(null)
 
     defineExpose({ Dialog })
-    // store.dispatch('getDiary', route.params.id)
+    store.dispatch('getDiary', route.params.id)
 
     const submit = async () => {
       try {

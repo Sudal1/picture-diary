@@ -1,38 +1,6 @@
 <template>
   <div class="diaryContent">
 
-    <form class="bg-white shadow-md rounded" @submit.prevent>
-      <div class="mb-4">
-        <v-date-picker v-model="range" :masks="masks" is-range>
-          <template v-slot="{ inputValue, inputEvents, isDragging }">
-            <div class="calendar">
-              <div class="relative flex-grow">
-                <i class="xi-calendar"></i>
-                <input class="flex-grow bg-gray-100 border rounded w-full"
-                  :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.start"
-                  v-on="inputEvents.start" />
-              </div>
-              <span class="flex-shrink-0 m-2">
-                <i class="xi-long-arrow-right"></i>
-              </span>
-              <div class="relative flex-grow">
-                <i class="xi-calendar"></i>
-                <input class="flex-grow bg-gray-100 border rounded w-full"
-                  :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.end"
-                  v-on="inputEvents.end" />
-              </div>
-            </div>
-          </template>
-        </v-date-picker>
-      </div>
-    </form>
-
-    <div class="btns">
-      <router-link :to="{ name: 'editor' }" class="write">
-        <button>Write</button>
-      </router-link>
-    </div>
-
     <div id="diaries">
       <div v-for="(diary, index) in getReducedDiaries" :key="index">
         <router-link :to="{ name: 'diary', params: { id: diary.id } }">
@@ -58,17 +26,11 @@ import Spinner from './Spinner.vue'
 export default {
   data() {
     return {
-      range: {
-        start: new Date().setMonth(new Date().getMonth() - 1),
-        end: Date.now()
-      },
-      masks: {
-        input: 'YYYY-MM-DD'
-      }
+      page: 1
     }
   },
-  created() {
-    // this.getDiaries()
+  props: {
+    modelValue: Object
   },
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
@@ -92,8 +54,13 @@ export default {
         const clientHeight = window.innerHeight
         if (totalHeight - scrollTop - clientHeight === 0 && this.moreDiary) {
           this.getDiaries({
-            add: true
+            range: this.modelValue,
+            add: true,
+            page: ++this.page
           })
+        }
+        if (!this.moreDiary) {
+          this.page = 1
         }
       }
     }
@@ -108,29 +75,6 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .diaryContent {
-  .calendar {
-    display: flex;
-    flex-direction: row;
-    padding-bottom: 2rem;
-    justify-content: center;
-    margin-left: -1.5px;
-
-    i {
-      margin: 1rem 1rem 0 0;
-    }
-
-    .xi-long-arrow-right {
-      margin: 1rem 2.5rem 1rem 3rem;
-    }
-  }
-
-  .btns {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    margin-bottom: 2rem;
-  }
-
   #diaries {
     flex-direction: row;
 
