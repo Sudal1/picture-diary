@@ -5,24 +5,24 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { onBeforeMount } from 'vue'
 
 export default {
   name: 'app',
-  mounted () {
-    document.addEventListener('visibilitychange', this.changeTitle, false)
-  },
-  computed: {
-    ...mapState(['isLoading'])
-  },
-  methods: {
-    changeTitle () {
+  setup () {
+    onBeforeMount(() => {
+      document.addEventListener('visibilitychange', changeTitle, false)
+    })
+
+    const changeTitle = () => {
       if (document.hidden) {
-        document.title = 'Picture Diary'
+        document.title = 'My Little Diary'
       } else {
-        document.title = '그림일기'
-      }
+        document.title = '작은 일기장'
+      } 
     }
+
+    return { changeTitle }
   }
 }
 </script>

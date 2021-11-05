@@ -47,13 +47,12 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
 import { useStore } from 'vuex'
 import { Form } from 'vee-validate'
 import * as Yup from 'yup'
 import TextInput from '../../components/TextInput.vue'
 
-export default defineComponent({
+export default {
   name: 'accountEditor',
   components: {
     Form,
@@ -71,7 +70,6 @@ export default defineComponent({
         .required('Confirm password is required')
         .oneOf([Yup.ref('password'), null], 'Passwords must match'),
       dob: Yup.string()
-        .required('Date of Birth is required')
         .matches(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/, 'Please select one'),
       name: Yup.string()
         .required('Name is required.')
@@ -83,8 +81,7 @@ export default defineComponent({
 
     async function onSubmit(values) {
       try {
-        alert(JSON.stringify(values))
-        const res = await store.dispatch('editAccount', values)
+        const res = await store.dispatch('editAccount', JSON.stringify(values))
         res.data ? store.dispatch('logout') : alert('Edit failed.')
       } catch (err) {
         console.log(err)
@@ -96,7 +93,7 @@ export default defineComponent({
       schema
     }
   }
-})
+}
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>

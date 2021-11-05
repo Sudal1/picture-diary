@@ -48,19 +48,20 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { Form } from 'vee-validate'
 import * as Yup from 'yup'
 import TextInput from '../../components/TextInput.vue'
 
-export default defineComponent({
+export default {
   name: 'signUp',
   components: {
     Form,
     TextInput
   },
   setup() {
+    const router = useRouter()
     const store = useStore()
 
     const schema = Yup.object().shape({
@@ -73,7 +74,6 @@ export default defineComponent({
         .required('Confirm password is required')
         .oneOf([Yup.ref('password'), null], 'Passwords must match'),
       dob: Yup.string()
-        .required('Date of Birth is required')
         .matches(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/, 'Please select one'),
       name: Yup.string()
         .required('Name is required.')
@@ -85,9 +85,8 @@ export default defineComponent({
 
     async function onSubmit(values) {
       try {
-        console.log(values)
-        const res = await store.dispatch('signUp', values)
-        res.data ? this.$router.push({ name: 'account' }) : alert('Sign up failed.')
+        const res = await store.dispatch('signUp', JSON.stringify(values))
+        res.data ? router.push({ name: 'account' }) : alert('Sign up failed.')
       } catch (err) {
         console.log(err)
       }
@@ -98,7 +97,7 @@ export default defineComponent({
       schema
     }
   }
-})
+}
 </script>
 
 <style scoped>

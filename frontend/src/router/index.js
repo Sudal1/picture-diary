@@ -22,9 +22,9 @@ const routes = [
       { path: 'about', name: 'about', component: About, meta: { title: 'About' } },
       { path: '/account', name: 'account', component: account, meta: { title: 'Account' } },
       { path: '/account/editor', name: 'accountEditor', component: accountEditor, meta: { title: 'Account Editor' } },
-      { path: '/diaries/:id', name: 'diary', component: diary, meta: { title: 'Diary' } },
       { path: '/diaries', name: 'diaries', component: diaries, meta: { title: 'Diaries' } },
-      { path: '/editor', name: 'editor', component: diaryEditor, meta: { title: 'Diary Editor' } }
+      { path: '/diaries/:id', name: 'diary', component: diary },
+      { path: '/editor', name: 'editor', component: diaryEditor }
     ]
   },
 

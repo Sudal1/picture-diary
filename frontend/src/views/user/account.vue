@@ -16,7 +16,9 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { ref, defineExpose, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 import Dialog from '../../components/Dialog.vue'
 
 export default {
@@ -24,27 +26,30 @@ export default {
   components: {
     Dialog
   },
-  computed: {
-    ...mapState(['user'])
-  },
-  methods: {
-    ...mapActions(['delAccount']),
+  setup() {
+    const router = useRouter()
+    const store = useStore()
+    const user = computed(() => store.state.user)
+    const Dialog = ref(null)
+    defineExpose({ Dialog })
 
-    async actionDel() {
+    const actionDel = async () => {
       try {
-        const ok = await this.$refs.Dialog.show({
+        const ok = await Dialog.value.show({
           title: 'Delete Account',
           message: 'Are you sure you want to delete your account?',
           okButton: 'Delete'
         })
         if (ok) {
-          const response = await this.delAccount(this.user.userId)
-          response.data ? this.$router.push({ name: 'login' }) : alert('Cannot delete account(Server error).')
+          const response = await store.dispatch('delAccount', user.value.userId)
+          response.data ? router.push({ name: 'login' }) : alert('Cannot delete account(Server error).')
         }
       } catch (err) {
         console.log(err)
       }
     }
+
+    return { user, Dialog, actionDel }
   }
 }
 </script>

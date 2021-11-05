@@ -22,30 +22,30 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from 'vuex'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
 
 export default {
   name: 'login',
-  data() {
-    return {
-      userId: '',
-      password: ''
-    }
-  },
-  methods: {
-    ...mapActions(['login']),
-    ...mapMutations(['setUser']),
-  
-    async actionLogin() {
+  setup() {
+    const router = useRouter()
+    const store = useStore()
+    const userId = ref('')
+    const password = ref('')
+
+    const actionLogin = async () => {
       try {
-        const res = await this.login({ userId: this.userId, password: this.password })
-        this.setUser(res.data)
-        this.$router.push({ name: 'account' })
+        const res = await store.dispatch('login', { userId: userId.value, password: password.value })
+        store.commit('setUser', res.data)
+        router.push({ name: 'account' })
       } catch (err) {
         console.log(err)
         alert('Login failed. Please retry login.')
       }
     }
+
+    return { userId, password, actionLogin }
   }
 }
 </script>

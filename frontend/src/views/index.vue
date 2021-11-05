@@ -10,7 +10,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
 import MyHeader from '../components/MyHeader.vue'
 import MyFooter from '../components/MyFooter.vue'
 import Spinner  from '../components/Spinner.vue'
@@ -22,8 +23,11 @@ export default {
     MyFooter,
     Spinner
   },
-  computed: {
-    ...mapState(['isLoading'])
+  setup() {
+    const store = useStore()
+    const isLoading = computed(() => store.state.isLoading)
+
+    return { isLoading }
   }
 }
 </script>

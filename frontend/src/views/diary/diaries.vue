@@ -13,16 +13,13 @@ import DiaryContent from '../../components/Diaries.vue'
 
 export default {
   name: 'diaries',
-  data() {
-    return {}
-  },
   components: {
     DiaryContent
   }
 }
 </script>
 
-<style scoped>
+<style>
 .content {
   padding: 2rem 5rem 0;
 }

@@ -9,7 +9,7 @@ export default createStore({
     user: {
       userId: 'hihi',
       name: 'test',
-      email: 'emailemailmdskfgjns@email.com'
+      email: 'emailemail@email.com'
     },
     diary: {
       id: 1,
