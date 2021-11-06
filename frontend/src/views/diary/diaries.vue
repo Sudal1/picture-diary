@@ -3,23 +3,27 @@
 
     <form class="bg-white shadow-md rounded" @submit.prevent>
       <div class="mb-4">
-        <v-date-picker v-model="range" :masks="masks" is-range>
+        <v-date-picker v-model="range" :masks="masks" :locale="locale" is-range>
           <template v-slot="{ inputValue, inputEvents, isDragging }">
             <div class="calendar">
               <div class="relative flex-grow">
                 <i class="xi-calendar"></i>
-                <input class="flex-grow bg-gray-100 border rounded w-full"
+                <input 
+                  class="flex-grow bg-gray-100 border rounded w-full"
                   :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.start"
-                  v-on="inputEvents.start" />
+                  v-on="inputEvents.start"
+                />
               </div>
               <span class="flex-shrink-0 m-2">
                 <i class="xi-long-arrow-right"></i>
               </span>
               <div class="relative flex-grow">
                 <i class="xi-calendar"></i>
-                <input class="flex-grow bg-gray-100 border rounded w-full"
+                <input 
+                  class="flex-grow bg-gray-100 border rounded w-full"
                   :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.end"
-                  v-on="inputEvents.end" />
+                  v-on="inputEvents.end"
+                />
               </div>
             </div>
           </template>
@@ -41,7 +45,7 @@
 </template>
 
 <script>
-import { ref, reactive, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 import dayjs from 'dayjs'
 import DiaryContent from '../../components/Diaries.vue'
@@ -54,18 +58,18 @@ export default {
   setup() {
     const store = useStore()
     const page = ref(1)
-    const range = reactive({
-      start: dayjs(new Date().setMonth(new Date().getMonth() - 1)).format('YYYY-MM-DD'),
-      end: dayjs(Date.now()).format('YYYY-MM-DD')
+    const range = ref({
+      start: new Date().setMonth(new Date().getMonth() - 1),
+      end: Date.now()
     })
-    const masks = reactive({
-      input: 'YYYY-MM-DD'
-    })
+    const masks = { input: ['YYYY-MM-DD'] }
+    const locale = 'en-US'
     const diaries = computed(() => store.state.diaries)
 
+    setInterval(() => console.log(range.value.start), 2000)
     // this.getDiaries({ page: page, range: range, limit: 10 })
 
-    return { page, range, masks, diaries }
+    return { page, range, masks, locale, diaries }
   }
 }
 </script>

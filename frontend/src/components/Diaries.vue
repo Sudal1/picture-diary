@@ -2,7 +2,7 @@
   <div class="diaryContent">
 
     <div id="diaries">
-      <div v-for="(diary, index) in getReducedDiaries" :key="index">
+      <div v-for="(diary, index) in reducedDiaries" :key="index">
         <router-link :to="{ name: 'diary', params: { id: diary.id } }">
           <h2>{{ diary.title }}</h2>
         </router-link>
@@ -11,64 +11,69 @@
         <p>{{ diary.content }}</p>
       </div>
 
-      <p v-if="!loadMore" v-show="!noMoreDiary" class="noMore"></p>
-      <p v-if="noMoreDiary" class="noMore">No more content</p>
+      <p v-if="!state.loadMore" v-show="!state.noMoreDiary" class="noMore"></p>
+      <p v-if="state.noMoreDiary" class="noMore">No more content</p>
 
     </div>
-    <spinner v-show="loadMore" class="spinner"></spinner>
+    <spinner v-show="state.loadMore" class="spinner"></spinner>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions, mapMutations } from 'vuex'
+import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 import Spinner from './Spinner.vue'
 
 export default {
-  data() {
-    return {
-      page: 1
-    }
-  },
   props: {
     modelValue: Object
-  },
-  mounted() {
-    window.addEventListener('scroll', this.handleScroll)
   },
   components: {
     Spinner
   },
-  computed: {
-    ...mapGetters(['getReducedDiaries']),
-    ...mapState(['loadMore', 'moreDiary', 'noMoreDiary', 'isLoading'])
-  },
-  methods: {
-    ...mapMutations(['moreDiaryToggle']),
-    ...mapActions(['getDiaries']),
+  setup(props) {
+    const route = useRoute()
+    const store = useStore()
+    
+    const page = ref(1)
+    const reducedDiaries = computed(() => store.getters.getReducedDiaries)
+    const state = reactive({
+      isLoading: computed(() => store.state.isLoading),
+      loadMore: computed(() => store.state.loadMore),
+      moreDiary: computed(() => store.state.moreDiary),
+      noMoreDiary: computed(() => store.state.noMoreDiary)
+    })
 
-    handleScroll() {
-      if (!this.isLoading && this.$route.name === 'diaries') {
+    onMounted(() => {
+      window.addEventListener('scroll', handleScroll)
+    })
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('scroll', handleScroll)
+    })
+
+    // setInterval(() => console.log(props.modelValue), 3000)
+    const handleScroll = () => {
+      if (!state.isLoading && route.name === 'diaries') {
         const body = document.body
         const totalHeight = body.scrollHeight
         const scrollTop = body.scrollTop
         const clientHeight = window.innerHeight
-        if (totalHeight - scrollTop - clientHeight === 0 && this.moreDiary) {
-          this.getDiaries({
-            range: this.modelValue,
+        if (totalHeight - scrollTop - clientHeight === 0 && state.moreDiary) {
+          store.dispatch('getDiaries', {
+            range: props.modelValue,
             add: true,
-            page: ++this.page
+            page: ++page.value
           })
         }
-        if (!this.moreDiary) {
-          this.page = 1
+        if (!state.moreDiary) {
+          page.value = 1
         }
       }
     }
-  },
-  
-  beforeRouteLeave(to, from, next) {
-    window.removeEventListener('scroll', this.handleScroll)
-    next()
+
+    return { page, reducedDiaries, state, handleScroll }
   }
 }
 </script>
