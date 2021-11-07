@@ -27,7 +27,7 @@ import Spinner from './Spinner.vue'
 
 export default {
   props: {
-    modelValue: Object
+    modelValue: Number
   },
   components: {
     Spinner
@@ -62,7 +62,7 @@ export default {
         const clientHeight = window.innerHeight
         if (totalHeight - scrollTop - clientHeight === 0 && state.moreDiary) {
           store.dispatch('getDiaries', {
-            range: props.modelValue,
+            date: props.modelValue,
             add: true,
             page: ++page.value
           })

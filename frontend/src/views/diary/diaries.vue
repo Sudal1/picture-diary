@@ -1,35 +1,18 @@
 <template>
   <div class="wrapper">
 
-    <form class="bg-white shadow-md rounded" @submit.prevent>
-      <div class="mb-4">
-        <v-date-picker v-model="range" :masks="masks" :locale="locale" is-range>
-          <template v-slot="{ inputValue, inputEvents, isDragging }">
-            <div class="calendar">
-              <div class="relative flex-grow">
-                <i class="xi-calendar"></i>
-                <input 
-                  class="flex-grow bg-gray-100 border rounded w-full"
-                  :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.start"
-                  v-on="inputEvents.start"
-                />
-              </div>
-              <span class="flex-shrink-0 m-2">
-                <i class="xi-long-arrow-right"></i>
-              </span>
-              <div class="relative flex-grow">
-                <i class="xi-calendar"></i>
-                <input 
-                  class="flex-grow bg-gray-100 border rounded w-full"
-                  :class="isDragging ? 'text-gray-600' : 'text-gray-900'" :value="inputValue.end"
-                  v-on="inputEvents.end"
-                />
-              </div>
-            </div>
-          </template>
-        </v-date-picker>
-      </div>
-    </form>
+    <div class="calendar">
+      <v-calendar
+        is-expanded
+        locale="en-US"
+        @update:fromPage="pageChange"
+        :max-date="new Date()"
+        :attributes="attributes" />
+    </div>
+
+    <div class="content">
+      <diary-content :modelValue="month"></diary-content>
+    </div>
 
     <div class="btns">
       <router-link :to="{ name: 'editor' }" class="write">
@@ -37,17 +20,12 @@
       </router-link>
     </div>
 
-    <div class="content">
-      <diary-content :modelValue="range"></diary-content>
-    </div>
-
   </div>
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import dayjs from 'dayjs'
 import DiaryContent from '../../components/Diaries.vue'
 
 export default {
@@ -58,47 +36,43 @@ export default {
   setup() {
     const store = useStore()
     const page = ref(1)
-    const range = ref({
-      start: new Date().setMonth(new Date().getMonth() - 1),
-      end: Date.now()
-    })
-    const masks = { input: ['YYYY-MM-DD'] }
-    const locale = 'en-US'
+    const month = ref(new Date().getMonth())
     const diaries = computed(() => store.state.diaries)
+    const attributes = computed(() =>
+      store.state.diaries.map(diary => ({
+        dates: diary.createdAt,
+        highlight: { color: 'green', fillMode: 'light' },
+        popover: { label: diary.title, visibility: 'click' }
+      }))
+    )
+    
+    const pageChange = (obj) => {
+      month.value = obj.month
+      console.log('month:', month.value)
+      // this.getDiaries({ page: page, date: obj.month, limit: 10 })
+    }
 
-    setInterval(() => console.log(range.value.start), 2000)
-    // this.getDiaries({ page: page, range: range, limit: 10 })
+    // this.getDiaries({ page: page, date: date, limit: 10 })
 
-    return { page, range, masks, locale, diaries }
+    return { page, month, attributes, diaries, pageChange }
   }
 }
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-.calendar {
+.wrapper {
   display: flex;
   flex-direction: row;
-  padding-bottom: 2rem;
   justify-content: center;
-  margin-left: -1.5px;
-
-  i {
-    margin: 1rem 1rem 0 0;
-  }
-
-  .xi-long-arrow-right {
-    margin: 1rem 2.5rem 1rem 3rem;
-  }
+  gap: 1rem;
 }
 
-.btns {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 2rem;
+.calendar {
 }
 
 .content {
-  padding: 2rem 5rem 0;
+}
+
+.btns {
 }
 </style>
