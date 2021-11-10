@@ -1,31 +1,44 @@
 <template>
   <div class="header">
 
-    <div class="title">
-      <router-link :to="{ name: 'home' }">
-        <h2>그림<span>일기</span></h2>
-        <p><span>Picture</span>Diary</p>
-      </router-link>
-    </div>
+    <div class="headerWrap">
 
-    <nav>
-      <ul class="catalog">
-        <span v-show="userId">Welcome {{ userId }}!</span>
-        <li>
-          <router-link to="/about">About</router-link>
-        </li>
-        <li>
-          <router-link to="/account">Account</router-link>
-        </li>
-        <li>
-          <router-link to="/diaries">Diary</router-link>
-        </li>
-        <li v-show="userId" @click="actionLogout">Logout</li>
-        <li>
-          <router-link to='/login' v-show="!userId">Login</router-link>
-        </li>
-      </ul>
-    </nav>
+      <h2 class="title"><i class="xi-layout-full"></i><span>Sense</span> diary</h2>
+
+      <nav>
+        <ul>
+          <li>
+            <router-link :to="{ name: 'home' }">Home</router-link>
+          </li>
+          /
+          <li>
+            <router-link :to="{ name: 'diaries' }">My diary</router-link>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="user">
+        <router-link to='/login' v-show="!userId"><i class="xi-user-o"></i></router-link>
+
+
+        <span v-show="userId">Welcome</span>
+        <div class="drop" v-show="userId">
+          <button class="btn">{{ userId }}</button>
+          <div class="menu">
+            <ul>
+              <li>
+                <router-link to="/account">Account</router-link>
+              </li>
+              <li @click="actionLogout">
+                Logout
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 </template>
@@ -38,7 +51,7 @@ import EventBus from '../common/EventBus'
 export default {
   setup() {
     const store = useStore()
-    const userId = computed(() => localStorage.getItem('user'))
+    const userId = computed(() => store.state.user.userId)
 
     onMounted(() => {
       EventBus.on('logout', () => store.dispatch('logout'))
@@ -58,58 +71,150 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-h2 {
-  color: #c5c5c5;
-  letter-spacing: 3px;
-  font-size: 28px;
-  font-weight: bold;
-}
-
-h2 > span {
-  margin-left: 15px;
-  color: #c2c4ff;
-}
-
-p {
-  color: #c5c5c5;
-  text-transform: uppercase;
-  font-size: 11px;
-  letter-spacing: 3px;
-  margin-top: 10px;
-  margin-left: 0px;
-}
-
-p > span {
-  margin-right: 13px;
-  color: #c2c4ff;
-}
 
 .header {
-  display: flex;
-  flex-direction: row;
-  border-top: 7px solid #c2c4ff;
-  padding: 30px 30px 33px;
+  display: grid;
+  justify-content: center;
+  background: #fff;
+  z-index: 1;
+}
+
+.headerWrap {
+  display: grid;
+  z-index: 2;
+  text-transform: uppercase;
+  width: 1200px;
+  grid-template-columns: repeat(3, 1fr);
+  color: var(--primary);
+  height: 80px;
   align-items: center;
-  z-index:100;
-}
 
-.header .title {
-  flex-shrink: 2;
-  flex-grow: 1;
-}
+  h2 {
+    font-size: 18px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    flex-basis: 400px;
 
-.header nav {
-  color: #000;
-  flex-shrink: 1;
-}
+    i {
+      position: relative;
+      top: 1px;
+      margin-right: 8px;
+      color: var(--point);
+    }
 
-.header nav > ul {  
-  list-style: none;
-}
+    span {
+      color: var(--point);
+    }
+  }
 
-.header nav > ul li {
-  margin-left: 20px;
-  display:inline-block;
+  nav {
+    display: flex;
+    justify-content: center;
+
+    ul {
+      list-style: none;
+    }
+
+    li {
+      margin: 0 40px;
+      display: inline-block;
+
+      a {
+        font-weight: 500;
+        color: var(--primary);
+        text-decoration: none;
+        font-size: 14px;
+        letter-spacing: 0.1em;
+      }
+    }
+  }
+
+
+  .user {
+    font-size: 14px;
+    font-weight: 600;
+    display: grid;
+    justify-content: end;
+    letter-spacing: 0.1em;
+    color: var(--primary);
+    grid-template-columns: repeat(2, minmax(auto, auto));
+    z-index: 100;
+
+    i {
+      font-size: 26px;
+    }
+
+    span {
+      color: var(--point);
+      margin-right: 15px;
+    }
+
+    a {
+      color: var(--primary);
+    }
+
+    .drop {
+      position: relative;
+      z-index: 300;
+
+      .btn {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-align: left;
+        cursor: pointer;
+        border: 0;
+        color: var(--primary);
+        z-index: 500;
+      }
+
+      .menu {
+        visibility: hidden;
+        opacity: 0;
+        transition-property: opacity, visibility;
+        transition-duration: .5s;
+        position: absolute;
+        padding-top: 32px;
+        right: 0;
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 13px;
+      }
+
+      .menu ul {
+        display: inline;
+      }
+
+      .menu li {
+        display: grid;
+        justify-content: center;
+        padding: 15px 30px;
+        background: #fff;
+        border-top: 1px solid #ccc;
+
+        button {
+          text-transform: uppercase;
+          cursor: pointer;
+          font-weight: 600;
+          letter-spacing: 0.1em;
+          border: 0;
+        }
+      }
+
+      .menu li:nth-child(1) {
+        border-top: 5px solid;
+        border-color: var(--point);
+      }
+
+    }
+
+    .drop:hover .menu {
+      visibility: visible;
+      opacity: 1;
+      transition-duration: .5s;
+    }
+  }
+
 }
 
 

@@ -1,12 +1,14 @@
 <template>
   <div class="accountEditor">
     <Form @submit="onSubmit" :validation-schema="schema">
+      
+      <h2>Account Edit</h2>
+
       <TextInput
         name="userId"
         type="text"
         label="User ID"
-        placeholder="User ID"
-        disabled="false"
+        placeholder="ID"
       />
       <TextInput
         name="password"
@@ -22,26 +24,25 @@
         success-message="Password is verified."
       />
       <TextInput
-        name="dob"
-        type="date"
-        label="Date of Birth"
-      />
-      <TextInput
-        name="name"
-        label="Name"
-        placeholder="Name"
-      />
-      <TextInput
         name="email"
         type="email"
         label="E-mail"
         placeholder="Email address (aaa@example.com)"
         success-message="E-mail is verified"
       />
-      <div class="btnWrap">
-        <router-link :to="{ name: 'account' }"><i class="xi-long-arrow-left"></i></router-link>
-        <button class="submit-btn" type="submit">Edit</button>
-      </div>
+      <TextInput
+        name="name"
+        type="text"
+        label="Name"
+        placeholder="Name"
+      />
+      <TextInput
+        name="dob"
+        type="date"
+        label="Date of Birth"
+        placeholder=""
+      />
+      <button class="submit-btn" type="submit">Submit</button>
     </Form>
   </div>
 </template>
@@ -97,15 +98,64 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-.btnWrap {
+.accountEditor {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
 }
 
-.btnWrap .submit-btn {
-  position: relative;
-  top: 3px;
-  margin-left: auto; 
+form {
+  width: 453px;
+  height: 970px;
+  background: #fff;
+  border-top: 8px solid;
+  border-color: var(--point);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position:relative;
+
+  h2 {
+    text-transform: uppercase;
+    text-decoration: underline;
+    color: var(--point);
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    margin-top:49px;
+  }
+}
+
+
+.submit-btn {
+  position:absolute;
+  bottom:0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 93px;
+  background: var(--point);
+  color:#fff;
+  font-size:16px;
+  text-transform: uppercase;
+  border:0;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+a {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.2em;
+  margin-top:77px;
+
+  i { font-weight: bold; position:relative; top:0.5px; margin-right: 5px; }
 }
 </style>

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.10.2",
+    "@techassi/vue-youtube-iframe": "^1.0.6",
     "axios": "^0.23.0",
     "core-js": "^3.18.3",
     "dayjs": "^1.10.7",

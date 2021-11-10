@@ -72,33 +72,39 @@ export default {
 <style scoped>
 .TextInput {
   position: relative;
-  margin-bottom: calc(1em * 2.0);
-  width: 100%;
 }
 
 label {
   display: block;
-  padding-left: 4px;
-  margin-bottom: 4px;
+  margin-top:38px;
+  margin-bottom: 12px;
   width: 100%;
   white-space: nowrap;
+  color:#909090;
+  font-size:14px;
+  font-weight: 500;
+  
 }
 
 input {
-  border-radius: 5px;
-  border: 2px solid transparent;
-  padding: 15px 10px;
+  border: 2px solid #e1e1e1;
+  padding: 14px 10px;
   outline: none;
   background-color: #ffffff;
-  width: 100%;
+  width:254px;
+  font-size:14px;
+  margin-bottom:9px;
+  color:#959595;
+  font-weight: 500;
 }
+
+input::placeholder { font-size:14px; color:#cbcbcb; font-weight: 500; }
 
 .help-message {
   position: absolute;
-  bottom: calc(-1.5 * 1em);
-  padding-left: 4px;
+  bottom: -16px;
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .TextInput.has-error input {
@@ -116,14 +122,13 @@ input {
 
 .TextInput.success input {
   background-color: #fff;
-  color: #21a67a;
 }
 
 .TextInput.success input:focus {
-  border-color: #21a67a;
+  border-color: rgba(138,165,148,0.5);
 }
 
 .TextInput.success .help-message {
-  color: #21a67a;
+  color:var(--point);
 }
 </style>

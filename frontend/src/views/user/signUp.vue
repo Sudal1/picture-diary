@@ -1,6 +1,10 @@
 <template>
   <div class="signUp">
+
     <Form @submit="onSubmit" :validation-schema="schema">
+      
+      <h2>Sign Up</h2>
+
       <TextInput
         name="userId"
         type="text"
@@ -21,10 +25,11 @@
         success-message="Password is verified."
       />
       <TextInput
-        name="dob"
-        type="date"
-        label="Date of Birth"
-        placeholder=""
+        name="email"
+        type="email"
+        label="E-mail"
+        placeholder="Email address (aaa@example.com)"
+        success-message="E-mail is verified"
       />
       <TextInput
         name="name"
@@ -33,17 +38,17 @@
         placeholder="Name"
       />
       <TextInput
-        name="email"
-        type="email"
-        label="E-mail"
-        placeholder="Email address (aaa@example.com)"
-        success-message="E-mail is verified"
+        name="dob"
+        type="date"
+        label="Date of Birth"
+        placeholder=""
       />
-      <div class="btnWrap">
-        <router-link :to="{ name: 'login' }"><i class="xi-long-arrow-left"></i></router-link>
-        <button class="submit-btn" type="submit">Sign Up</button>
-      </div>
+        <button class="submit-btn" type="submit">Submit</button>
     </Form>
+
+       <router-link :to="{ name: 'login' }"><i class="xi-angle-left"></i>back to previous</router-link>
+
+
   </div>
 </template>
 
@@ -100,25 +105,65 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
 .signUp {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100vh;
 }
 
-.btnWrap {
+form {
+  width: 453px;
+  height: 970px;
+  background: #fff;
+  border-top: 8px solid;
+  border-color: var(--point);
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
+  position:relative;
+
+  h2 {
+    text-transform: uppercase;
+    text-decoration: underline;
+    color: var(--point);
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    margin-top:49px;
+  }
 }
 
 
-.btnWrap .submit-btn {
-  position: relative;
-  top: 3px;
-  margin-left: auto; 
+.submit-btn {
+  position:absolute;
+  bottom:0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 93px;
+  background: var(--point);
+  color:#fff;
+  font-size:16px;
+  text-transform: uppercase;
+  border:0;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+a {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.2em;
+  margin-top:77px;
+
+  i { font-weight: bold; position:relative; top:0.5px; margin-right: 5px; }
 }
 </style>

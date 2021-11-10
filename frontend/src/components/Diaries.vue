@@ -1,20 +1,32 @@
 <template>
   <div class="diaryContent">
 
+    <div class="page">
+      <i class="xi-angle-left"></i> 1 <i class="xi-angle-right"></i>
+    </div>
+
     <div id="diaries">
-      <div v-for="(diary, index) in reducedDiaries" :key="index">
-        <router-link :to="{ name: 'diary', params: { id: diary.id } }">
-          <h2>{{ diary.title }}</h2>
-        </router-link>
-        <time>{{ diary.createdAt }}</time>
-        <time>{{ diary.updatedAt }}</time>
-        <p>{{ diary.content }}</p>
+
+      <div class="list" v-for="(diary, index) in reducedDiaries" :key="index">
+
+        <div class="point">
+          <i class="xi-full-moon"></i>
+        </div>
+
+        <div class="info">
+          <div class="time">{{ diary.createdAt }}</div>
+          <router-link :to="{ name: 'diary', params: { id: diary.id } }">
+            <h2>{{ diary.title }}</h2>
+          </router-link>
+        </div>
+
       </div>
 
-      <p v-if="!state.loadMore" v-show="!state.noMoreDiary" class="noMore"></p>
-      <p v-if="state.noMoreDiary" class="noMore">No more content</p>
-
     </div>
+
+    <p v-if="!state.loadMore" v-show="!state.noMoreDiary" class="noMore"></p>
+    <p v-if="state.noMoreDiary" class="noMore">No more content</p>
+
     <spinner v-show="state.loadMore" class="spinner"></spinner>
   </div>
 </template>
@@ -80,31 +92,54 @@ export default {
 
 <style lang="scss" rel="stylesheet/scss" scoped>
 .diaryContent {
-  #diaries {
-    flex-direction: row;
+  .page {
+    font-weight: 700;
+    font-size: 14px;
+    color:#adadad;
+    text-align:right;
+    margin:40px 26px -25px 0;
 
-    div {
-      width: 100%;
-      background: #d9daff;
-      border-radius: 15px;
-      margin-bottom: 1.875rem;
-      padding: 1.7rem 1.7rem;
+    i {
+      margin: 0 10px;
+      color: #dedede;
+      font-weight: bold;
+    }
+  }
+  #diaries {
+    .list {
+      margin: 0px 40px;
+      border-bottom:1px solid #e3e3e3;
+      display: flex;
+      direction: row;
+
+      .point {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-right: 25px;
+        font-size:12px;
+        color: #fee9bf;
+      }
 
       h2 {
-        margin-bottom: 1.25rem;
+        font-size:16px;
+        font-style: italic;
+        color:#999999;
+        letter-spacing: 0.09em;
+        margin:15px 0 30px;
+        font-weight:600;
       }
 
-      time {
-        margin-top: 0.625rem;
-        margin-right: 0.625rem;
-      }
-
-      p {
-        white-space: pre-wrap;
-        word-wrap: break-word;
-        margin-top: 1.875rem;
+      .time {
+        font-size:14px;
+        color:#bebebe;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        margin-top:30px;
       }
     }
+
+  .list:nth-last-child(1) { border:0; }
 
     p.noMore {
       width: 100%;

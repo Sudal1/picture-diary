@@ -1,23 +1,15 @@
 <template>
-  <div class="wrapper">
+  <div class="diaries">
 
-    <div class="calendar">
-      <v-calendar
-        is-expanded
-        locale="en-US"
-        @update:fromPage="pageChange"
-        :max-date="new Date()"
-        :attributes="attributes" />
-    </div>
+    <div class="wrapper">
+      <div class="calendar">
+        <v-calendar locale="en-US" @update:fromPage="pageChange" :max-date="new Date()"
+          :attributes="attributes" />
+      </div>
 
-    <div class="content">
-      <diary-content :modelValue="month"></diary-content>
-    </div>
-
-    <div class="btns">
-      <router-link :to="{ name: 'editor' }" class="write">
-        <button>Write</button>
-      </router-link>
+      <div class="content">
+        <diary-content :modelValue="month"></diary-content>
+      </div>
     </div>
 
   </div>
@@ -60,19 +52,45 @@ export default {
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
+.diaries {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 92vh;
+}
+
 .wrapper {
   display: flex;
   flex-direction: row;
   justify-content: center;
-  gap: 1rem;
+  border-top: 8px solid;
+  border-color: var(--point);
+  width: 1194px;
+  height: 965px;
 }
 
 .calendar {
+  background: #fff;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.vc-container {
+  width: 500px;
+  height: 500px;
+}
+
+.vc-pane {
+  min-height: 500px;
 }
 
 .content {
-}
-
-.btns {
+  background:#fff;
+  margin-left:5px;
+  width:100%;
+  overflow: auto;
 }
 </style>

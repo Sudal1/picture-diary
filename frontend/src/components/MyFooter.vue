@@ -21,7 +21,6 @@ span {
   display: flex;
   justify-content: center;
   padding: 40px 0;
-  border-top: 1px dashed #dfdfdf;
   letter-spacing: 3px;
   font-size: 12px;
   font-weight: bold;
