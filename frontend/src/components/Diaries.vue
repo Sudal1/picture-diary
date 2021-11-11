@@ -2,13 +2,12 @@
   <div class="diaryContent">
 
     <div class="page">
-      <i class="xi-angle-left"></i> 1 <i class="xi-angle-right"></i>
+      <i class="xi-angle-left" @click="prevPage"></i>{{ page }}<i class="xi-angle-right" @click="nextPage"></i>
     </div>
 
     <div id="diaries">
-
-      <div class="list" v-for="(diary, index) in reducedDiaries" :key="index">
-
+      
+      <div class="list" v-for="(diary, index) in reducedDiaries" :key="index"  v-show="!isLoading">
         <div class="point">
           <i class="xi-full-moon"></i>
         </div>
@@ -19,73 +18,43 @@
             <h2>{{ diary.title }}</h2>
           </router-link>
         </div>
-
       </div>
-
     </div>
 
-    <p v-if="!state.loadMore" v-show="!state.noMoreDiary" class="noMore"></p>
-    <p v-if="state.noMoreDiary" class="noMore">No more content</p>
-
-    <spinner v-show="state.loadMore" class="spinner"></spinner>
   </div>
 </template>
 
 <script>
-import { ref, reactive, computed, onMounted, onBeforeUnmount } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
-import Spinner from './Spinner.vue'
 
 export default {
   props: {
     modelValue: Number
   },
-  components: {
-    Spinner
-  },
-  setup(props) {
-    const route = useRoute()
+  setup(props, { emit }) {
     const store = useStore()
-    
     const page = ref(1)
     const reducedDiaries = computed(() => store.getters.getReducedDiaries)
-    const state = reactive({
-      isLoading: computed(() => store.state.isLoading),
-      loadMore: computed(() => store.state.loadMore),
-      moreDiary: computed(() => store.state.moreDiary),
-      noMoreDiary: computed(() => store.state.noMoreDiary)
-    })
 
-    onMounted(() => {
-      window.addEventListener('scroll', handleScroll)
-    })
+    const nextPage = () => {
+      page.value++
+      emit('update:onNextPage')
+    }
 
-    onBeforeUnmount(() => {
-      window.removeEventListener('scroll', handleScroll)
-    })
-
-    // setInterval(() => console.log(props.modelValue), 3000)
-    const handleScroll = () => {
-      if (!state.isLoading && route.name === 'diaries') {
-        const body = document.body
-        const totalHeight = body.scrollHeight
-        const scrollTop = body.scrollTop
-        const clientHeight = window.innerHeight
-        if (totalHeight - scrollTop - clientHeight === 0 && state.moreDiary) {
-          store.dispatch('getDiaries', {
-            date: props.modelValue,
-            add: true,
-            page: ++page.value
-          })
-        }
-        if (!state.moreDiary) {
-          page.value = 1
-        }
+    const prevPage = () => {
+      if (page.value > 1) {
+        page.value--
+        emit('update:onPrevPage')
       }
     }
 
-    return { page, reducedDiaries, state, handleScroll }
+    return {
+      page,
+      reducedDiaries,
+      nextPage,
+      prevPage
+    }
   }
 }
 </script>
@@ -118,7 +87,7 @@ export default {
         align-items: center;
         margin-right: 25px;
         font-size:12px;
-        color: #fee9bf;
+        color: #c6f6d5;
       }
 
       h2 {

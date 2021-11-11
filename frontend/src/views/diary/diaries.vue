@@ -1,17 +1,27 @@
 <template>
   <div class="diaries">
-
     <div class="wrapper">
+
       <div class="calendar">
-        <v-calendar locale="en-US" @update:fromPage="pageChange" :max-date="new Date()"
-          :attributes="attributes" />
+        <v-calendar
+          locale="en-US"
+          :max-date="new Date()"
+          :attributes="attributes"
+          @update:fromPage="pageChange"
+        />
       </div>
 
       <div class="content">
-        <diary-content :modelValue="month"></diary-content>
+        <spinner v-show="isLoading" class="spinner"></spinner>
+        <diary-content
+          v-show="!isLoading"
+          :modelValue="month"
+          @update:onNextPage="nextPage"
+          @update:onPrevPage="prevPage"
+        ></diary-content>
       </div>
+      
     </div>
-
   </div>
 </template>
 
@@ -19,17 +29,20 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import DiaryContent from '../../components/Diaries.vue'
+import Spinner from '../../components/Spinner.vue'
 
 export default {
   name: 'diaries',
   components: {
-    DiaryContent
+    DiaryContent,
+    Spinner
   },
   setup() {
     const store = useStore()
     const page = ref(1)
     const month = ref(new Date().getMonth())
     const diaries = computed(() => store.state.diaries)
+    const isLoading = computed(() => store.state.isLoading)
     const attributes = computed(() =>
       store.state.diaries.map(diary => ({
         dates: diary.createdAt,
@@ -41,12 +54,29 @@ export default {
     const pageChange = (obj) => {
       month.value = obj.month
       console.log('month:', month.value)
-      // this.getDiaries({ page: page, date: obj.month, limit: 10 })
+      // store.dispatch('getDiaries', { page: page.value, date: obj.month, limit: 8 })
     }
 
-    // this.getDiaries({ page: page, date: date, limit: 10 })
+    const nextPage = () => {
+      page.value++
+      store.dispatch('getDiaries', { page: page.value, date: month.value, limit: 8 })
+    }
 
-    return { page, month, attributes, diaries, pageChange }
+    const prevPage = () => {
+      page.value--
+      store.dispatch('getDiaries', { page: page.value, date: month.value, limit: 8 })
+    }
+
+    return {
+      page,
+      month,
+      diaries,
+      isLoading,
+      attributes,
+      pageChange,
+      nextPage,
+      prevPage
+    }
   }
 }
 </script>
@@ -79,12 +109,8 @@ export default {
 }
 
 .vc-container {
-  width: 500px;
-  height: 500px;
-}
-
-.vc-pane {
-  min-height: 500px;
+  width: 250px;
+  height: 250px;
 }
 
 .content {

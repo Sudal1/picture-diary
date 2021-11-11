@@ -12,7 +12,7 @@
           </li>
           /
           <li>
-            <router-link :to="{ name: 'diaries' }">My diary</router-link>
+            <router-link :to="{ name: 'diaries' }">Diary</router-link>
           </li>
         </ul>
       </nav>

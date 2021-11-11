@@ -46,10 +46,7 @@ export default createStore({
     tag: '',
     tags: [],
     isLoading: false,
-    isSaving: false,
-    loadMore: false,
-    moreDiary: true,
-    noMoreDiary: false
+    isSaving: false
   },
   getters,
   actions,

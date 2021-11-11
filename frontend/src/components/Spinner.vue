@@ -22,6 +22,7 @@ $size: 30px;
   width: $size;
   height: $size;
   animation: spinner 0.75s linear infinite;
+  z-index: 999;
 
   span {
     position: absolute;

@@ -2,12 +2,23 @@
   <div class="wrapper">
 
     <div class="title">
-      <input type="text" placeholder="Title" onfocus="this.placeholder=''" onblur="this.placeholder='Title'"
-        v-model="title">
+      <input
+        type="text"
+        v-model="title"
+        placeholder="Title"
+        onfocus="this.placeholder=''"
+        onblur="this.placeholder='Title'"
+      >
     </div>
 
     <div class="content">
-      <textarea id="editor" spellcheck="false" v-model="content" v-focus></textarea>
+      <QuillEditor
+        theme="snow"
+        v-model:content="content"
+        contentType="text"
+        placeholder="What happened today? Hmm..."
+        :toolbar="state.toolbarOptions"
+      />
     </div>
     
     <button class="submit-btn" @click="submit()">Write!</button>
@@ -16,102 +27,111 @@
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from 'vuex'
+import { defineComponent, ref, computed, onUpdated, onMounted, onBeforeUnmount, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import Dialog from '../../components/Dialog.vue'
 
-export default {
+
+export default defineComponent({
   name: 'editor',
   components: {
+    QuillEditor,
     Dialog
   },
-  directives: {
-    focus: {
-      mounted (el) { el.focus() }
-    }
-  },
-  data() {
-    return {
+  setup: (props, { emit }) => {
+    const router = useRouter()
+    const route = useRoute()
+    const store = useStore()
+    const Dialog = ref(null)
+    const state = ref({
       firstUpdate: true,
-      canLeaveSite: true
-    }
-  },
-  created() {
-    const id = this.$route.params.id
-    this.isSavingToggle(false)
-    // if (id) { return this.getDiary(id) }
-    this.setDiary({
-      title: '',
-      content: ''
+      canLeaveSite: true,
+      toolbarOptions: [
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ color: [] }, { background: [] }],
+        [{ size: ['small', false, 'large', 'huge'] }],
+        [{ indent: '-1' }, { indent: '+1' }],
+        [{ direction: 'rtl' }],
+        [{ script: 'sub' }, { script: 'super' }],
+        ['clean']
+      ]
     })
-  },
-  updated() {
-    if (this.firstUpdate) { this.canLeaveSite = true }
-    this.firstUpdate = false
-  },
-  computed: {
-    ...mapState(['diary', 'isSaving']),
+    const diary = computed(() => store.state.diary)
+    const title = computed({
+      get: () => store.state.diary.title || '',
+      set: val => store.commit('updateDiaryTitle', val)
+    })
+    const contentText = ref('')
+    const content = computed({
+      get: () => store.state.diary.content || '',
+      set: val => store.commit('updateDiaryContent', val)
+    })
 
-    title: {
-      get () { return this.diary.title || '' },
-      set (value) { this.updateDiaryTitle(value) }
-    },
+    const did = route.params.id
+    store.commit('isSavingToggle', false)
+    // if (did) { store.dispatch('getDiary', did) }
+    store.commit('setDiary', { title: '', content: '' })
 
-    content: {
-      get () { return this.diary.content },
-      set (value) { this.updateDiaryContent(value) }
+    watch(title, () => {
+      state.value.canLeaveSite = false
+      changeCanLeaveSite()
+    })
+
+    watch(content, () => {
+      state.value.canLeaveSite = false
+      changeCanLeaveSite()
+    })
+
+    onUpdated(() => {
+      if (state.value.firstUpdate) { state.value.canLeaveSite = true }
+      state.value.firstUpdate = false
+    })
+
+    onMounted(() => {
+      window.addEventListener('beforeunload', unLoadEvent)
+    })
+
+    onBeforeUnmount(() => {
+      window.removeEventListener('beforeunload', unLoadEvent)
+    })
+
+    const unLoadEvent = (event) => {
+      if (!state.value.canLeaveSite) {
+        event.preventDefault()
+        event.returnValue = ''
+      }
     }
-  },
-  methods: {
-    ...mapMutations(['setDiary', 'updateDiaryContent', 'updateDiaryTitle', 'isSavingToggle']),
-    ...mapActions(['saveDiary', 'getDiary']),
 
-    async submit() {
+    const changeCanLeaveSite = () => {
+      emit('change-can-leave-site', state.value.canLeaveSite)
+    }
+
+    const submit = async () => {
+      console.log([title.value, content.value, contentText.value])
       try {
-        const response = await this.saveDiary(this.$route.params.id)
+        const response = await store.dispatch('saveDiary', route.params.id)
         if (response) {
-          this.canLeaveSite = true
-          this.changeCanLeaveSite()
-          this.$router.push({ name: 'diary', params: { id: response.id } })
+          state.value.canLeaveSite = true
+          changeCanLeaveSite()
+          router.push({ name: 'diary', params: { id: response.id } })
         } else {
           alert('Cannot save diary(Server error).')
         }
       } catch (err) {
         console.log(err)
       }
-    },
-
-    unLoadEvent (event) {
-      if (!this.canLeaveSite) {
-        event.preventDefault()
-        event.returnValue = ''        
-      }
-    },
-
-    changeCanLeaveSite () {
-      this.$emit('change-can-leave-site', this.canLeaveSite)
     }
-  },
-  watch: {
-    title: function() {
-      this.canLeaveSite = false
-      this.changeCanLeaveSite()
-    },
-    content: function () {
-      this.canLeaveSite = false
-      this.changeCanLeaveSite()
-    }
-  },
-  mounted() {
-    window.addEventListener('beforeunload', this.unLoadEvent)
-  },
-  beforeUnmount() {
-    window.removeEventListener('beforeunload', this.unLoadEvent)
+
+    return { Dialog, state, diary, title, contentText, content, submit }
   },
   async beforeRouteLeave (to, from, next) {
-    if (this.canLeaveSite) {
+    if (this.state.canLeaveSite) {
       next()
     } else {
-      const ok = await this.$refs.Dialog.show({
+      const ok = await this.Dialog.value.show({
         title: 'Leave this page',
         message: 'Are you sure you want to leave current page?',
         okButton: 'Sure'
@@ -121,7 +141,7 @@ export default {
       }
     }
   }
-}
+})
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>

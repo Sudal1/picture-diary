@@ -1,13 +1,12 @@
 <template>
   <div class="wrapper">
     <my-header></my-header>
-    <router-view v-show="!isLoading"></router-view>
+    <router-view></router-view>
     <div class="btns" v-show="!isLoading">
-        <router-link :to="{ name: 'editor' }" class="write">
-          <button><i class="xi-pen"></i></button>
-        </router-link>
-      </div>
-    <spinner v-show="isLoading"></spinner>
+      <router-link :to="{ name: 'editor' }" class="write">
+        <button><i class="xi-pen"></i></button>
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -15,13 +14,11 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import MyHeader from '../components/MyHeader.vue'
-import Spinner  from '../components/Spinner.vue'
 
 export default {
   name: 'index',
   components: {
-    MyHeader,
-    Spinner
+    MyHeader
   },
   setup() {
     const store = useStore()
