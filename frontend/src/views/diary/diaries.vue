@@ -12,9 +12,9 @@
       </div>
 
       <div class="content">
-        <spinner v-show="isLoading" class="spinner"></spinner>
+        <spinner v-show="!isLoading" class="spinner"></spinner>
         <diary-content
-          v-show="!isLoading"
+          v-show="isLoading"
           :modelValue="month"
           @update:onNextPage="nextPage"
           @update:onPrevPage="prevPage"

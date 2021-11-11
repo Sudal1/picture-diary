@@ -1,10 +1,7 @@
 <template>
   <div class="signUp">
-
     <Form @submit="onSubmit" :validation-schema="schema">
-      
       <h2>Sign Up</h2>
-
       <TextInput
         name="userId"
         type="text"
@@ -43,12 +40,9 @@
         label="Date of Birth"
         placeholder=""
       />
-        <button class="submit-btn" type="submit">Submit</button>
+      <button class="submit-btn" type="submit">Submit</button>
     </Form>
-
-       <router-link :to="{ name: 'login' }"><i class="xi-angle-left"></i>back to previous</router-link>
-
-
+    <router-link :to="{ name: 'login' }"><i class="xi-angle-left"></i>back to previous</router-link>
   </div>
 </template>
 
@@ -124,7 +118,7 @@ form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  position:relative;
+  position: relative;
 
   h2 {
     text-transform: uppercase;
@@ -133,24 +127,23 @@ form {
     font-size: 16px;
     font-weight: 900;
     letter-spacing: 0.1em;
-    margin-top:49px;
+    margin-top: 49px;
   }
 }
 
-
 .submit-btn {
-  position:absolute;
-  bottom:0;
+  position: absolute;
+  bottom: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 93px;
   background: var(--point);
-  color:#fff;
-  font-size:16px;
+  color: #fff;
+  font-size: 16px;
   text-transform: uppercase;
-  border:0;
+  border: 0;
   font-weight: 700;
   letter-spacing: 0.2em;
 }
@@ -162,8 +155,13 @@ a {
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.2em;
-  margin-top:77px;
+  margin-top: 77px;
 
-  i { font-weight: bold; position:relative; top:0.5px; margin-right: 5px; }
+  i {
+    font-weight: bold;
+    position: relative;
+    top: 0.5px;
+    margin-right: 5px;
+  }
 }
 </style>

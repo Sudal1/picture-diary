@@ -145,7 +145,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-
 .wrapper {
   display: flex;
   width: 30%;
@@ -155,10 +154,11 @@ export default defineComponent({
   .title {
     width: 100%;
   }
+
   .title input {
     width: 100%;
     height: 3.125rem;
-    font-size:16px;
+    font-size: 16px;
   }
 
   .content {

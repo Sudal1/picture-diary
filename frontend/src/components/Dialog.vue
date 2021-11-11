@@ -1,13 +1,16 @@
 <template>
   <popup-modal ref="popup">
+
     <div class="massage">
       <h2>{{ title }}</h2>
       {{ message }}
-      </div>
+    </div>
+
     <div class="btns">
       <button @click="_cancel">{{ cancelButton }}</button>
       <button @click="_confirm">{{ okButton }}</button>
     </div>
+    
   </popup-modal>
 </template>
 

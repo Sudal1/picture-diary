@@ -1,45 +1,31 @@
 <template>
   <div class="header">
-
     <div class="headerWrap">
 
       <h2 class="title"><i class="xi-layout-full"></i><span>Sense</span> diary</h2>
 
       <nav>
         <ul>
-          <li>
-            <router-link :to="{ name: 'home' }">Home</router-link>
-          </li>
+          <li><router-link :to="{ name: 'home' }">Home</router-link></li>
           /
-          <li>
-            <router-link :to="{ name: 'diaries' }">Diary</router-link>
-          </li>
+          <li><router-link :to="{ name: 'diaries' }">Diary</router-link></li>
         </ul>
       </nav>
 
       <div class="user">
         <router-link to='/login' v-show="!userId"><i class="xi-user-o"></i></router-link>
-
-
         <span v-show="userId">Welcome</span>
         <div class="drop" v-show="userId">
           <button class="btn">{{ userId }}</button>
           <div class="menu">
             <ul>
-              <li>
-                <router-link to="/account">Account</router-link>
-              </li>
-              <li @click="actionLogout">
-                Logout
-              </li>
+              <li><router-link to="/account">Account</router-link></li>
+              <li @click="actionLogout">Logout</li>
             </ul>
           </div>
         </div>
-
       </div>
-
     </div>
-
   </div>
 </template>
 

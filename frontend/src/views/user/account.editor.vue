@@ -1,9 +1,7 @@
 <template>
   <div class="accountEditor">
     <Form @submit="onSubmit" :validation-schema="schema">
-      
       <h2>Account Edit</h2>
-
       <TextInput
         name="userId"
         type="text"

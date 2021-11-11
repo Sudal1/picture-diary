@@ -1,15 +1,12 @@
 <template>
   <div class="login">
     <div class="loginWrap">
-
       <div>
         <h2>You need to <span>sign in</span> to use our service</h2>
       </div>
 
       <form v-on:submit.prevent="submitForm">
-
         <div class="form">
-
           <input type="text" id="userId" placeholder="ID" onfocus="this.placeholder=''"
             onblur="this.placeholder='User ID'" v-model="userId">
 
@@ -17,7 +14,6 @@
             onblur="this.placeholder='Password'" v-model="password" @keydown.enter="actionLogin()">
 
           <button type="submit" @click="actionLogin()">Sign In</button>
-
         </div>
       </form>
 
@@ -25,8 +21,7 @@
         <button class="signUp" type="submit">Sign Up</button>
       </router-link>
     </div>
-
-     <router-link class="back" :to="{ name: 'home' }"><i class="xi-angle-left"></i>back to previous</router-link>
+    <router-link class="back" :to="{ name: 'home' }"><i class="xi-angle-left"></i>back to previous</router-link>
   </div>
 </template>
 
@@ -93,7 +88,7 @@ export default {
       font-style: normal;
     }
   }
-  
+
   .form {
     display: grid;
     gap: 5px;
@@ -103,8 +98,8 @@ export default {
     input {
       padding: 12px 10px 10px;
       border: 1px solid #d8d8d8;
-      font-size:14px;
-      color:#959595;
+      font-size: 14px;
+      color: #959595;
       font-weight: 500;
     }
 
@@ -142,17 +137,27 @@ export default {
     letter-spacing: 0.1em;
   }
 
-  input::placeholder { font-size:14px; color:#cbcbcb; font-weight: 500; }
+  input::placeholder {
+    font-size: 14px;
+    color: #cbcbcb;
+    font-weight: 500;
+  }
 }
- .back {
+
+.back {
   color: var(--primary);
   font-size: 14px;
   font-weight: 900;
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.2em;
-  margin-top:50px;
+  margin-top: 50px;
 
-  i { font-weight: bold; position:relative; top:0.5px; margin-right: 5px; }
+  i {
+    font-weight: bold;
+    position: relative;
+    top: 0.5px;
+    margin-right: 5px;
+  }
 }
 </style>
