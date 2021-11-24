@@ -32,12 +32,20 @@ export default {
     state.diaries = state.diaries.concat(diaries)
   },
 
-  updateDiaryTitle: (state, title) => {
+  setDiaryTitle: (state, title) => {
     state.diary.title = title
   },
   
-  updateDiaryContent: (state, content) => {
+  setDiaryContent: (state, content) => {
     state.diary.content = content
+  },
+
+  updateDiaryTitle: (state, title) => {
+    state.diary.title = state.diary.title + title
+  },
+
+  updateDiaryContent: (state, content) => {
+    state.diary.content = state.diary.content + content
   },
 
   updateDiaryTags: (state, tags) => {
@@ -52,23 +60,11 @@ export default {
   },
 
   // toggle
-  isSavingToggle: (state, flag) => {
-    state.isSaving = flag
-  },
-
   isLoadingToggle: (state, flag) => {
     state.isLoading = flag
   },
 
-  loadMoreToggle: (state, flag) => {
-    state.loadMore = flag
-  },
-
-  moreDiaryToggle: (state, flag) => {
-    state.moreDiary = flag
-  },
-
-  noMoreDiaryToggle: (state, flag) => {
-    state.noMoreDiary = flag
+  isSavingToggle: (state, flag) => {
+    state.isSaving = flag
   }
 }

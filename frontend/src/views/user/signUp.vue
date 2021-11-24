@@ -104,9 +104,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   width: 100%;
-  height: 100vh;
+  margin:50px 0;
 }
 
 form {
@@ -155,7 +154,7 @@ a {
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.2em;
-  margin-top: 77px;
+  margin-top: 50px;
 
   i {
     font-weight: bold;

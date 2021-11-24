@@ -7,7 +7,7 @@
 
     <div id="diaries">
       
-      <div class="list" v-for="(diary, index) in reducedDiaries" :key="index"  v-show="!isLoading">
+      <div class="list" v-for="(diary, index) in diaries" :key="index">
         <div class="point">
           <i class="xi-full-moon"></i>
         </div>
@@ -35,11 +35,13 @@ export default {
   setup(props, { emit }) {
     const store = useStore()
     const page = ref(1)
-    const reducedDiaries = computed(() => store.getters.getReducedDiaries)
+    const diaries = computed(() => store.getters.getDiariesFormated)
 
     const nextPage = () => {
-      page.value++
-      emit('update:onNextPage')
+      if (page.value <= store.getters.getDiariesFormated.length / 8) {
+        page.value++
+        emit('update:onNextPage')
+      }
     }
 
     const prevPage = () => {
@@ -51,7 +53,7 @@ export default {
 
     return {
       page,
-      reducedDiaries,
+      diaries,
       nextPage,
       prevPage
     }
@@ -80,6 +82,13 @@ export default {
       border-bottom:1px solid #e3e3e3;
       display: flex;
       direction: row;
+      $colors: #fed7d7, #feebc8, #c6f6d5, #bee3f8, #fed7e2, #c3dafe, #e9d8fd, #fefcbf;
+      @each $item in $colors {
+        $index: index($colors, $item);
+        &:nth-child(#{$index}) {
+          color: $item;
+        }
+      }
 
       .point {
         display: flex;
@@ -87,7 +96,6 @@ export default {
         align-items: center;
         margin-right: 25px;
         font-size:12px;
-        color: #c6f6d5;
       }
 
       h2 {

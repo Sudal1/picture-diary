@@ -100,9 +100,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  margin:50px 0;
   width: 100%;
-  height: 100vh;
 }
 
 form {

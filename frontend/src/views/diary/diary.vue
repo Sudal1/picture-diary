@@ -65,7 +65,7 @@
           <h2>{{ diary.title }}</h2>
         </div>
 
-        <div class="content">{{ diary.content }}</div>
+        <div class="diaryContent" v-html="diary.content"></div>
 
         <div class="etc">
           <div class="time">{{ state.time }}</div>
@@ -128,7 +128,7 @@ export default {
     const vid = 'GknKBj6b79I'
 
     // store.dispatch('getDiary', route.params.id)
-
+    
     const submit = async () => {
       try {
         const ok = await Dialog.value.show({
@@ -156,7 +156,7 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin: 110px 0;
+  margin: 50px 0;
 }
 
 .wrapper {
@@ -270,9 +270,8 @@ export default {
     }
   }
 
-  .content {
+  .diaryContent {
     color: #9f9f9f;
-    font-size: 16px;
     line-height: 1.8;
   }
 

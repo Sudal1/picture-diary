@@ -3,7 +3,6 @@ import store from '../store/index'
 
 import index         from '../views/index.vue'
 import Home          from '../views/Home.vue'
-import About         from '../views/About.vue'
 import login         from '../views/user/login.vue'
 import signUp        from '../views/user/signUp.vue'
 import account       from '../views/user/account.vue'
@@ -19,7 +18,6 @@ const routes = [
     component: index,
     children: [
       { path: 'home', name: 'home', component: Home, meta: { title: 'Home' } },
-      { path: 'about', name: 'about', component: About, meta: { title: 'About' } },
       { path: '/account', name: 'account', component: account, meta: { title: 'Account' } },
       { path: '/account/editor', name: 'accountEditor', component: accountEditor, meta: { title: 'Account Editor' } },
       { path: '/diaries', name: 'diaries', component: diaries, meta: { title: 'Diaries' } },
@@ -34,14 +32,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes,
-  scrollBehavior (to, from, savedPosition) {
-    if (to.hash) {
-      return { selector: to.hash }
-    } else {
-      return { x: 0, y: 0 }
-    }
-  }
+  routes
 })
 
 router.beforeEach((to, from, next) => {

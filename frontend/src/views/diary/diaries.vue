@@ -9,12 +9,16 @@
           :attributes="attributes"
           @update:fromPage="pageChange"
         />
+
+        <div class="today">
+          <h2><span>Today's</span> date is <span>2021, November 7</span></h2>
+        </div>
       </div>
 
       <div class="content">
-        <spinner v-show="!isLoading" class="spinner"></spinner>
+        <spinner v-show="isLoading" class="spinner"></spinner>
         <diary-content
-          v-show="isLoading"
+          v-show="!isLoading"
           :modelValue="month"
           @update:onNextPage="nextPage"
           @update:onPrevPage="prevPage"
@@ -41,34 +45,40 @@ export default {
     const store = useStore()
     const page = ref(1)
     const month = ref(new Date().getMonth())
+    const year = ref(new Date().getFullYear())
     const diaries = computed(() => store.state.diaries)
     const isLoading = computed(() => store.state.isLoading)
+    const colors = ['red', 'orange', 'green', 'blue', 'pink', 'indigo', 'purple', 'yellow']
     const attributes = computed(() =>
-      store.state.diaries.map(diary => ({
+      store.state.diaries.map((diary, index) => ({
         dates: diary.createdAt,
-        highlight: { color: 'green', fillMode: 'light' },
+        highlight: { color: colors[index % 8], fillMode: 'light' },
         popover: { label: diary.title, visibility: 'click' }
       }))
     )
     
     const pageChange = (obj) => {
+      year.value = obj.year
       month.value = obj.month
+
+      console.log(year.value)
       console.log('month:', month.value)
       // store.dispatch('getDiaries', { page: page.value, date: obj.month, limit: 8 })
     }
 
     const nextPage = () => {
       page.value++
-      store.dispatch('getDiaries', { page: page.value, date: month.value, limit: 8 })
+      // store.dispatch('getDiaries', { page: page.value, date: month.value, limit: 8 })
     }
 
     const prevPage = () => {
       page.value--
-      store.dispatch('getDiaries', { page: page.value, date: month.value, limit: 8 })
+      // store.dispatch('getDiaries', { page: page.value, date: month.value, limit: 8 })
     }
 
     return {
       page,
+      year,
       month,
       diaries,
       isLoading,
@@ -87,7 +97,7 @@ export default {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 92vh;
+  margin:50px 0;
 }
 
 .wrapper {
@@ -104,13 +114,31 @@ export default {
   background: #fff;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-}
 
-.vc-container {
-  width: 250px;
-  height: 250px;
+  .today {
+    width:100%;
+
+    h2 {
+      margin:0 80px !important;
+      padding-top:50px;
+      border-top:1px solid #ddd;
+      text-align: center;
+      font-size:17px;
+      color:#bebebe;
+      font-weight:400;
+      
+      span:nth-child(1) {
+        color:var(--point);
+      }
+      span:nth-child(2) {
+        font-weight: 500;
+        color:#adacac;
+      }
+    }
+  }
 }
 
 .content {

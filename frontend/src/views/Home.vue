@@ -17,7 +17,7 @@ export default {
 .home {
   letter-spacing: 1px;
   text-align: center;
-   display:flex;
+  display:flex;
   justify-content: center;
   align-items: center;
   width:100%;

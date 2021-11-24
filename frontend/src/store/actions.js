@@ -1,8 +1,8 @@
 import axios from '../services/axios'
 import router from '../router'
 
-const beginLoading = (commit, add) => {
-  add ? commit('loadMoreToggle', true) : commit('isLoadingToggle', true)
+const beginLoading = (commit) => {
+  commit('isLoadingToggle', true)
   return Date.now()
 }
 
@@ -27,7 +27,7 @@ export default {
 
   async signUp({ commit }, payload) {
     try {
-      await axios.post('/api/sign-up', payload)
+      await axios.post('/api/account', payload)
       return await this.login({ commit }, { userId: payload.userId, password: payload.password })
     } catch (err) {
       console.log(err)
@@ -36,7 +36,7 @@ export default {
 
   async getAccount({ commit }, uid) {
     try {
-      return await axios.get(`/api/user/${uid}`)
+      return await axios.get(`/api/account/${uid}`)
     } catch (err) {
       console.log(err)
     }
@@ -44,7 +44,7 @@ export default {
   
   async editAccount ({ commit }, payload) {
     try {
-      return await axios.put('/api/user', payload)
+      return await axios.put('/api/account', payload)
     } catch (err) {
       console.log(err)
     }
@@ -52,7 +52,7 @@ export default {
 
   async delAccount({ commit }, payload) {
     try {
-      return await axios.delete('/api/user', { data: payload })
+      return await axios.delete('/api/account', { data: payload })
     } catch (err) {
       console.log(err.message)
     }
@@ -60,6 +60,34 @@ export default {
 
   refreshToken({ commit }, accessToken) {
     commit('refreshToken', accessToken)
+  },
+
+  async getDiaries ({ commit }, payload) {
+    try {
+      const startTime = beginLoading(commit)
+      if (payload.value) { commit('isLoadingToggle', false) }
+      const response = await axios.get('/api/diaries', { params: { payload } })
+      commit('setDiaries', response.data.diaries)
+      endLoading(commit, startTime, 'isLoadingToggle')
+    } catch (err) {
+      console.log(err)
+    }
+  },
+
+  async getDiary ({ commit, state }, id) {
+    try {
+      const startTime = beginLoading(commit)
+      if (router.currentRoute.value.hash) {
+        commit('isLoadingToggle', false)
+      }
+      document.title = 'Loading...'
+      const response = await axios.get(`/api/diary/${id}`)
+      commit('setDiary', response.data)
+      document.title = state.diary.title
+      endLoading(commit, startTime, 'isLoadingToggle')
+    } catch (err) {
+      console.log(err)
+    }
   },
 
   async saveDiary ({ state, commit }, id) {
@@ -79,58 +107,16 @@ export default {
     }
   },
 
-  async getDiaries ({ commit }, payload) {
-    try {
-      commit('moreDiaryToggle', true)
-      const startTime = beginLoading(commit, payload.add)
-      if (payload.value) { commit('isLoadingToggle', false) }
-
-      const response = await axios.get('/api/diaries', { params: { payload } })
-      if (!response.data.diaries.length) {
-        commit('moreDiaryToggle', false)
-        commit('noMoreDiaryToggle', true)
-      } else {
-        commit('noMoreDiaryToggle', false)
-      }
-      if (payload.add) {
-        commit('addDiaries', response.data.diaries)
-        endLoading(commit, startTime, 'loadMoreToggle')
-      } else {
-        commit('setDiaries', response.data.diaries)
-        endLoading(commit, startTime, 'isLoadingToggle')
-      }
-    } catch (err) {
-      console.log(err)
-    }
-  },
-
-  async getDiary ({ commit, state }, id) {
-    try {
-      const startTime = beginLoading(commit, false)
-      if (router.currentRoute.value.hash) {
-        commit('isLoadingToggle', false)
-      }
-      document.title = 'Loading...'
-      const response = await axios.get(`/api/diary/${id}`)
-      commit('setDiary', response.data)
-
-      document.title = state.diary.title
-      endLoading(commit, startTime, 'isLoadingToggle')
-    } catch (err) {
-      console.log(err)
-    }
-  },
-
-  async delDiary ({ dispatch }, payload) {
+  async delDiary ({ commit }, payload) {
     try {
       const response = await axios.delete(`/api/diary/${payload.id}`)
-      dispatch('getDiaries', { page: payload.page, limit: 10 })
       return response
     } catch (err) {
       console.log(err)
     }
-  },
+  }
 
+  /*
   async searchDiaries ({ commit }, payload) {
     try {
       document.title = 'Searching...'
@@ -155,4 +141,5 @@ export default {
       console.log(err)
     }
   }
+  */
 }

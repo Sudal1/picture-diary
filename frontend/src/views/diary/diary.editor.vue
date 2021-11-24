@@ -1,27 +1,23 @@
 <template>
-  <div class="wrapper">
+  <div class="editor">
 
     <div class="title">
-      <input
-        type="text"
-        v-model="title"
-        placeholder="Title"
-        onfocus="this.placeholder=''"
-        onblur="this.placeholder='Title'"
-      >
+      <input type="text" v-model="title" placeholder="Title" onfocus="this.placeholder=''"
+        onblur="this.placeholder='Title'">
     </div>
 
     <div class="content">
       <QuillEditor
         theme="snow"
         v-model:content="content"
-        contentType="text"
+        contentType="html"
         placeholder="What happened today? Hmm..."
         :toolbar="state.toolbarOptions"
       />
+      <button @click="submit()">Write</button>
+      <button class="back" @click="goBack"><i class="xi-angle-left"></i>back to previous</button>
     </div>
-    
-    <button class="submit-btn" @click="submit()">Write!</button>
+
     <Dialog ref="Dialog"></Dialog>
   </div>
 </template>
@@ -51,23 +47,24 @@ export default defineComponent({
       canLeaveSite: true,
       toolbarOptions: [
         ['bold', 'italic', 'underline', 'strike'],
-        [{ color: [] }, { background: [] }],
         [{ size: ['small', false, 'large', 'huge'] }],
+        [{ color: [] }, { background: [] }],
         [{ indent: '-1' }, { indent: '+1' }],
         [{ direction: 'rtl' }],
         [{ script: 'sub' }, { script: 'super' }],
         ['clean']
       ]
     })
+    
     const diary = computed(() => store.state.diary)
     const title = computed({
       get: () => store.state.diary.title || '',
-      set: val => store.commit('updateDiaryTitle', val)
+      set: val => store.commit('setDiaryTitle', val)
     })
     const contentText = ref('')
     const content = computed({
       get: () => store.state.diary.content || '',
-      set: val => store.commit('updateDiaryContent', val)
+      set: val => store.commit('setDiaryContent', val)
     })
 
     const did = route.params.id
@@ -110,7 +107,7 @@ export default defineComponent({
     }
 
     const submit = async () => {
-      console.log([title.value, content.value, contentText.value])
+      console.log(store.state.diary)
       try {
         const response = await store.dispatch('saveDiary', route.params.id)
         if (response) {
@@ -125,13 +122,17 @@ export default defineComponent({
       }
     }
 
-    return { Dialog, state, diary, title, contentText, content, submit }
+    const goBack = () => {
+      router.go(-1)
+    }
+
+    return { Dialog, state, diary, title, contentText, content, submit, goBack }
   },
   async beforeRouteLeave (to, from, next) {
     if (this.state.canLeaveSite) {
       next()
     } else {
-      const ok = await this.Dialog.value.show({
+      const ok = await this.Dialog.show({
         title: 'Leave this page',
         message: 'Are you sure you want to leave current page?',
         okButton: 'Sure'
@@ -145,35 +146,75 @@ export default defineComponent({
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
-.wrapper {
+.editor {
   display: flex;
-  width: 30%;
-  margin: 0 auto;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height:72vh;
 
   .title {
-    width: 100%;
+     width: 1194px;
+     height:65px;
   }
 
   .title input {
     width: 100%;
-    height: 3.125rem;
     font-size: 16px;
+    padding:20px;
+    border:0;
+    border-left: 8px solid;
+    border-color: var(--point);
+    color: #555;
+    letter-spacing: 0.05em;
   }
 
   .content {
-    margin: 2rem 0 1.5rem 0;
-
-    #editor {
-      width: 100%;
-      outline: none;
-      white-space: pre-wrap;
-      min-height: 30rem;
-    }
+    margin: 2rem 0 2rem 0;
+    width: 1194px;
+    height:450px;
+    background: #fff;
   }
 
-  .submit-btn {
-    margin-left: auto;
+  button {
+    width: 1194px;
+    background: var(--point);
+    color:#fff;
+    border:0;
+    padding:20px 0;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    margin-top:2rem;
+    cursor: pointer;
+  }
+
+.back {
+  color: var(--primary);
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.2em;
+  margin-top: 40px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+
+  i {
+    font-weight: bold;
+    position: relative;
+    top: 0.5px;
+    margin-right: 5px;
   }
 }
+
+}
+
+
+
+
+
+
 </style>
