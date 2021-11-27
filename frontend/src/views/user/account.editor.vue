@@ -3,10 +3,11 @@
     <Form @submit="onSubmit" :validation-schema="schema">
       <h2>Account Edit</h2>
       <TextInput
-        name="userId"
-        type="text"
-        label="User ID"
-        placeholder="ID"
+        name="email"
+        type="email"
+        label="E-mail"
+        placeholder="Email (aaa@example.com)"
+        success-message="E-mail is verified"
       />
       <TextInput
         name="password"
@@ -22,23 +23,10 @@
         success-message="Password is verified."
       />
       <TextInput
-        name="email"
-        type="email"
-        label="E-mail"
-        placeholder="Email address (aaa@example.com)"
-        success-message="E-mail is verified"
-      />
-      <TextInput
-        name="name"
+        name="nickname"
         type="text"
         label="Name"
         placeholder="Name"
-      />
-      <TextInput
-        name="dob"
-        type="date"
-        label="Date of Birth"
-        placeholder=""
       />
       <button class="submit-btn" type="submit">Submit</button>
     </Form>
@@ -61,27 +49,24 @@ export default {
     const store = useStore()
 
     const schema = Yup.object().shape({
-      userId: Yup.string(),
+      email: Yup.string()
+        .required('E-mail is required')
+        .email(),
       password: Yup.string()
         .required('Password is required')
         .min(4, 'Password must be at least 4 characters'),
       confirmPassword: Yup.string()
         .required('Confirm password is required')
         .oneOf([Yup.ref('password'), null], 'Passwords must match'),
-      dob: Yup.string()
-        .matches(/^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/, 'Please select one'),
-      name: Yup.string()
+      nickname: Yup.string()
         .required('Name is required.')
-        .matches(/^[가-힣a-zA-Z\s]+$/, 'Must be a combination of characters'),
-      email: Yup.string()
-        .required('E-mail is required')
-        .email()
+        .matches(/^[가-힣a-zA-Z\s]+$/, 'Must be a combination of characters')
     })
 
     async function onSubmit(values) {
       try {
         const res = await store.dispatch('editAccount', JSON.stringify(values))
-        res.data ? store.dispatch('logout') : alert('Edit failed.')
+        res.status === 200 ? store.dispatch('logout') : alert('Sign up failed.')
       } catch (err) {
         console.log(err)
       }
@@ -100,13 +85,15 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   margin:50px 0;
   width: 100%;
+  height: 87vh;
 }
 
 form {
   width: 453px;
-  height: 970px;
+  height: 720px;
   background: #fff;
   border-top: 8px solid;
   border-color: var(--point);

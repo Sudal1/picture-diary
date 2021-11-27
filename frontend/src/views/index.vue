@@ -4,7 +4,7 @@
     <router-view></router-view>
     <div class="btns" v-show="!isLoading">
       <router-link :to="{ name: 'editor' }" class="write">
-        <button><i class="xi-pen"></i></button>
+        <button><i class="material-icons">edit</i></button>
       </router-link>
     </div>
   </div>

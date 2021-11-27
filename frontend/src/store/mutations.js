@@ -1,8 +1,12 @@
+import jwtDecode from 'jwt-decode'
+
 export default {
   // user
   setUser: (state, data) => {
-    localStorage.setItem('access_token', data.token.accessToken)
-    localStorage.setItem('refresh_token', data.token.refreshToken)
+    const decoded = jwtDecode(data.result.jwt)
+    console.log(decoded)
+    localStorage.setItem('access_token', decoded.accessToken)
+    localStorage.setItem('refresh_token', decoded.refreshToken)
     localStorage.setItem('user', data.user)
 
     state.user = data.user
@@ -48,15 +52,20 @@ export default {
     state.diary.content = state.diary.content + content
   },
 
-  updateDiaryTags: (state, tags) => {
-    state.diary.tags = tags
-  },
-
   unsetDiary: (state, data) => {
     const newDiaries = [...state.diaries]
     const idx = state.diaries.findIndex((diary) => diary.id === data.id)
     if (idx !== -1) { newDiaries.splice(idx, 1) }
     state.diaries = newDiaries
+  },
+
+  // tag
+  setTags: (state, tags) => {
+    state.tags = tags
+  },
+
+  setTag: (state, tag) => {
+    state.tag = tag
   },
 
   // toggle

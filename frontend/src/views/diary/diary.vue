@@ -4,55 +4,62 @@
 
       <div class="recommend">
 
-        <div class="music">
-
-          <div class="info">
-            <h2>Music</h2>
-            <p>We <span>recommend</span> this music</p>
-            <p>Analyzed by our products</p>
-          </div>
-
-          <div class="youtube">
-            <youtube-iframe
-              :video-id="diary.vid"
-              :player-width="502"
-              :player-height="290"
-              :player-parameters="Player"
-            ></youtube-iframe>
-          </div>
-
-          <div class="etc">
-            <ul v-for="tag in diary.tags" :key="tag">
-              <li># {{ tag }}</li>
-            </ul>
-            <p>We analyzed your sentiment with the following keywords.</p>
-          </div>
-
-        </div>
-
         <div class="media">
 
           <div class="info">
             <h2>Media</h2>
             <p>We <span>recommend</span> this media</p>
-            <p>Analyzed by our products</p>
+            <p>Analyzed with our products</p>
           </div>
 
           <div class="youtube">
             <youtube-iframe
-              :video-id="vid"
-              :player-width="502"
-              :player-height="290"
+              :video-id="diary.vid"
+              :player-width="518"
+              :player-height="292"
               :player-parameters="Player"
             ></youtube-iframe>
           </div>
 
-          <div class="etc">
-            <ul v-for="tag in diary.tags" :key="tag">
-              <li># {{ tag }}</li>
-            </ul>
-            <p>We analyzed your sentiment with the following keywords.</p>
+        </div>
+
+        <div class="keyword">
+
+          <div class="info">
+            <h2>Sentiment</h2>
+            <p>We <span>recommend</span> this media</p>
+            <p>based on the analysis below</p>
           </div>
+
+          <div class="progressWrap">
+            <p>
+            <i :class="m[0].icon"></i>
+            {{ m[0].tag }}
+            </p>
+            <k-progress class="progress"
+              status="error" 
+              type="line"
+              :border="true"
+              :color="'#8aa594'"
+              :percent="m[0].percent"
+              :line-height="14">
+            </k-progress>
+
+            <div v-for="item in keywords" :key="item">
+              <p>
+              <i :class="item.icon"></i>
+              {{ item.tag }}
+              </p>
+              <k-progress class="progress"
+                status="warning" 
+                type="line"
+                :border="true"
+                :color="'#ddd'"
+                :percent="item.percent"
+                :line-height="14">
+              </k-progress>
+            </div>
+          </div>  
 
         </div>
 
@@ -71,17 +78,50 @@
           <div class="time">{{ state.time }}</div>
           <div class="btns">
             <router-link :to="{ name: 'editor', params: { id: diary.id } }">
-              <button style="margin-right:20px;">Edit</button>
+              <button style="margin-right:20px;"><i class="material-icons">edit</i> Edit</button>
             </router-link>
-            <button @click="submit()">Del</button>
+            <button @click="submit()"><i class="material-icons">delete</i> Del</button>
           </div>
         </div>
 
-        <ul v-for="tag in diary.tags" :key="tag">
-          <li>#{{ tag }}</li>
-        </ul>
+        <div class="tag">
+          <ul v-for="tag in diary.tags" :key="tag">
+            <li>#{{ tag }}</li>
+          </ul>
+        </div>
 
-      </div>
+
+<!--
+        <div class="progress">
+
+           <h2 class="keyword">Keyword</h2>
+
+          {{ percents[2].tag }}
+           <k-progress class="progress"
+            status="error" 
+            type="line"
+            :border="true"
+            :color="'#8aa594'"
+            :percent="percents[2].percent"
+            :line-height="12">
+           </k-progress>
+
+            <div v-for="item in percents" :key="item">
+             {{ item.tag }}
+             <k-progress class="progress"
+             status="warning" 
+             type="line"
+             :border="true"
+             :color="'#ddd'"
+             :percent="item.percent"
+             :line-height="12">
+             </k-progress>
+            </div> 
+
+        </div>
+-->       
+
+    </div>
 
       <Dialog ref="Dialog"></Dialog>
     </div>
@@ -126,6 +166,32 @@ export default {
       ref: 0
     }
     const vid = 'GknKBj6b79I'
+    const percents = [
+      {
+        percent: 10,
+        tag: 'happy'
+      },
+      {
+        percent: 20,
+        tag: 'sad'
+      },
+      {
+        percent: 70,
+        tag: 'angry'
+      }
+    ]
+    for (const keyword of percents) {
+      if (keyword.tag === 'happy') {
+        keyword.icon = 'xi-emoticon-happy-o'
+      } else if (keyword.tag === 'sad') {
+        keyword.icon = 'xi-emoticon-sad-o'
+      } else {
+        keyword.icon = 'xi-emoticon-devil-o'
+      }
+    }
+    const m = percents.filter((item) => { return item.percent === Math.max.apply(Math, percents.map((item) => item.percent)) })
+    const keywords = percents.filter((item) => item.percent !== m[0].percent)
+    
 
     // store.dispatch('getDiary', route.params.id)
     
@@ -145,7 +211,7 @@ export default {
       }
     }
 
-    return { diary, state, Dialog, Player, vid, submit }
+    return { diary, state, Dialog, Player, vid, percents, keywords, submit, m }
   }
 }
 </script>
@@ -166,26 +232,47 @@ export default {
   border-top: 8px solid;
   border-color: var(--point);
   width: 1194px;
+  height: 100%;
 }
 
 .recommend {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex:1.125;
 
-  .music {
+  .media {
     background: #fff;
     padding: 52px 37px;
   }
 
-  .media {
+  .keyword {
     margin-top: 5px;
     background: #fff;
-    padding: 52px 37px;
+    padding: 52px 37px 44px;
+    color: #8d8d8d;
+
+    .progressWrap {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+
+      p {
+        margin: 20px 0;
+
+        i {
+          font-size: 20px;
+          position: relative;
+          top:3px;
+        }
+      }
+    }
   }
 
   .info {
     border-left: 3px solid;
     border-color: var(--point);
     padding-left: 18px;
+    margin-bottom:40px;
 
     h2 {
       color: var(--point);
@@ -219,9 +306,6 @@ export default {
     }
   }
 
-  .youtube {
-    margin: 40px 0;
-  }
 
   .etc {
     ul {
@@ -243,9 +327,11 @@ export default {
 
 .contents {
   background: #fff;
-  width: 100%;
   margin-left: 5px;
   padding: 52px 37px;
+   display: flex;
+  flex-direction: column;
+  flex:1;
 
   .title {
     .createdAt {
@@ -273,11 +359,27 @@ export default {
   .diaryContent {
     color: #9f9f9f;
     line-height: 1.8;
+    overflow-y: scroll;
+    padding-right:10px;
+    height: 625px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #ddd;
+      border-radius: 0px;
+    }
+
+    &::-webkit-scrollbar-track {
+      width:6px;
+      background-color: transparent;
+    }
   }
 
   .etc {
     padding: 25px 0;
-    border-bottom: 1px solid #d6d6d6;
     color: #c1c1c1;
     font-size: 14px;
     display: flex;
@@ -297,6 +399,14 @@ export default {
         font-weight: 700;
         letter-spacing: 0.1em;
         cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        i {
+          margin-right:5px;
+          font-size:20px;
+        }
       }
     }
 
@@ -307,14 +417,19 @@ export default {
     }
   }
 
-  ul {
-    font-size: 14px;
-    color: var(--point);
-    font-family: 'Roboto Condensed', sans-serif;
-    letter-spacing: 0.1em;
-    margin-right: 5px;
-    padding: 25px 0 0;
+  .tag {
+    border-top: 1px solid #d6d6d6;
+    padding-top: 25px;
+
+    ul {
+      font-size: 14px;
+      color: var(--point);
+      font-family: 'Roboto Condensed', sans-serif;
+      letter-spacing: 0.1em;
+      margin-right: 5px;
+    }
   }
+
 }
 
 .back {
@@ -336,4 +451,8 @@ export default {
     margin-right: 5px;
   }
 }
+
+
+
+
 </style>

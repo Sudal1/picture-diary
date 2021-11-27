@@ -52,8 +52,10 @@ export default {
 
 .window {
     background: #fff;
-    max-width: 480px;
+    border-top:8px solid var(--point);
+    padding:20px;
     margin-left: auto;
     margin-right: auto;
+    color:var(--primary);
 }
 </style>

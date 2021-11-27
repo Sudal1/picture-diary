@@ -3,7 +3,7 @@ import actions from './actions.js'
 import getters from './getters.js'
 import mutations from './mutations.js'
 
-const user = JSON.parse(localStorage.getItem('user'))
+const user = JSON.parse(localStorage.getItem('userIdx'))
 const diaries = []
 const date = new Date()
 const year = date.getFullYear()
@@ -34,7 +34,7 @@ export default createStore({
     diary: {
       id: 1,
       title: 'testDiary1',
-      content: '<p><span class="ql-size-large">가나다라마바사</span></p><p><strong>아자차카타파하</strong></p><p><em>으악으악으아악</em></p><p><u>딩굴딩굴딩구르</u></p><p><s>낑끙낑끙끙낑끙</s></p>',
+      content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five. daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehe daengul babo hehehesfdgsfdg',
       author: 'testName',
       tags: ['tag1', 'tag2', 'tag3'],
       createdAt: new Date(),

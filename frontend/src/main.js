@@ -5,11 +5,13 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import setupInterceptors from './services/axios.interceptors'
+import KProgress from 'k-progress-v3'
 
 
 setupInterceptors(store)
 
 createApp(App)
+  .component('k-progress', KProgress)
   .use(router)
   .use(store)
   .use(VCalendar, {})

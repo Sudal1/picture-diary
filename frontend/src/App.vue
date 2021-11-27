@@ -31,6 +31,8 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;0,900;1,300;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap');
 @import url('https://cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
 
 :root {
   --primary: #565656;
@@ -72,8 +74,33 @@ body {
   background-color: #e5eae7;
 }
 
-::-webkit-scrollbar {
+body::-webkit-scrollbar {
   display: none;
+}
+
+.k-progress {
+  margin-right: 0px !important;
+  color: #8d8d8d !important;
+
+  .k-progress-outer-line {
+    animation: bar 1.5s linear;
+  }
+
+  @keyframes bar {
+    from {
+      width: 0;
+    }
+
+    to {
+      width: percent;
+    }
+  }
+
+  .k-progress-outer {
+    margin-right: 0px !important;
+    padding-right: 0px !important;
+  }
+
 }
 
 // Quill custom

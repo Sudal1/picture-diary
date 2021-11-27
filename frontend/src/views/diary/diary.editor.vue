@@ -14,6 +14,14 @@
         placeholder="What happened today? Hmm..."
         :toolbar="state.toolbarOptions"
       />
+      <input
+        type="text"
+        class="tags"
+        placeholder="Tags (Separated by comma ',')"
+        v-model="tag"
+        onfocus="this.placeholder=''"
+        @keypress="addTag($event)"
+      >
       <button @click="submit()">Write</button>
       <button class="back" @click="goBack"><i class="xi-angle-left"></i>back to previous</button>
     </div>
@@ -57,14 +65,18 @@ export default defineComponent({
     })
     
     const diary = computed(() => store.state.diary)
+    const tags = computed(() => store.state.tags)
     const title = computed({
       get: () => store.state.diary.title || '',
       set: val => store.commit('setDiaryTitle', val)
     })
-    const contentText = ref('')
     const content = computed({
       get: () => store.state.diary.content || '',
       set: val => store.commit('setDiaryContent', val)
+    })
+    const tag = computed({
+      get: () => store.state.tag || '',
+      set: val => tags.value.pop(val.trim().replace(/,/g, ''))
     })
 
     const did = route.params.id
@@ -126,7 +138,16 @@ export default defineComponent({
       router.go(-1)
     }
 
-    return { Dialog, state, diary, title, contentText, content, submit, goBack }
+    return { 
+      Dialog,
+      state,
+      diary,
+      title,
+      content,
+      tag,
+      submit,
+      goBack
+    }
   },
   async beforeRouteLeave (to, from, next) {
     if (this.state.canLeaveSite) {
@@ -174,6 +195,16 @@ export default defineComponent({
     width: 1194px;
     height:450px;
     background: #fff;
+  }
+
+  .tags {
+    margin-top: 2rem;
+    padding:20px;
+    font-size: 16px;
+    color: #555;
+    letter-spacing: 0.05em;
+    border: 0;
+    width: 100%;
   }
 
   button {

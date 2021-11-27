@@ -61,30 +61,39 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
 .massage {
   border-radius:10px;
-  padding:1rem;
-  min-width: 18rem;
-  min-height: 8rem;
+  padding:2rem 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  font-weight:400;
+  letter-spacing: 0.05rem;
 }
 
-.massage h2 { margin-bottom:1rem; }
+.massage h2 { margin-bottom:1rem; font-weight:700; letter-spacing: 0.05rem; }
 
 .btns {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin-top:1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 1rem;
+
+button {
+    width: 10.45rem;
+    background: transparent;
+    border: 0px;
+    font-weight: 600;
+    color: var(--primary);
+    font-size:14px;
+
+    &:hover {
+      color: var(--point) !important;
+      transition: 0.3s all;
+    }
+  }
 }
 
-.btns button { 
-  width:10.45rem;
-  background: transparent;
-  border: 1px solid transparent;
-}
 </style>

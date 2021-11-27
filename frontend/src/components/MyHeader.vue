@@ -13,7 +13,7 @@
       </nav>
 
       <div class="user">
-        <router-link to='/login' v-show="!userId"><i class="xi-user-o"></i></router-link>
+        <router-link to='/login' v-show="!userId"><i class="material-icons">person</i></router-link>
         <span v-show="userId">Welcome</span>
         <div class="drop" v-show="userId">
           <button class="btn">{{ userId }}</button>
@@ -142,7 +142,7 @@ export default {
     .drop {
       position: relative;
       z-index: 300;
-
+      
       .btn {
         font-size: 14px;
         font-weight: 600;

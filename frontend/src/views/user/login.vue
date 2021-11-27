@@ -7,8 +7,8 @@
 
       <form v-on:submit.prevent="submitForm">
         <div class="form">
-          <input type="text" id="userId" placeholder="ID" onfocus="this.placeholder=''"
-            onblur="this.placeholder='User ID'" v-model="userId">
+          <input type="email" id="email" placeholder="ID" onfocus="this.placeholder=''"
+            onblur="this.placeholder='User ID (Email)'" v-model="email">
 
           <input type="password" id="password" placeholder="Password" onfocus="this.placeholder=''"
             onblur="this.placeholder='Password'" v-model="password" @keydown.enter="actionLogin()">
@@ -35,13 +35,13 @@ export default {
   setup() {
     const router = useRouter()
     const store = useStore()
-    const userId = ref('')
+    const email = ref('')
     const password = ref('')
 
     const actionLogin = async () => {
       try {
-        const res = await store.dispatch('login', { userId: userId.value, password: password.value })
-        store.commit('setUser', JSON.stringify(res.data))
+        const res = await store.dispatch('login', { email: email.value, password: password.value })
+        store.commit('setUser', res.data)
         router.push({ name: 'account' })
       } catch (err) {
         console.log(err)
@@ -49,7 +49,7 @@ export default {
       }
     }
 
-    return { userId, password, actionLogin }
+    return { email, password, actionLogin }
   }
 }
 </script>
