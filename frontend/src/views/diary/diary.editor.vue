@@ -14,9 +14,17 @@
         placeholder="What happened today? Hmm..."
         :toolbar="state.toolbarOptions"
       />
+      <div class="tags">
+        <ul>
+          <li><button>tag1 <i class="material-icons">clear</i></button></li>
+          <li><button>tag2 <i class="material-icons">clear</i></button></li>
+          <li><button>tag3 <i class="material-icons">clear</i></button></li>
+        </ul>
+      </div>
+
       <input
         type="text"
-        class="tags"
+        class="tagInput"
         placeholder="Tags (Separated by comma ',')"
         v-model="tag"
         onfocus="this.placeholder=''"
@@ -118,6 +126,12 @@ export default defineComponent({
       emit('change-can-leave-site', state.value.canLeaveSite)
     }
 
+    const addTag = (event) => {
+      if (event.code === 'Comma') {
+        console.log(event.target.value)
+      }
+    }
+
     const submit = async () => {
       console.log(store.state.diary)
       try {
@@ -145,6 +159,7 @@ export default defineComponent({
       title,
       content,
       tag,
+      addTag,
       submit,
       goBack
     }
@@ -193,11 +208,35 @@ export default defineComponent({
   .content {
     margin: 2rem 0 2rem 0;
     width: 1194px;
-    height:450px;
+    height: 450px;
     background: #fff;
+
+    .tags {
+      margin-bottom: -1rem;
+    }
+
+    .tags ul {
+      display: inline-block;
+
+      button {
+        width: 100%;
+        margin-right: 1em;
+        padding: 10px 10px 10px 13px;
+        font-size: 11px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        i {
+          font-size:11px;
+          margin-left:4px;
+        }
+      }
+    }
+
   }
 
-  .tags {
+  .tagInput {
     margin-top: 2rem;
     padding:20px;
     font-size: 16px;
