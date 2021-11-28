@@ -12,24 +12,24 @@
         v-model:content="content"
         contentType="html"
         placeholder="What happened today? Hmm..."
-        :toolbar="state.toolbarOptions"
+        :toolbar="option.toolbarOptions"
       />
+
       <div class="tags">
-        <ul>
-          <li><button>tag1 <i class="material-icons">clear</i></button></li>
-          <li><button>tag2 <i class="material-icons">clear</i></button></li>
-          <li><button>tag3 <i class="material-icons">clear</i></button></li>
+        <ul v-for="(tag, index) in tags" :key="index" v-show="tags">
+          <li># {{ tag }}<button @click="delTag(index)"><i class="material-icons">clear</i></button></li>
         </ul>
       </div>
 
       <input
         type="text"
         class="tagInput"
-        placeholder="Tags (Separated by comma ',')"
-        v-model="tag"
+        placeholder="Tags ( Separated by comma `,` )"
         onfocus="this.placeholder=''"
+        :value="tag"
         @keypress="addTag($event)"
       >
+
       <button @click="submit()">Write</button>
       <button class="back" @click="goBack"><i class="xi-angle-left"></i>back to previous</button>
     </div>
@@ -40,7 +40,7 @@
 
 <script>
 import { defineComponent, ref, computed, onUpdated, onMounted, onBeforeUnmount, watch } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
@@ -55,12 +55,13 @@ export default defineComponent({
   },
   setup: (props, { emit }) => {
     const router = useRouter()
-    const route = useRoute()
     const store = useStore()
     const Dialog = ref(null)
     const state = ref({
       firstUpdate: true,
-      canLeaveSite: true,
+      canLeaveSite: true
+    })
+    const option = {
       toolbarOptions: [
         ['bold', 'italic', 'underline', 'strike'],
         [{ size: ['small', false, 'large', 'huge'] }],
@@ -70,10 +71,9 @@ export default defineComponent({
         [{ script: 'sub' }, { script: 'super' }],
         ['clean']
       ]
-    })
+    }
     
     const diary = computed(() => store.state.diary)
-    const tags = computed(() => store.state.tags)
     const title = computed({
       get: () => store.state.diary.title || '',
       set: val => store.commit('setDiaryTitle', val)
@@ -82,12 +82,10 @@ export default defineComponent({
       get: () => store.state.diary.content || '',
       set: val => store.commit('setDiaryContent', val)
     })
-    const tag = computed({
-      get: () => store.state.tag || '',
-      set: val => tags.value.pop(val.trim().replace(/,/g, ''))
-    })
+    const tag = ref('')
+    const tags = ref([])
 
-    const did = route.params.id
+    const did = store.state.diary.diaryIdx
     store.commit('isSavingToggle', false)
     // if (did) { store.dispatch('getDiary', did) }
     store.commit('setDiary', { title: '', content: '' })
@@ -128,14 +126,20 @@ export default defineComponent({
 
     const addTag = (event) => {
       if (event.code === 'Comma') {
-        console.log(event.target.value)
+        tags.value.push(event.target.value.replace(/./g, ''))
+        tag.value = ''
       }
     }
 
+    const delTag = (index) => {
+      tags.value.splice(index, 1)
+    }
+
     const submit = async () => {
-      console.log(store.state.diary)
       try {
-        const response = await store.dispatch('saveDiary', route.params.id)
+        console.log(store.state.diary)
+        const response = await store.dispatch('saveDiary', did)
+        console.log(response)
         if (response) {
           state.value.canLeaveSite = true
           changeCanLeaveSite()
@@ -155,11 +159,14 @@ export default defineComponent({
     return { 
       Dialog,
       state,
+      option,
       diary,
       title,
       content,
       tag,
+      tags,
       addTag,
+      delTag,
       submit,
       goBack
     }

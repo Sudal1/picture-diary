@@ -5,7 +5,7 @@ const setup = (store) => {
   axiosInstance.interceptors.request.use(
     (config) => {
       const token = TokenService.getAccessToken()
-      if (token) { config.headers.Authorization = 'Bearer' + token }
+      if (token) { config.headers['x-access-token'] = token }
       return config
     },
     (error) => {
@@ -16,11 +16,13 @@ const setup = (store) => {
   axiosInstance.interceptors.response.use(
     (res) => { return res },
     async (err) => {
+      console.log('err: ', err.response)
       const originalConfig = err.config
 
       if (originalConfig.url !== '/app/users/log-in' && err.response) {
         // Access token was expired
         if (err.response.status === 401 && !originalConfig._retry) {
+          console.log('Access token expired')
           originalConfig._retry = true
           
           try {

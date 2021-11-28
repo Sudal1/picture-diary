@@ -1,19 +1,18 @@
-import jwtDecode from 'jwt-decode'
-
 export default {
   // user
   setUser: (state, data) => {
-    const decoded = jwtDecode(data.result.jwt)
-    console.log(decoded)
-    localStorage.setItem('access_token', decoded.accessToken)
-    localStorage.setItem('refresh_token', decoded.refreshToken)
-    localStorage.setItem('user', data.user)
+    sessionStorage.setItem('access_token', data.result.jwt)
+    sessionStorage.setItem('user', data.result.userIdx)
+    state.user = { idx: data.result.userIdx }
+  },
 
-    state.user = data.user
+  setUserInfo: (state, data) => {
+    state.status.loggedIn = true
+    state.user = data
   },
 
   unsetUser: (state) => {
-    localStorage.clear()
+    sessionStorage.clear()
     state.status.loggedIn = false
     state.user = {}
   },

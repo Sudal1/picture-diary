@@ -42,7 +42,7 @@ export default {
       try {
         const res = await store.dispatch('login', { email: email.value, password: password.value })
         store.commit('setUser', res.data)
-        router.push({ name: 'account' })
+        router.push({ name: 'home' })
       } catch (err) {
         console.log(err)
         alert('Login failed. Please retry login.')

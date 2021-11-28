@@ -35,8 +35,13 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   document.title = to.meta.title
+  if (sessionStorage.getItem('user') && !store.state.user.nickname) {
+    const res = await store.dispatch('getAccount', sessionStorage.getItem('user'))
+    console.log(res)
+    store.commit('setUserInfo', res.data.result)
+  }
   if (store.state.status.loggedIn && (to.name === 'login' || to.name === 'signUp')) {
     next({ name: 'diaries' })
   } else if (!store.state.status.loggedIn && to.meta.requiredAuth) {

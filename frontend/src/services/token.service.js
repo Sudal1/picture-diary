@@ -1,31 +1,29 @@
 class TokenService {
   getRefreshToken() {
-    const user = JSON.parse(localStorage.getItem('user'))
-    return user?.refreshToken
+    const refreshToken = sessionStorage.getItem('refresh_token')
+    return refreshToken
   }
 
   getAccessToken() {
-    const user = JSON.parse(localStorage.getItem('user'))
-    return user?.accessToken
+    const accessToken = sessionStorage.getItem('access_token')
+    return accessToken
   }
 
   updateAccessToken(token) {
-    const user = JSON.parse(localStorage.getItem('user'))
-    user.accessToken = token
-    localStorage.setItem('user', JSON.stringify(user))
+    sessionStorage.setItem('access_token', token)
   }
 
   getUser() {
-    return JSON.parse(localStorage.getItem('user'))
+    return JSON.parse(sessionStorage.getItem('user'))
   }
 
   setUser(user) {
     console.log(JSON.stringify(user))
-    localStorage.setItem('user', JSON.stringify(user))
+    sessionStorage.setItem('user', JSON.stringify(user))
   }
 
   removeUser() {
-    localStorage.removeItem('user')
+    sessionStorage.removeItem('user')
   }
 }
 

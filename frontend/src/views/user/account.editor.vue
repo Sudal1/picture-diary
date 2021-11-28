@@ -6,8 +6,7 @@
         name="email"
         type="email"
         label="E-mail"
-        placeholder="Email (aaa@example.com)"
-        success-message="E-mail is verified"
+        :disabled="true"
       />
       <TextInput
         name="password"
@@ -30,23 +29,30 @@
       />
       <button class="submit-btn" type="submit">Submit</button>
     </Form>
+    <Dialog ref="Dialog"></Dialog>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { Form } from 'vee-validate'
 import * as Yup from 'yup'
 import TextInput from '../../components/TextInput.vue'
+import Dialog from '../../components/Dialog.vue'
 
 export default {
   name: 'accountEditor',
   components: {
     Form,
-    TextInput
+    TextInput,
+    Dialog
   },
   setup() {
+    const router = useRouter()
     const store = useStore()
+    const Dialog = ref(null)
 
     const schema = Yup.object().shape({
       email: Yup.string()
@@ -65,16 +71,36 @@ export default {
 
     async function onSubmit(values) {
       try {
-        const res = await store.dispatch('editAccount', JSON.stringify(values))
+        const uid = store.state.user.userIdx || JSON.parse(sessionStorage.getItem('user'))
+        const res = await store.dispatch('editAccount', uid, JSON.stringify(values))
         res.status === 200 ? store.dispatch('logout') : alert('Sign up failed.')
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    const accountDelete = async () => {
+      try {
+        const ok = await Dialog.value.show({
+          title: 'Delete Account',
+          message: 'Are you sure you want to delete your account?',
+          okButton: 'Delete'
+        })
+        if (ok) {
+          const uid = store.state.user.userIdx || JSON.parse(sessionStorage.getItem('user'))
+          const response = await store.dispatch('delAccount', uid)
+          response.data ? router.push({ name: 'login' }) : alert('Cannot delete account(Server error).')
+        }
       } catch (err) {
         console.log(err)
       }
     }
     
     return {
+      Dialog,
+      schema,
       onSubmit,
-      schema
+      accountDelete
     }
   }
 }

@@ -46,9 +46,8 @@ export default {
       default: ''
     },
     disabled: {
-      validator(value) {
-        return ['false'].includes(value)
-      }
+      type: Boolean,
+      default: false
     }
   },
   setup(props) {

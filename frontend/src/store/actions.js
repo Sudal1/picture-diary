@@ -35,15 +35,15 @@ export default {
 
   async getAccount({ commit }, uid) {
     try {
-      return await axios.get(`/app/account/${uid}`)
+      return await axios.get(`/app/users/${uid}`)
     } catch (err) {
       console.log(err)
     }
   },
   
-  async editAccount ({ commit }, payload) {
+  async editAccount ({ commit }, uid, payload) {
     try {
-      return await axios.put('/app/account', payload)
+      return await axios.patch(`/app/users/${uid}`, payload)
     } catch (err) {
       console.log(err)
     }
@@ -92,12 +92,13 @@ export default {
   async saveDiary ({ state, commit }, id) {
     try {
       commit('isSavingToggle', false)
+      const diary = JSON.stringify(state.diary)
       if (id) {
-        const response = await axios.put(`/app/diary/${id}`, state.diary)
+        const response = await axios.patch(`/app/diaries/${id}`, JSON.parse(diary))
         commit('isSavingToggle', true)
         return response
       } else {
-        const response = await axios.post('/app/diary', state.diary)
+        const response = await axios.post('/app/diaries', JSON.parse(diary))
         commit('isSavingToggle', true)
         return response
       }

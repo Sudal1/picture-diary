@@ -13,10 +13,10 @@
       </nav>
 
       <div class="user">
-        <router-link to='/login' v-show="!userId"><i class="material-icons">person</i></router-link>
-        <span v-show="userId">Welcome</span>
-        <div class="drop" v-show="userId">
-          <button class="btn">{{ userId }}</button>
+        <router-link to='/login' v-show="!name"><i class="material-icons">person</i></router-link>
+        <span v-show="name">Welcome</span>
+        <div class="drop" v-show="name">
+          <button class="btn">{{ name }}</button>
           <div class="menu">
             <ul>
               <li><router-link to="/account">Account</router-link></li>
@@ -37,7 +37,7 @@ import EventBus from '../common/EventBus'
 export default {
   setup() {
     const store = useStore()
-    const userId = computed(() => store.state.user.userId)
+    const name = computed(() => store.state.user.nickname)
 
     onMounted(() => {
       EventBus.on('logout', () => store.dispatch('logout'))
@@ -51,7 +51,7 @@ export default {
       store.dispatch('logout')
     }
 
-    return { userId, actionLogout }
+    return { name, actionLogout }
   }
 }
 </script>

@@ -6,7 +6,7 @@
         name="email"
         type="email"
         label="E-mail"
-        placeholder="Email (aaa@example.com)"
+        placeholder="Email"
         success-message="E-mail is verified"
       />
       <TextInput
@@ -72,7 +72,7 @@ export default {
         if (res.status === 200) {
           const response = await store.dispatch('login', { email: values.email, password: values.password })
           store.commit('setUser', response.data)
-          router.push({ name: 'account' })
+          router.push({ name: 'home' })
         } else {
           alert('Sign up failed.')
         }
