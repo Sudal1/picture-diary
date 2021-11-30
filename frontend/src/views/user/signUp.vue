@@ -30,7 +30,6 @@
       />
       <button class="submit-btn" type="submit">Submit</button>
     </Form>
-    <router-link :to="{ name: 'login' }"><i class="xi-angle-left"></i>back to previous</router-link>
   </div>
 </template>
 
@@ -140,7 +139,7 @@ form {
   letter-spacing: 0.2em;
 }
 
-a {
+.back {
   color: var(--primary);
   font-size: 14px;
   font-weight: 900;
@@ -148,12 +147,15 @@ a {
   text-decoration: none;
   letter-spacing: 0.2em;
   margin-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   i {
     font-weight: bold;
+    margin-right: 10px;
     position: relative;
-    top: 0.5px;
-    margin-right: 5px;
+    top:-0.7px;
   }
 }
 </style>

@@ -1,17 +1,14 @@
 <template>
   <div class="diaryView">
     <div class="wrapper">
-
       <div class="recommend">
 
         <div class="media">
-
           <div class="info">
             <h2>Media</h2>
             <p>We <span>recommend</span> this media</p>
             <p>Analyzed with our products</p>
           </div>
-
           <div class="youtube">
             <youtube-iframe
               :video-id="vid"
@@ -20,17 +17,14 @@
               :player-parameters="Player"
             ></youtube-iframe>
           </div>
-
         </div>
 
         <div class="keyword">
-
           <div class="info">
             <h2>Sentiment</h2>
             <p>We <span>recommend</span> this media</p>
             <p>based on the analysis below</p>
           </div>
-
           <div class="progressWrap">
             <p>
             <i :class="m[0].icon"></i>
@@ -60,13 +54,11 @@
               </k-progress>
             </div>
           </div>  
-
         </div>
 
       </div>
 
       <div class="contents">
-
         <div class="title">
           <div class="createdAt">{{ state.year }} <span>{{ state.month }}</span> {{ state.day }}</div>
           <h2>{{ diary.title }}</h2>
@@ -77,7 +69,7 @@
         <div class="etc">
           <div class="time">{{ state.time }}</div>
           <div class="btns">
-            <router-link :to="{ name: 'editor', params: { id: diary.id } }">
+            <router-link :to="{ name: 'editor', params: { id: diary.diaryIdx } }">
               <button style="margin-right:20px;"><i class="material-icons">edit</i> Edit</button>
             </router-link>
             <button @click="submit()"><i class="material-icons">delete</i> Del</button>
@@ -89,45 +81,11 @@
             <li>#{{ tag }}</li>
           </ul>
         </div>
-<!--
-        <div class="progress">
-
-           <h2 class="keyword">Keyword</h2>
-
-          {{ percents[2].tag }}
-           <k-progress class="progress"
-            status="error" 
-            type="line"
-            :border="true"
-            :color="'#8aa594'"
-            :percent="percents[2].percent"
-            :line-height="12">
-           </k-progress>
-
-            <div v-for="item in percents" :key="item">
-             {{ item.tag }}
-             <k-progress class="progress"
-             status="warning" 
-             type="line"
-             :border="true"
-             :color="'#ddd'"
-             :percent="item.percent"
-             :line-height="12">
-             </k-progress>
-            </div> 
-
-        </div>
--->       
-    </div>
+      </div>
 
       <Dialog ref="Dialog"></Dialog>
     </div>
-
-    <button class="back" @click="$router.push({ name: 'diaries' })"><i class="xi-angle-left"></i>back to
-      previous</button>
-
   </div>
-
 </template>
 
 <script>
@@ -162,22 +120,8 @@ export default {
       day: dayjs(diary.value.createdAt).format('D'),
       time: dayjs(diary.value.createdAt).format('A hh:mm')
     })
-    
     const vid = 'PO0vpohz53M'
-    const percents = [
-      {
-        percent: 10,
-        tag: 'happy'
-      },
-      {
-        percent: 20,
-        tag: 'sad'
-      },
-      {
-        percent: 70,
-        tag: 'angry'
-      }
-    ]
+    const percents = [{ percent: 10, tag: 'happy' }, { percent: 20, tag: 'sad' }, { percent: 70, tag: 'angry' }]
     for (const keyword of percents) {
       if (keyword.tag === 'happy') {
         keyword.icon = 'xi-emoticon-happy-o'
@@ -187,9 +131,7 @@ export default {
         keyword.icon = 'xi-emoticon-devil-o'
       }
     }
-    const m = percents.filter((item) => {
-      return item.percent === Math.max.apply(Math, percents.map((item) => item.percent))
-    })
+    const m = percents.filter((item) => { return item.percent === Math.max.apply(Math, percents.map((item) => item.percent)) })
     const keywords = percents.filter((item) => item.percent !== m[0].percent)
 
     const submit = async () => {
@@ -200,10 +142,8 @@ export default {
           okButton: 'Yes'
         })
         if (ok) {
-          const response = await store.dispatch('delDiary', diary.value.id)
-          response.data ? router.push({
-            name: 'diaries'
-          }) : alert('Cannot delete diary(Server error).')
+          const response = await store.dispatch('delDiary', diary.value.diaryIdx)
+          response.data ? router.push({ name: 'diaries' }) : alert('Cannot delete diary(Server error).')
         }
       } catch (err) {
         console.log(err)
@@ -448,20 +388,40 @@ export default {
   text-transform: uppercase;
   text-decoration: none;
   letter-spacing: 0.2em;
-  margin-top: 40px;
+  margin-top: 50px;
   border: 0;
   background: transparent;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 
   i {
     font-weight: bold;
-    position: relative;
-    top: 0.5px;
-    margin-right: 5px;
+    margin-right: 10px;
   }
 }
 
 
+.page {
+  width: 100%;
+  position: absolute;
+  top: calc( 50% - 50px );
+
+  button { border:0; background: transparent;
+    i { 
+      color:var(--point);
+      font-size:48px;
+      font-weight:bold;
+    }
+  }
+
+  button:nth-child(1) {
+    position:absolute; left:1%;
+  }
+  button:nth-child(2) {
+    position:absolute; right:1%;
+  } 
+}
 
 
 </style>

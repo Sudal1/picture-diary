@@ -21,7 +21,6 @@
         <button class="signUp" type="submit">Sign Up</button>
       </router-link>
     </div>
-    <router-link class="back" :to="{ name: 'home' }"><i class="xi-angle-left"></i>back to previous</router-link>
   </div>
 </template>
 
@@ -152,12 +151,15 @@ export default {
   text-decoration: none;
   letter-spacing: 0.2em;
   margin-top: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   i {
     font-weight: bold;
+    margin-right: 10px;
     position: relative;
-    top: 0.5px;
-    margin-right: 5px;
+    top:-0.7px;
   }
 }
 </style>

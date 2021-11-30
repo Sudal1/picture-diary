@@ -29,12 +29,7 @@
         :value="tag"
         @keyup="addTag($event)"
       >
-
       <button @click="submit()" class="write">Write</button>
-      
-      <div class="back">
-        <button @click="goBack"><i class="xi-angle-left"></i>back to previous</button>
-      </div>
     </div>
 
     <Dialog ref="Dialog"></Dialog>
@@ -300,16 +295,17 @@ export default defineComponent({
       text-transform: uppercase;
       text-decoration: none;
       letter-spacing: 0.2em;
-      margin-top: 40px;
+      margin-top:10px;
       border: 0;
       background: transparent;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       i {
         font-weight: bold;
-        position: relative;
-        top: 0.5px;
-        margin-right: 5px;
+        margin-right: 10px;
       }
     }
 
@@ -330,7 +326,4 @@ export default defineComponent({
   opacity: 0;
   transform: translateY(0px);
 }
-
-
-
 </style>

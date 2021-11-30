@@ -8,7 +8,6 @@
           :attributes="attributes"
           @update:toPage="pageChange"
         />
-
         <div class="today">
           <h2><span>Today's</span> date is <span>2021, November 7</span></h2>
         </div>
@@ -16,10 +15,7 @@
 
       <div class="content">
         <Spinner v-show="isLoading" class="spinner"></Spinner>
-        <diary-content
-          v-show="!isLoading"
-          :date="date"
-        ></diary-content>
+        <diary-content v-show="!isLoading" :date="date"></diary-content>
       </div>
       
     </div>

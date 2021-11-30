@@ -34,6 +34,7 @@ export default {
   },
 
   setSortedDiaries: (state) => {
+    state.sortedDiaries = {}
     for (const diary of state.diaries) {
       const createdAt = dayjs(diary.createdAt).format('YYYY-MM')
       state.sortedDiaries[createdAt]
