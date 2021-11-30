@@ -14,7 +14,7 @@
 
           <div class="youtube">
             <youtube-iframe
-              :video-id="diary.vid"
+              :video-id="vid"
               :player-width="518"
               :player-height="292"
               :player-parameters="Player"
@@ -89,8 +89,6 @@
             <li>#{{ tag }}</li>
           </ul>
         </div>
-
-
 <!--
         <div class="progress">
 
@@ -120,7 +118,6 @@
 
         </div>
 -->       
-
     </div>
 
       <Dialog ref="Dialog"></Dialog>
@@ -150,14 +147,7 @@ export default {
     const route = useRoute()
     const store = useStore()
     const Dialog = ref(null)
-    const diary = computed(() => store.state.diary)
-    const state = reactive({
-      year: dayjs(diary.value.createdAt).format('YYYY'),
-      month: dayjs(diary.value.createdAt).format('MMMM'),
-      day: dayjs(diary.value.createdAt).format('D'),
-      time: dayjs(diary.value.createdAt).format('A hh:mm')
-    })
-    const Player = { 
+    const Player = {
       autoplay: 0,
       controls: 1,
       disablekb: 0,
@@ -165,7 +155,15 @@ export default {
       start: 1,
       ref: 0
     }
-    const vid = 'GknKBj6b79I'
+    const diary = computed(() => store.state.diaries.find(elem => String(elem.diaryIdx) === route.params.id))
+    const state = reactive({
+      year: dayjs(diary.value.createdAt).format('YYYY'),
+      month: dayjs(diary.value.createdAt).format('MMMM'),
+      day: dayjs(diary.value.createdAt).format('D'),
+      time: dayjs(diary.value.createdAt).format('A hh:mm')
+    })
+    
+    const vid = 'PO0vpohz53M'
     const percents = [
       {
         percent: 10,
@@ -189,12 +187,11 @@ export default {
         keyword.icon = 'xi-emoticon-devil-o'
       }
     }
-    const m = percents.filter((item) => { return item.percent === Math.max.apply(Math, percents.map((item) => item.percent)) })
+    const m = percents.filter((item) => {
+      return item.percent === Math.max.apply(Math, percents.map((item) => item.percent))
+    })
     const keywords = percents.filter((item) => item.percent !== m[0].percent)
-    
 
-    // store.dispatch('getDiary', route.params.id)
-    
     const submit = async () => {
       try {
         const ok = await Dialog.value.show({
@@ -204,14 +201,26 @@ export default {
         })
         if (ok) {
           const response = await store.dispatch('delDiary', diary.value.id)
-          response.data ? router.push({ name: 'diaries' }) : alert('Cannot delete diary(Server error).')
+          response.data ? router.push({
+            name: 'diaries'
+          }) : alert('Cannot delete diary(Server error).')
         }
       } catch (err) {
         console.log(err)
       }
     }
 
-    return { diary, state, Dialog, Player, vid, percents, keywords, submit, m }
+    return {
+      Dialog,
+      Player,
+      diary,
+      state,
+      vid,
+      percents,
+      keywords,
+      submit,
+      m
+    }
   }
 }
 </script>

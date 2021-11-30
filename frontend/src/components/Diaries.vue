@@ -6,15 +6,14 @@
     </div>
 
     <div id="diaries">
-      
-      <div class="list" v-for="(diary, index) in diaries" :key="index">
+      <div class="list" v-for="(diary, index) in curPageDiaries" :key="index">
         <div class="point">
           <i class="xi-full-moon"></i>
         </div>
 
         <div class="info">
           <div class="time">{{ diary.createdAt }}</div>
-          <router-link :to="{ name: 'diary', params: { id: diary.id } }">
+          <router-link :to="{ name: 'diary', params: { id: diary.diaryIdx } }">
             <h2>{{ diary.title }}</h2>
           </router-link>
         </div>
@@ -25,35 +24,38 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useStore } from 'vuex'
 
 export default {
   props: {
-    modelValue: Number
+    date: Object
   },
   setup(props, { emit }) {
     const store = useStore()
     const page = ref(1)
-    const diaries = computed(() => store.getters.getDiariesFormated)
+    const curDate = computed(() => props.date.date)
+    const curDateDiaries = computed(() => store.getters.getCurDateDiaries(curDate.value))
+    const curPageDiaries = computed(() => curDateDiaries.value.slice(8 * (page.value - 1), 8 * page.value))
+
+    watch(curDate, () => { page.value = 1 })
 
     const nextPage = () => {
-      if (page.value <= store.getters.getDiariesFormated.length / 8) {
+      if (page.value <= parseInt(curDateDiaries.value.length / 8)) {
         page.value++
-        emit('update:onNextPage')
       }
     }
 
     const prevPage = () => {
       if (page.value > 1) {
         page.value--
-        emit('update:onPrevPage')
       }
     }
 
     return {
       page,
-      diaries,
+      curDate,
+      curPageDiaries,
       nextPage,
       prevPage
     }

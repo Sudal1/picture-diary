@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 export default {
   // user
   setUser: (state, data) => {
@@ -29,6 +31,15 @@ export default {
 
   setDiaries: (state, diaries) => {
     state.diaries = diaries
+  },
+
+  setSortedDiaries: (state) => {
+    for (const diary of state.diaries) {
+      const createdAt = dayjs(diary.createdAt).format('YYYY-MM')
+      state.sortedDiaries[createdAt]
+        ? state.sortedDiaries[createdAt].push(diary)
+        : state.sortedDiaries[createdAt] = [diary]
+    }
   },
 
   addDiaries: (state, diaries) => {

@@ -61,12 +61,11 @@ export default {
     commit('refreshToken', accessToken)
   },
 
-  async getDiaries ({ commit }, payload) {
+  async getDiaries ({ commit }) {
     try {
       const startTime = beginLoading(commit)
-      if (payload.value) { commit('isLoadingToggle', false) }
-      const response = await axios.get('/app/diaries', { params: { payload } })
-      commit('setDiaries', response.data.diaries)
+      const response = await axios.get('/app/diaries')
+      commit('setDiaries', response.data)
       endLoading(commit, startTime, 'isLoadingToggle')
     } catch (err) {
       console.log(err)

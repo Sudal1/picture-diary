@@ -15,11 +15,11 @@
         :toolbar="option.toolbarOptions"
       />
 
-      <div class="tags">
-        <ul v-for="(tag, index) in tags" :key="index" v-show="tags">
-          <li># {{ tag }}<button @click="delTag(index)"><i class="material-icons">clear</i></button></li>
+      <transition-group name="list" tag="div" class="tags">
+        <ul v-for="(tag, index) in tags" :key="tag" v-show="tags">
+           <li>{{ tag }}<button @click="delTag(index)"><i class="material-icons">clear</i></button></li>
         </ul>
-      </div>
+      </transition-group>
 
       <input
         type="text"
@@ -27,11 +27,14 @@
         placeholder="Tags ( Separated by comma `,` )"
         onfocus="this.placeholder=''"
         :value="tag"
-        @keypress="addTag($event)"
+        @keyup="addTag($event)"
       >
 
-      <button @click="submit()">Write</button>
-      <button class="back" @click="goBack"><i class="xi-angle-left"></i>back to previous</button>
+      <button @click="submit()" class="write">Write</button>
+      
+      <div class="back">
+        <button @click="goBack"><i class="xi-angle-left"></i>back to previous</button>
+      </div>
     </div>
 
     <Dialog ref="Dialog"></Dialog>
@@ -126,8 +129,9 @@ export default defineComponent({
 
     const addTag = (event) => {
       if (event.code === 'Comma') {
-        tags.value.push(event.target.value.replace(/./g, ''))
+        tags.value.push(event.target.value.replace(/,/g, ''))
         tag.value = ''
+        event.target.value = ''
       }
     }
 
@@ -194,22 +198,22 @@ export default defineComponent({
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height:72vh;
+  height: 72vh;
 
   .title {
-     width: 1194px;
-     height:65px;
-  }
+    width: 1194px;
+    height: 65px;
 
-  .title input {
-    width: 100%;
-    font-size: 16px;
-    padding:20px;
-    border:0;
-    border-left: 8px solid;
-    border-color: var(--point);
-    color: #555;
-    letter-spacing: 0.05em;
+    input {
+      width: 100%;
+      font-size: 16px;
+      padding: 20px;
+      border: 0;
+      border-left: 8px solid;
+      border-color: var(--point);
+      color: #555;
+      letter-spacing: 0.05em;
+    }
   }
 
   .content {
@@ -220,77 +224,112 @@ export default defineComponent({
 
     .tags {
       margin-bottom: -1rem;
+      display: flex;
+      flex-direction: row;
+
+      ul {
+        margin-top:1rem;
+
+        li {
+          margin-right: 1em;
+          padding: 8px 8px 8px 11px;
+          max-height:35px;
+          color:#fff;
+          font-size: 12px;
+          background: var(--point);
+          letter-spacing: 0.2em;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          button {
+            color:#fff;
+            font-weight:bold;
+            margin-left:2px;
+            border:0;
+            background: transparent;
+            position:relative;
+            top:1px;
+          }
+
+          i {
+            font-size: 16px;
+          }
+        }
+      }
     }
 
-    .tags ul {
-      display: inline-block;
+    .tagInput {
+      margin-top: 2rem;
+      padding: 20px;
+      font-size: 16px;
+      color: #555;
+      letter-spacing: 0.05em;
+      border: 0;
+      width: 100%;
+    }
 
-      button {
-        width: 100%;
-        margin-right: 1em;
-        padding: 10px 10px 10px 13px;
-        font-size: 11px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+    button.write {
+      width: 1194px;
+      background: var(--point);
+      color: #fff;
+      border: 0;
+      padding: 20px 0;
+      font-size: 16px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      margin-top: 2.5rem;
+      cursor: pointer;
+    }
 
-        i {
-          font-size:11px;
-          margin-left:4px;
-        }
+
+  }
+
+
+  .back {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin-top: 2.5rem;
+
+    button {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 900;
+      text-transform: uppercase;
+      text-decoration: none;
+      letter-spacing: 0.2em;
+      margin-top: 40px;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+
+      i {
+        font-weight: bold;
+        position: relative;
+        top: 0.5px;
+        margin-right: 5px;
       }
     }
 
   }
 
-  .tagInput {
-    margin-top: 2rem;
-    padding:20px;
-    font-size: 16px;
-    color: #555;
-    letter-spacing: 0.05em;
-    border: 0;
-    width: 100%;
-  }
-
-  button {
-    width: 1194px;
-    background: var(--point);
-    color:#fff;
-    border:0;
-    padding:20px 0;
-    font-size: 16px;
-    text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.2em;
-    margin-top:2rem;
-    cursor: pointer;
-  }
-
-.back {
-  color: var(--primary);
-  font-size: 14px;
-  font-weight: 900;
-  text-transform: uppercase;
-  text-decoration: none;
-  letter-spacing: 0.2em;
-  margin-top: 40px;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-
-  i {
-    font-weight: bold;
-    position: relative;
-    top: 0.5px;
-    margin-right: 5px;
-  }
 }
 
+.list-enter-active,
+.list-leave-active {
+  transition: all .3s ease-in;
+}
+.list-enter-from{
+  opacity: 0;
+  transform: translateY(20px);
 }
 
-
-
+.list-leave-to {
+  opacity: 0;
+  transform: translateY(0px);
+}
 
 
 

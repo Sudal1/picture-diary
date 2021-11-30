@@ -5,9 +5,8 @@
       <div class="calendar">
         <v-calendar
           locale="en-US"
-          :max-date="new Date()"
           :attributes="attributes"
-          @update:fromPage="pageChange"
+          @update:toPage="pageChange"
         />
 
         <div class="today">
@@ -16,12 +15,10 @@
       </div>
 
       <div class="content">
-        <spinner v-show="isLoading" class="spinner"></spinner>
+        <Spinner v-show="isLoading" class="spinner"></Spinner>
         <diary-content
           v-show="!isLoading"
-          :modelValue="month"
-          @update:onNextPage="nextPage"
-          @update:onPrevPage="prevPage"
+          :date="date"
         ></diary-content>
       </div>
       
@@ -35,6 +32,8 @@ import { useStore } from 'vuex'
 import DiaryContent from '../../components/Diaries.vue'
 import Spinner from '../../components/Spinner.vue'
 
+const colors = ['red', 'orange', 'green', 'blue', 'pink', 'indigo', 'purple', 'yellow']
+
 export default {
   name: 'diaries',
   components: {
@@ -43,49 +42,25 @@ export default {
   },
   setup() {
     const store = useStore()
-    const page = ref(1)
-    const month = ref(new Date().getMonth())
-    const year = ref(new Date().getFullYear())
-    const diaries = computed(() => store.state.diaries)
+    const date = ref({ date: new Date() })
     const isLoading = computed(() => store.state.isLoading)
-    const colors = ['red', 'orange', 'green', 'blue', 'pink', 'indigo', 'purple', 'yellow']
-    const attributes = computed(() =>
-      store.state.diaries.map((diary, index) => ({
-        dates: diary.createdAt,
-        highlight: { color: colors[index % 8], fillMode: 'light' },
-        popover: { label: diary.title, visibility: 'click' }
-      }))
-    )
+    const attributes = computed(() => store.state.diaries.map((diary, index) => ({
+      dates: diary.createdAt,
+      highlight: { color: colors[index % 8], fillMode: 'light' }
+    })))
     
+    // store.dispatch('getDiaries')
+    store.commit('setSortedDiaries')
+
     const pageChange = (obj) => {
-      year.value = obj.year
-      month.value = obj.month
-
-      console.log(year.value)
-      console.log('month:', month.value)
-      // store.dispatch('getDiaries', { page: page.value, date: obj.month, limit: 8 })
-    }
-
-    const nextPage = () => {
-      page.value++
-      // store.dispatch('getDiaries', { page: page.value, date: month.value, limit: 8 })
-    }
-
-    const prevPage = () => {
-      page.value--
-      // store.dispatch('getDiaries', { page: page.value, date: month.value, limit: 8 })
+      date.value.date = obj.year + '-' + ('0' + obj.month).slice(-2)
     }
 
     return {
-      page,
-      year,
-      month,
-      diaries,
+      date,
       isLoading,
       attributes,
-      pageChange,
-      nextPage,
-      prevPage
+      pageChange
     }
   }
 }

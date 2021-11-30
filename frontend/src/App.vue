@@ -108,6 +108,7 @@ body::-webkit-scrollbar {
   border-bottom: 1px dashed #d1d5db !important;
   font-family: 'Roboto' !important;
   padding: 13px 8px !important;
+  border:0 !important;
 }
 
 .ql-size-large {
@@ -115,6 +116,8 @@ body::-webkit-scrollbar {
 }
 
 .ql-container {
+
+  border:0 !important;
 
   .ql-editor {
     font-size: 16px !important;
