@@ -88,6 +88,24 @@ export default {
     }
   },
 
+  async saveDiaryInMachine ({ state, commit }, id) {
+    try {
+      commit('isSavingToggle', false)
+      const diary = JSON.stringify(state.diary)
+      if (id) {
+        const response = await axios.patch(`/predict/${id}`, JSON.parse(diary))
+        commit('isSavingToggle', true)
+        return response
+      } else {
+        const response = await axios.post('/predict', JSON.parse(diary))
+        commit('isSavingToggle', true)
+        return response
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  },
+
   async saveDiary ({ state, commit }, id) {
     try {
       commit('isSavingToggle', false)

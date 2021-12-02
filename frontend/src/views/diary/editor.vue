@@ -10,7 +10,7 @@
       <QuillEditor
         theme="snow"
         v-model:content="content"
-        contentType="html"
+        contentType="text"
         placeholder="What happened today? Hmm..."
         :toolbar="option.toolbarOptions"
       />
@@ -140,7 +140,7 @@ export default defineComponent({
     const submit = async () => {
       try {
         console.log(diary.value)
-        const response = await store.dispatch('saveDiary', diary.value.diaryIdx)
+        const response = await store.dispatch('saveDiaryInMachine', diary.value.diaryIdx)
         if (response) {
           state.value.canLeaveSite = true
           changeCanLeaveSite()
