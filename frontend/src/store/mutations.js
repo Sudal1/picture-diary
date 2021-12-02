@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 export default {
   // user
   setUser: (state, data) => {
-    sessionStorage.setItem('access_token', data.result.jwt)
+    sessionStorage.setItem('access_token', data.result['x_access_token'])
     sessionStorage.setItem('user', data.result.userIdx)
     state.user = { idx: data.result.userIdx }
   },
@@ -58,6 +58,27 @@ export default {
 
   addDiaries: (state, diaries) => {
     state.diaries = state.diaries.concat(diaries)
+  },
+
+  addDiaryResult: (state, data) => {
+    state.diary.vid = data.vid
+    state.diary.sentiment = data.sentiment
+    state.diary.result = data.result
+  },
+
+  changeDiaryToSend: (state) => {
+    state.diary.userIdx = state.user.userIdx || sessionStorage.getItem('user')
+    state.diary.result.forEach(elem => {
+      state.diary[elem.sentiment] = elem.percent
+    })
+  },
+
+  changeDiaryToReceive: (state, data) => {
+    state.diary.result = [
+      { setiment: 'happy', percent: data.happy },
+      { sentiment: 'sad', percent: data.sad },
+      { sentiment: 'angry', percent: data.angry }
+    ]
   },
 
   setDiaryTitle: (state, title) => {

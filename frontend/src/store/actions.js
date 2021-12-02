@@ -61,10 +61,10 @@ export default {
     commit('refreshToken', accessToken)
   },
 
-  async getDiaries ({ commit }) {
+  async getDiaries ({ commit, state }) {
     try {
       const startTime = beginLoading(commit)
-      const response = await axios.get('/app/diaries')
+      const response = await axios.get('/app/diaries', { params: state.user.userIdx })
       commit('setDiaries', response.data)
       endLoading(commit, startTime, 'isLoadingToggle')
     } catch (err) {
@@ -88,19 +88,13 @@ export default {
     }
   },
 
-  async saveDiaryInMachine ({ state, commit }, id) {
+  async saveDiaryInMachine ({ state, commit }) {
     try {
       commit('isSavingToggle', false)
       const diary = JSON.stringify(state.diary)
-      if (id) {
-        const response = await axios.patch(`/predict/${id}`, JSON.parse(diary))
-        commit('isSavingToggle', true)
-        return response
-      } else {
-        const response = await axios.post('/predict', JSON.parse(diary))
-        commit('isSavingToggle', true)
-        return response
-      }
+      const response = await axios.post('/predict', JSON.parse(diary))
+      commit('isSavingToggle', true)
+      return response
     } catch (err) {
       console.log(err)
     }
@@ -109,6 +103,7 @@ export default {
   async saveDiary ({ state, commit }, id) {
     try {
       commit('isSavingToggle', false)
+      commit('changeDiaryToSend')
       const diary = JSON.stringify(state.diary)
       if (id) {
         const response = await axios.patch(`/app/diaries/${id}`, JSON.parse(diary))

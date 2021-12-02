@@ -37,6 +37,9 @@ router.beforeEach(async (to, from, next) => {
     const res = await store.dispatch('getAccount', sessionStorage.getItem('user'))
     store.commit('setUserInfo', res.data.result)
   }
+  if (!store.state.diaries.length) {
+    store.dispatch('getDiaries')
+  }
   if (!Object.keys(store.state.sortedDiaries).length && store.state.diaries.length) {
     store.commit('setSortedDiaries')
   }

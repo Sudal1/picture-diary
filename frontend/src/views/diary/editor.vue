@@ -141,10 +141,15 @@ export default defineComponent({
       try {
         console.log(diary.value)
         const response = await store.dispatch('saveDiaryInMachine')
-        if (response) {
+        console.log(response.data)
+        store.commit('addDiaryResult', response.data.result)
+        if (response.data) {
+          const backRes = await store.dispatch('saveDiary', diary.value?.diaryIdx)
+          console.log(backRes.data)
+          store.commit('setDiary', backRes.data.result)
           state.value.canLeaveSite = true
           changeCanLeaveSite()
-          router.push({ name: 'diary', params: { id: response.data.result.diaryIdx } })
+          router.push({ name: 'diary', params: { id: backRes.data.result.diaryIdx } })
         } else {
           alert('Cannot save diary(Server error).')
         }
