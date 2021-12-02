@@ -3,7 +3,7 @@
     <my-header></my-header>
     <router-view></router-view>
     <div class="btns" v-show="!isLoading">
-      <router-link :to="{ name: 'editor' }" class="write">
+      <router-link :to="{ name: 'editor' }" class="write" v-show="$route.name !== 'editor'">
         <button><i class="material-icons">edit</i></button>
       </router-link>
     </div>

@@ -29,6 +29,18 @@ export default {
     state.diary = diary
   },
 
+  setDiaryKeywordIcon: (state, diary) => {
+    for (const keyword of diary.result) {
+      if (keyword.sentiment === 'happy') {
+        keyword.icon = 'xi-emoticon-happy-o'
+      } else if (keyword.sentiment === 'sad') {
+        keyword.icon = 'xi-emoticon-sad-o'
+      } else {
+        keyword.icon = 'xi-emoticon-devil-o'
+      }
+    }
+  },
+
   setDiaries: (state, diaries) => {
     state.diaries = diaries
   },
@@ -36,6 +48,7 @@ export default {
   setSortedDiaries: (state) => {
     state.sortedDiaries = {}
     for (const diary of state.diaries) {
+      diary.result.sort((a, b) => b.percent - a.percent)
       const createdAt = dayjs(diary.createdAt).format('YYYY-MM')
       state.sortedDiaries[createdAt]
         ? state.sortedDiaries[createdAt].push(diary)
@@ -55,12 +68,20 @@ export default {
     state.diary.content = content
   },
 
+  setDiaryTags: (state, tags) => {
+    state.diary.tags = tags
+  },
+
   updateDiaryTitle: (state, title) => {
     state.diary.title = state.diary.title + title
   },
 
   updateDiaryContent: (state, content) => {
     state.diary.content = state.diary.content + content
+  },
+
+  updateDiaryTags: (state, tag) => {
+    state.diary.tags.push(tag.replace(/,/g, ''))
   },
 
   unsetDiary: (state, data) => {
@@ -70,13 +91,8 @@ export default {
     state.diaries = newDiaries
   },
 
-  // tag
-  setTags: (state, tags) => {
-    state.tags = tags
-  },
-
-  setTag: (state, tag) => {
-    state.tag = tag
+  unsetDiaryTag: (state, index) => {
+    state.diary.tags.splice(index, 1)
   },
 
   // toggle

@@ -38,7 +38,7 @@
 
 <script>
 import { defineComponent, ref, computed, onUpdated, onMounted, onBeforeUnmount, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
@@ -53,6 +53,7 @@ export default defineComponent({
   },
   setup: (props, { emit }) => {
     const router = useRouter()
+    const route = useRoute()
     const store = useStore()
     const Dialog = ref(null)
     const state = ref({
@@ -64,9 +65,7 @@ export default defineComponent({
         ['bold', 'italic', 'underline', 'strike'],
         [{ size: ['small', false, 'large', 'huge'] }],
         [{ color: [] }, { background: [] }],
-        [{ indent: '-1' }, { indent: '+1' }],
         [{ direction: 'rtl' }],
-        [{ script: 'sub' }, { script: 'super' }],
         ['clean']
       ]
     }
@@ -81,12 +80,16 @@ export default defineComponent({
       set: val => store.commit('setDiaryContent', val)
     })
     const tag = ref('')
-    const tags = ref([])
+    const tags = computed({
+      get: () => store.state.diary.tags || '',
+      set: val => store.commit('setDiaryTags', val)
+    })
 
-    const did = store.state.diary.diaryIdx
-    store.commit('isSavingToggle', false)
-    // if (did) { store.dispatch('getDiary', did) }
-    store.commit('setDiary', { title: '', content: '' })
+    if (!route.params.id) {
+      store.commit('setDiary', { title: '', content: '', tags: [] })
+    } else if (route.params.date && route.params.id) {
+      store.commit('setDiary', store.state.sortedDiaries[route.params.date].find(elem => elem.diaryIdx === route.params.id))
+    }
 
     watch(title, () => {
       state.value.canLeaveSite = false
@@ -124,25 +127,24 @@ export default defineComponent({
 
     const addTag = (event) => {
       if (event.code === 'Comma') {
-        tags.value.push(event.target.value.replace(/,/g, ''))
+        store.commit('updateDiaryTags', event.target.value)
         tag.value = ''
         event.target.value = ''
       }
     }
 
     const delTag = (index) => {
-      tags.value.splice(index, 1)
+      store.commit('unsetDiaryTag', index)
     }
 
     const submit = async () => {
       try {
-        console.log(store.state.diary)
-        const response = await store.dispatch('saveDiary', did)
-        console.log(response)
+        console.log(diary.value)
+        const response = await store.dispatch('saveDiary', diary.value.diaryIdx)
         if (response) {
           state.value.canLeaveSite = true
           changeCanLeaveSite()
-          router.push({ name: 'diary', params: { id: response.id } })
+          router.push({ name: 'diary', params: { id: response.data.result.diaryIdx } })
         } else {
           alert('Cannot save diary(Server error).')
         }
@@ -170,6 +172,7 @@ export default defineComponent({
       goBack
     }
   },
+  
   async beforeRouteLeave (to, from, next) {
     if (this.state.canLeaveSite) {
       next()

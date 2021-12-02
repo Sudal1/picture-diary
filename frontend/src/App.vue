@@ -197,7 +197,7 @@ body::-webkit-scrollbar {
     }
 
     .vc-highlight {
-      padding: 23px;
+      padding: 1.3rem;
       margin-left: 1px;
     }
 

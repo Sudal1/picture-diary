@@ -11,7 +11,7 @@
           </div>
           <div class="youtube">
             <youtube-iframe
-              :video-id="vid"
+              :video-id="diary.vid"
               :player-width="518"
               :player-height="292"
               :player-parameters="Player"
@@ -26,30 +26,26 @@
             <p>based on the analysis below</p>
           </div>
           <div class="progressWrap">
-            <p>
-            <i :class="m[0].icon"></i>
-            {{ m[0].tag }}
-            </p>
-            <k-progress class="progress"
-              status="error" 
-              type="line"
-              :border="true"
-              :color="'#8aa594'"
-              :percent="m[0].percent"
-              :line-height="14">
-            </k-progress>
-
-            <div v-for="item in keywords" :key="item">
-              <p>
-              <i :class="item.icon"></i>
-              {{ item.tag }}
-              </p>
+            <div v-for="keyword in state.happyKeyword" :key="keyword">
+              <p><i :class="keyword.icon"></i>{{ keyword.sentiment }}</p>
+              <k-progress class="progress"
+                status="error" 
+                type="line"
+                :border="true"
+                :color="'#8aa594'"
+                :percent="keyword.percent"
+                :line-height="14">
+              </k-progress>
+            </div> 
+            
+            <div v-for="keyword in state.otherKeywords" :key="keyword">
+              <p><i :class="keyword.icon"></i>{{ keyword.sentiment }}</p>
               <k-progress class="progress"
                 status="warning" 
                 type="line"
                 :border="true"
                 :color="'#ddd'"
-                :percent="item.percent"
+                :percent="keyword.percent"
                 :line-height="14">
               </k-progress>
             </div>
@@ -69,7 +65,7 @@
         <div class="etc">
           <div class="time">{{ state.time }}</div>
           <div class="btns">
-            <router-link :to="{ name: 'editor', params: { id: diary.diaryIdx } }">
+            <router-link :to="{ name: 'editor', params: { date: curDate, id: diary.diaryIdx } }">
               <button style="margin-right:20px;"><i class="material-icons">edit</i> Edit</button>
             </router-link>
             <button @click="submit()"><i class="material-icons">delete</i> Del</button>
@@ -81,28 +77,39 @@
             <li>#{{ tag }}</li>
           </ul>
         </div>
+
       </div>
 
-      <Dialog ref="Dialog"></Dialog>
     </div>
+    <Dialog ref="Dialog"></Dialog>
+
+    <div class="page">
+      <button @click="prevPage"><i class="material-icons" :style="[curIdx>0 ? {'color':'var(--point)','cursor':'pointer'} : {'color':'#ddd','cursor':'default'}]">arrow_back_ios_new</i></button>
+      <button @click="nextPage"><i class="material-icons" :style="[curIdx<curDateDiaries.length-1 ? {'color':'var(--point)','cursor':'pointer'} : {'color':'#ddd','cursor':'default'}]">arrow_forward_ios</i></button>
+    </div>
+
   </div>
 </template>
 
 <script>
 import { ref, computed, reactive } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import dayjs from 'dayjs'
 import Dialog from '../../components/Dialog.vue'
+
+const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
 export default {
   name: 'diary',
   components: {
     Dialog
   },
-  setup() {
+  props: {
+    date: String,
+    id: String
+  },
+  setup(props) {
     const router = useRouter()
-    const route = useRoute()
     const store = useStore()
     const Dialog = ref(null)
     const Player = {
@@ -113,27 +120,22 @@ export default {
       start: 1,
       ref: 0
     }
-    const diary = computed(() => store.state.diaries.find(elem => String(elem.diaryIdx) === route.params.id))
+    const curDate = computed(() => props.date)
+    const curDateDiaries = computed(() => store.getters.getCurDateDiaries(curDate.value))
+    const curIdx = computed(() => curDateDiaries.value.findIndex(diary => diary.diaryIdx === props.id))
+    const diary = computed(() => curDateDiaries.value[curIdx.value])
     const state = reactive({
-      year: dayjs(diary.value.createdAt).format('YYYY'),
-      month: dayjs(diary.value.createdAt).format('MMMM'),
-      day: dayjs(diary.value.createdAt).format('D'),
-      time: dayjs(diary.value.createdAt).format('A hh:mm')
+      happyKeyword: computed(() => diary.value.result.filter(keyword => keyword.sentiment === 'happy')),
+      otherKeywords: computed(() => diary.value.result.filter(keyword => keyword.sentiment !== 'happy')),
+      year: computed(() => diary.value.createdAt.slice(0, 4)),
+      month: computed(() => months[diary.value.createdAt.slice(5, 7) - 1]),
+      day: computed(() => diary.value.createdAt.slice(9, 10)),
+      time: computed(() => diary.value.createdAt.slice(-8))
     })
-    const vid = 'PO0vpohz53M'
-    const percents = [{ percent: 10, tag: 'happy' }, { percent: 20, tag: 'sad' }, { percent: 70, tag: 'angry' }]
-    for (const keyword of percents) {
-      if (keyword.tag === 'happy') {
-        keyword.icon = 'xi-emoticon-happy-o'
-      } else if (keyword.tag === 'sad') {
-        keyword.icon = 'xi-emoticon-sad-o'
-      } else {
-        keyword.icon = 'xi-emoticon-devil-o'
-      }
-    }
-    const m = percents.filter((item) => { return item.percent === Math.max.apply(Math, percents.map((item) => item.percent)) })
-    const keywords = percents.filter((item) => item.percent !== m[0].percent)
 
+    store.commit('setDiary', diary.value)
+    store.commit('setDiaryKeywordIcon', diary.value)
+    
     const submit = async () => {
       try {
         const ok = await Dialog.value.show({
@@ -150,16 +152,27 @@ export default {
       }
     }
 
+    const prevPage = () => {
+      const prevIdx = curIdx.value - 1
+      if (curDateDiaries.value[prevIdx]) { router.push({ name: 'diary', params: { date: curDate.value, id: curDateDiaries.value[prevIdx].diaryIdx } }) }
+    }
+
+    const nextPage = () => {
+      const nextIdx = curIdx.value + 1
+      if (curDateDiaries.value[nextIdx]) { router.push({ name: 'diary', params: { date: curDate.value, id: curDateDiaries.value[nextIdx].diaryIdx } }) }
+    }
+
     return {
       Dialog,
       Player,
+      curIdx,
+      curDate,
+      curDateDiaries,
       diary,
       state,
-      vid,
-      percents,
-      keywords,
       submit,
-      m
+      prevPage,
+      nextPage
     }
   }
 }
@@ -401,27 +414,32 @@ export default {
   }
 }
 
-
 .page {
   width: 100%;
   position: absolute;
-  top: calc( 50% - 50px );
+  top: calc(50% - 50px);
 
-  button { border:0; background: transparent;
-    i { 
-      color:var(--point);
-      font-size:48px;
-      font-weight:bold;
+  button {
+    border: 0;
+    background: transparent;
+    cursor: none;
+
+    i {
+      color: var(--point);
+      font-size: 48px;
+      font-weight: bold;
     }
   }
 
   button:nth-child(1) {
-    position:absolute; left:1%;
+    position: absolute;
+    left: 1%;
   }
+
   button:nth-child(2) {
-    position:absolute; right:1%;
-  } 
+    position: absolute;
+    right: 1%;
+  }
+
 }
-
-
 </style>

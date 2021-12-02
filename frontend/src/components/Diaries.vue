@@ -5,20 +5,24 @@
       <i class="xi-angle-left" @click="prevPage"></i>{{ page }}<i class="xi-angle-right" @click="nextPage"></i>
     </div>
 
-    <div id="diaries">
-      <div class="list" v-for="(diary, index) in curPageDiaries" :key="index">
-        <div class="point">
+    <transition-group name="diaries" id="diaries" tag="div">
+      <div class="list" v-for="diary in curPageDiaries" :key="diary">
+        <div class="point" :style="[{'color': `${colors[diary.result[0].sentiment]}`}]">
           <i class="xi-full-moon"></i>
         </div>
 
         <div class="info">
           <div class="time">{{ diary.createdAt }}</div>
-          <router-link :to="{ name: 'diary', params: { id: diary.diaryIdx } }">
+          <router-link :to="{ name: 'diary', params: { date: curDate, id: diary.diaryIdx } }">
             <h2>{{ diary.title }}</h2>
           </router-link>
         </div>
       </div>
-    </div>
+
+      <div class="empty" v-if="!curPageDiaries.length">
+        <h2>There is no written diary.<br>Write a new diary.</h2>
+      </div>
+    </transition-group>
 
   </div>
 </template>
@@ -37,8 +41,11 @@ export default {
     const curDate = computed(() => props.date.date)
     const curDateDiaries = computed(() => store.getters.getCurDateDiaries(curDate.value))
     const curPageDiaries = computed(() => curDateDiaries.value.slice(8 * (page.value - 1), 8 * page.value))
+    const colors = { happy: '#feebc8', sad: '#c3dafe', angry: '#fed7d7' }
 
-    watch(curDate, () => { page.value = 1 })
+    watch(curDate, () => {
+      page.value = 1
+    })
 
     const nextPage = () => {
       if (page.value <= parseInt(curDateDiaries.value.length / 8)) {
@@ -55,7 +62,9 @@ export default {
     return {
       page,
       curDate,
+      curDateDiaries,
       curPageDiaries,
+      colors,
       nextPage,
       prevPage
     }
@@ -68,9 +77,9 @@ export default {
   .page {
     font-weight: 700;
     font-size: 14px;
-    color:#adadad;
-    text-align:right;
-    margin:40px 26px -25px 0;
+    color: #adadad;
+    text-align: right;
+    margin: 40px 26px -25px 0;
 
     i {
       margin: 0 10px;
@@ -78,57 +87,83 @@ export default {
       font-weight: bold;
     }
   }
+
   #diaries {
     .list {
       margin: 0px 40px;
-      border-bottom:1px solid #e3e3e3;
+      border-bottom: 1px solid #e3e3e3;
       display: flex;
       direction: row;
-      $colors: #fed7d7, #feebc8, #c6f6d5, #bee3f8, #fed7e2, #c3dafe, #e9d8fd, #fefcbf;
-      @each $item in $colors {
-        $index: index($colors, $item);
-        &:nth-child(#{$index}) {
-          color: $item;
-        }
-      }
 
       .point {
         display: flex;
         justify-content: center;
         align-items: center;
         margin-right: 25px;
-        font-size:12px;
+        font-size: 12px;
       }
 
       h2 {
-        font-size:16px;
+        font-size: 16px;
         font-style: italic;
-        color:#999999;
+        color: #999999;
         letter-spacing: 0.09em;
-        margin:15px 0 30px;
-        font-weight:600;
+        margin: 15px 0 30px;
+        font-weight: 600;
       }
 
       .time {
-        font-size:14px;
-        color:#bebebe;
+        font-size: 14px;
+        color: #bebebe;
         font-weight: 500;
         letter-spacing: 0.05em;
-        margin-top:30px;
+        margin-top: 30px;
       }
     }
 
-  .list:nth-last-child(1) { border:0; }
-
-    p.noMore {
-      width: 100%;
-      height: 1.5rem;
-      line-height: 1.5rem;
-      color: #000000;
-      margin-top: 1.875rem;
-      margin-bottom: 1.875rem;
-      text-align: center;
+    .list:nth-last-child(1) {
+      border: 0;
     }
+
+    .empty {
+      display: grid;
+      place-items: center;
+      min-height: 65vh;
+      text-align: center;
+
+      h2 {
+       font-size:20px;
+       color:#999;
+      }
+    }
+
+
   }
+
+  .diaries-enter-active {
+    transition: all 0.5s;
+  }
+
+  .diaries-enter-from,
+  .diaries-leave-to {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+
+}
+
+.slide-fade-enter {
+  transform: translateX(10px);
+  opacity: 0;
+}
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.2s ease;
+}
+
+.slide-fade-leave-to {
+  transform: translateX(-10px);
+  opacity: 0;
 }
 </style>

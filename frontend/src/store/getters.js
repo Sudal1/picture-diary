@@ -8,7 +8,6 @@ export default {
         .map(diary => {
           const newDiary = {}
           for (const p in diary) { newDiary[p] = diary[p] }
-          newDiary.content = diary.content.replace(/<[^>]*>/g, '').slice(0, 20) + '...'
           newDiary.createdAt = dayjs(diary.createdAt).format('YYYY.MM.DD A HH:mm')
           return newDiary
         })
