@@ -16,10 +16,10 @@ const routes = [
     component: index,
     children: [
       { path: '/home', name: 'home', component: Home, meta: { title: 'Home' } },
-      { path: '/account', name: 'account', component: account, meta: { title: 'Account' } },
-      { path: '/diaries', name: 'diaries', component: diaries, meta: { title: 'Diaries' } },
-      { path: '/diaries/:date/:id', name: 'diary', component: diary, props: true },
-      { path: '/diaries/editor/:date?/:id?', name: 'editor', component: editor }
+      { path: '/account', name: 'account', component: account, meta: { title: 'Account', requiredAuth: true } },
+      { path: '/diaries', name: 'diaries', component: diaries, meta: { title: 'Diaries', requiredAuth: true } },
+      { path: '/diaries/:date/:id', name: 'diary', component: diary, props: true, meta: { requiredAuth: true } },
+      { path: '/diaries/editor/:date?/:id?', name: 'editor', component: editor, meta: { requiredAuth: true } }
     ]
   },
   { path: '/login', name: 'login', component: login, meta: { title: 'Login' } },

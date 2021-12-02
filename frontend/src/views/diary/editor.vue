@@ -69,6 +69,12 @@ export default defineComponent({
         ['clean']
       ]
     }
+
+    if (!route.params.id) {
+      store.commit('setDiary', { title: '', content: '', tags: [], vid: 'PO0vpohz53M', sentiment: 'happy', result: [{ sentiment: 'happy', percent: 30 }, { sentiment: 'sad', percent: 30 }, { sentiment: 'angry', percent: 20 }] })
+    } else if (route.params.date && route.params.id) {
+      store.commit('setDiary', store.state.sortedDiaries[route.params.date].find(elem => String(elem.diaryIdx) === route.params.id))
+    }
     
     const diary = computed(() => store.state.diary)
     const title = computed({
@@ -85,11 +91,7 @@ export default defineComponent({
       set: val => store.commit('setDiaryTags', val)
     })
 
-    if (!route.params.id) {
-      store.commit('setDiary', { title: '', content: '', tags: [], vid: 'PO0vpohz53M', sentiment: 'happy', result: [{ sentiment: 'happy', percent: 30 }, { sentiment: 'sad', percent: 30 }, { sentiment: 'angry', percent: 20 }] })
-    } else if (route.params.date && route.params.id) {
-      store.commit('setDiary', store.state.sortedDiaries[route.params.date].find(elem => elem.diaryIdx === route.params.id))
-    }
+    console.log(diary.value)
 
     watch(title, () => {
       state.value.canLeaveSite = false
@@ -156,9 +158,10 @@ export default defineComponent({
         */
         const curDate = new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
         const backRes = await store.dispatch('saveDiary', diary.value?.diaryIdx)
+        console.log(backRes)
         state.value.canLeaveSite = true
         changeCanLeaveSite()
-        backRes.data ? router.push({ name: 'diary', date: curDate, id: backRes.data.result.diaryIdx }) : alert('Fail to save diary.')
+        backRes.data ? router.push({ name: 'diary', params: { date: curDate, id: backRes.data.result.diaryIdx || diary.value.diaryIdx } }) : alert('Fail to save diary.')
       } catch (err) {
         console.log(err)
       }

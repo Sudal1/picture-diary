@@ -116,6 +116,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  flex:0.99;
 
   .today {
     width: 100%;
@@ -176,6 +177,7 @@ export default {
   background: #fff;
   margin-left: 5px;
   width: 100%;
+  flex:1;
 }
 
 

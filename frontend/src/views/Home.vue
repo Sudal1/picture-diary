@@ -1,7 +1,9 @@
 <template>
   <div class="home">
     <h2>Write Your day & Get Content for you</h2>
-    <button>get start</button>
+    <router-link :to="{ name: 'editor' }">
+      <button>Get Start</button>
+    </router-link>
   </div>
 </template>
 

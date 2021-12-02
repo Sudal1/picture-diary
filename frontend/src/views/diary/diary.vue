@@ -188,19 +188,15 @@ export default {
 }
 
 .wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  display: inline-flex;
   border-top: 8px solid;
   border-color: var(--point);
   width: 1194px;
-  height: 100%;
 }
 
 .recommend {
   display: flex;
   flex-direction: column;
-  flex:1.125;
 
   .media {
     background: #fff;
@@ -291,9 +287,10 @@ export default {
   background: #fff;
   margin-left: 5px;
   padding: 52px 37px;
-   display: flex;
+  display: flex;
   flex-direction: column;
-  flex:1;
+  flex-basis: 100%;
+  max-height:976px;
 
   .title {
     .createdAt {
@@ -323,7 +320,6 @@ export default {
     line-height: 1.8;
     overflow-y: scroll;
     padding-right:10px;
-    height: 625px;
 
     &::-webkit-scrollbar {
       width: 6px;
