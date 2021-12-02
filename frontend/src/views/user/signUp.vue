@@ -68,7 +68,7 @@ export default {
     async function onSubmit(values) {
       try {
         const res = await store.dispatch('signUp', JSON.stringify(values))
-        if (res.status === 200) {
+        if (res.data) {
           const response = await store.dispatch('login', { email: values.email, password: values.password })
           store.commit('setUser', response.data)
           router.push({ name: 'home' })

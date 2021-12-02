@@ -122,7 +122,7 @@ export default {
     }
     const curDate = computed(() => props.date)
     const curDateDiaries = computed(() => store.getters.getCurDateDiaries(curDate.value))
-    const curIdx = computed(() => curDateDiaries.value.findIndex(diary => diary.diaryIdx === props.id))
+    const curIdx = computed(() => curDateDiaries.value.findIndex(diary => String(diary.diaryIdx) === props.id))
     const diary = computed(() => curDateDiaries.value[curIdx.value])
     const state = reactive({
       happyKeyword: computed(() => diary.value.result.filter(keyword => keyword.sentiment === 'happy')),

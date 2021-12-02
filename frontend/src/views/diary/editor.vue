@@ -10,14 +10,14 @@
       <QuillEditor
         theme="snow"
         v-model:content="content"
-        contentType="text"
+        contentType="html"
         placeholder="What happened today? Hmm..."
         :toolbar="option.toolbarOptions"
       />
 
       <transition-group name="list" tag="div" class="tags">
-        <ul v-for="(tag, index) in tags" :key="tag" v-show="tags">
-           <li>{{ tag }}<button @click="delTag(index)"><i class="material-icons">clear</i></button></li>
+        <ul v-for="(item, index) in tags" :key="item" v-show="tags">
+           <li>{{ item }}<button @click="delTag(index)"><i class="material-icons">clear</i></button></li>
         </ul>
       </transition-group>
 
@@ -86,7 +86,7 @@ export default defineComponent({
     })
 
     if (!route.params.id) {
-      store.commit('setDiary', { title: '', content: '', tags: [] })
+      store.commit('setDiary', { title: '', content: '', tags: [], vid: 'PO0vpohz53M', sentiment: 'happy', result: [{ sentiment: 'happy', percent: 30 }, { sentiment: 'sad', percent: 30 }, { sentiment: 'angry', percent: 20 }] })
     } else if (route.params.date && route.params.id) {
       store.commit('setDiary', store.state.sortedDiaries[route.params.date].find(elem => elem.diaryIdx === route.params.id))
     }
@@ -139,7 +139,7 @@ export default defineComponent({
 
     const submit = async () => {
       try {
-        console.log(diary.value)
+        /*
         const response = await store.dispatch('saveDiaryInMachine')
         console.log(response.data)
         store.commit('addDiaryResult', response.data.result)
@@ -153,6 +153,12 @@ export default defineComponent({
         } else {
           alert('Cannot save diary(Server error).')
         }
+        */
+        const curDate = new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
+        const backRes = await store.dispatch('saveDiary', diary.value?.diaryIdx)
+        state.value.canLeaveSite = true
+        changeCanLeaveSite()
+        backRes.data ? router.push({ name: 'diary', date: curDate, id: backRes.data.result.diaryIdx }) : alert('Fail to save diary.')
       } catch (err) {
         console.log(err)
       }

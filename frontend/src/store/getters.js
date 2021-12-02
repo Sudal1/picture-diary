@@ -7,7 +7,9 @@ export default {
         .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
         .map(diary => {
           const newDiary = {}
-          for (const p in diary) { newDiary[p] = diary[p] }
+          for (const p in diary) {
+            newDiary[p] = diary[p]
+          }
           newDiary.createdAt = dayjs(diary.createdAt).format('YYYY.MM.DD A HH:mm')
           return newDiary
         })

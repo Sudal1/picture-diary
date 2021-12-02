@@ -41,8 +41,9 @@ export default {
     }
   },
   
-  async editAccount ({ commit }, uid, payload) {
+  async editAccount ({ commit, state }, payload) {
     try {
+      const uid = state.user.userIdx || sessionStorage.getItem('user')
       return await axios.patch(`/app/users/${uid}`, payload)
     } catch (err) {
       console.log(err)
@@ -63,9 +64,12 @@ export default {
 
   async getDiaries ({ commit, state }) {
     try {
+      const uid = state.user.userIdx || sessionStorage.getItem('user')
       const startTime = beginLoading(commit)
-      const response = await axios.get('/app/diaries', { params: state.user.userIdx })
+      const response = await axios.get(`/app/diaries/${uid}`)
       commit('setDiaries', response.data)
+      commit('setSortedDiaries')
+      commit('isUpdatedToggle', true)
       endLoading(commit, startTime, 'isLoadingToggle')
     } catch (err) {
       console.log(err)
@@ -103,55 +107,35 @@ export default {
   async saveDiary ({ state, commit }, id) {
     try {
       commit('isSavingToggle', false)
-      commit('changeDiaryToSend')
-      const diary = JSON.stringify(state.diary)
-      if (id) {
-        const response = await axios.patch(`/app/diaries/${id}`, JSON.parse(diary))
-        commit('isSavingToggle', true)
-        return response
-      } else {
-        const response = await axios.post('/app/diaries', JSON.parse(diary))
-        commit('isSavingToggle', true)
-        return response
-      }
+      const uid = state.user.userIdx || sessionStorage.getItem('user')
+      let diary = { ...state.diary }
+      let response = null
+      diary.userIdx = uid
+      diary.tags = [...state.diary.tags].join(',')
+      diary.result.forEach(elem => {
+        diary[elem.sentiment] = elem.percent
+      })
+      delete diary.result
+      diary = JSON.stringify(diary)
+      id
+        ? response = await axios.patch(`/app/diaries/${uid}/${id}`, JSON.parse(diary))
+        : response = await axios.post(`/app/diaries/${uid}`, JSON.parse(diary))
+      commit('isSavingToggle', true)
+      commit('isUpdatedToggle', false)
+      return response
     } catch (err) {
       console.log(err)
     }
   },
 
-  async delDiary ({ commit }, payload) {
+  async delDiary ({ commit, state }, id) {
     try {
-      const response = await axios.delete(`/app/diary/${payload.id}`)
+      const uid = state.user.userIdx || sessionStorage.getItem('user')
+      const response = await axios.delete(`/app/diaries/${uid}/${id}`)
+      commit('isUpdatedToggle', false)
       return response
     } catch (err) {
       console.log(err)
     }
   }
-
-  /*
-  async searchDiaries ({ commit }, payload) {
-    try {
-      document.title = 'Searching...'
-      commit('moreDiaryToggle', true)
-      const startTime = beginLoading(commit, payload.id)
-      const response = await axios.get('/app/someDiaries', { params: { payload } })
-      if (!response.data.diaries.length) {
-        commit('moreDiaryToggle', false)
-        commit('noMoreDiaryToggle', true)
-      } else {
-        commit('noMoreDiaryToggle', false)
-      }
-      if (payload.add) {
-        commit('addDiaries', response.data.diaries)
-        endLoading(commit, startTime, 'loadMoreToggle')
-      } else {
-        commit('setDiaries', response.data.diaries)
-        endLoading(commit, startTime, 'isLoadingToggle')
-      }
-      document.title = 'Searched diaries'
-    } catch (err) {
-      console.log(err)
-    }
-  }
-  */
 }

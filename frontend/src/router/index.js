@@ -34,14 +34,16 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   document.title = to.meta.title
   if (sessionStorage.getItem('user') && !store.state.user?.nickname) {
-    const res = await store.dispatch('getAccount', sessionStorage.getItem('user'))
-    store.commit('setUserInfo', res.data.result)
+    try {
+      const res = await store.dispatch('getAccount', sessionStorage.getItem('user'))
+      store.commit('setUserInfo', res.data)
+    } catch (err) {
+      store.dispatch('logout')
+      alert('The token has expired. Please login again.')
+    }
   }
-  if (!store.state.diaries.length) {
-    store.dispatch('getDiaries')
-  }
-  if (!Object.keys(store.state.sortedDiaries).length && store.state.diaries.length) {
-    store.commit('setSortedDiaries')
+  if (store.state.status.loggedIn && !store.state.isUpdated) {
+    await store.dispatch('getDiaries')
   }
   if (store.state.status.loggedIn && (to.name === 'login' || to.name === 'signUp')) {
     next({ name: 'diaries' })

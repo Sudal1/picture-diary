@@ -3,14 +3,14 @@ import dayjs from 'dayjs'
 export default {
   // user
   setUser: (state, data) => {
-    sessionStorage.setItem('access_token', data.result['x_access_token'])
+    sessionStorage.setItem('access_token', data.result.x_access_token)
     sessionStorage.setItem('user', data.result.userIdx)
     state.user = { idx: data.result.userIdx }
   },
 
   setUserInfo: (state, data) => {
     state.status.loggedIn = true
-    state.user = data
+    state.user = data.result
   },
 
   unsetUser: (state) => {
@@ -41,8 +41,17 @@ export default {
     }
   },
 
-  setDiaries: (state, diaries) => {
-    state.diaries = diaries
+  setDiaries: (state, data) => {
+    state.diaries = data.result
+    state.diaries.forEach(diary => {
+      diary.result = [
+        { sentiment: 'happy', percent: diary.happy },
+        { sentiment: 'sad', percent: diary.sad },
+        { sentiment: 'angry', percent: diary.angry }
+      ]
+      diary.createdAt = new Date(diary.createdAt)
+      diary.tags = typeof diary.tags === 'string' ? diary.tags.split(',') : diary.tags
+    })
   },
 
   setSortedDiaries: (state) => {
@@ -56,8 +65,8 @@ export default {
     }
   },
 
-  addDiaries: (state, diaries) => {
-    state.diaries = state.diaries.concat(diaries)
+  addDiary: (state, id, date) => {
+    console.log('add', id, date)
   },
 
   addDiaryResult: (state, data) => {
@@ -68,9 +77,11 @@ export default {
 
   changeDiaryToSend: (state) => {
     state.diary.userIdx = state.user.userIdx || sessionStorage.getItem('user')
+    state.diary.tags = state.diary.tags.join(',')
     state.diary.result.forEach(elem => {
       state.diary[elem.sentiment] = elem.percent
     })
+    delete state.diary.result
   },
 
   changeDiaryToReceive: (state, data) => {
@@ -123,5 +134,9 @@ export default {
 
   isSavingToggle: (state, flag) => {
     state.isSaving = flag
+  },
+
+  isUpdatedToggle: (state, flag) => {
+    state.isUpdated = flag
   }
 }

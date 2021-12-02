@@ -71,11 +71,11 @@ export default {
 
     async function onSubmit(values) {
       try {
-        const uid = store.state.user.userIdx || JSON.parse(sessionStorage.getItem('user'))
-        const res = await store.dispatch('editAccount', uid, JSON.stringify(values))
-        res.status === 200 ? store.dispatch('logout') : alert('Sign up failed.')
+        const res = await store.dispatch('editAccount', values)
+        res.data ? store.dispatch('logout') : alert('Edit account failed.')
       } catch (err) {
         console.log(err)
+        alert('Edit account failed.')
       }
     }
 
