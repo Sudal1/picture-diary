@@ -140,7 +140,7 @@ export default defineComponent({
     const submit = async () => {
       try {
         console.log(diary.value)
-        const response = await store.dispatch('saveDiaryInMachine', diary.value.diaryIdx)
+        const response = await store.dispatch('saveDiaryInMachine')
         if (response) {
           state.value.canLeaveSite = true
           changeCanLeaveSite()
