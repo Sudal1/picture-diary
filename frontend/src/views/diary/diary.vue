@@ -137,7 +137,7 @@ export default defineComponent({
     })
 
     onBeforeMount(() => {
-      document.title = diary.value.title
+      document.title = diary.value?.title
       vid.value = diary.value?.vid
     })
 

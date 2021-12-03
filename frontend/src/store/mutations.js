@@ -96,7 +96,7 @@ export default {
   },
 
   unsetDiary: (state) => {
-    state.diary = { title: '', content: '', tags: [], result: [], vid: '', sentiment: '' }
+    state.diary = { title: '', content: '', tags: [], result: [], vid: '', sentiment: '', createdAt: new Date() }
   },
 
   unsetDiaryTag: (state, index) => {
