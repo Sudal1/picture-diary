@@ -65,31 +65,10 @@ export default {
     }
   },
 
-  addDiary: (state, id, date) => {
-    console.log('add', id, date)
-  },
-
   addDiaryResult: (state, data) => {
     state.diary.vid = data.vid
     state.diary.sentiment = data.sentiment
     state.diary.result = data.result
-  },
-
-  changeDiaryToSend: (state) => {
-    state.diary.userIdx = state.user.userIdx || sessionStorage.getItem('user')
-    state.diary.tags = state.diary.tags.join(',')
-    state.diary.result.forEach(elem => {
-      state.diary[elem.sentiment] = elem.percent
-    })
-    delete state.diary.result
-  },
-
-  changeDiaryToReceive: (state, data) => {
-    state.diary.result = [
-      { setiment: 'happy', percent: data.happy },
-      { sentiment: 'sad', percent: data.sad },
-      { sentiment: 'angry', percent: data.angry }
-    ]
   },
 
   setDiaryTitle: (state, title) => {

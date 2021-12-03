@@ -40,6 +40,7 @@
 import { defineComponent, ref, computed, onUpdated, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
+import dayjs from 'dayjs'
 import { QuillEditor } from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import Dialog from '../../components/Dialog.vue'
@@ -71,7 +72,7 @@ export default defineComponent({
     }
 
     if (!route.params.id) {
-      store.commit('setDiary', { title: '', content: '', tags: [], vid: 'PO0vpohz53M', sentiment: 'happy', result: [{ sentiment: 'happy', percent: 30 }, { sentiment: 'sad', percent: 30 }, { sentiment: 'angry', percent: 20 }] })
+      store.commit('setDiary', { title: '', content: '', tags: [] })
     } else if (route.params.date && route.params.id) {
       store.commit('setDiary', store.state.sortedDiaries[route.params.date].find(elem => String(elem.diaryIdx) === route.params.id))
     }
@@ -141,27 +142,13 @@ export default defineComponent({
 
     const submit = async () => {
       try {
-        /*
-        const response = await store.dispatch('saveDiaryInMachine')
-        console.log(response.data)
-        store.commit('addDiaryResult', response.data.result)
-        if (response.data) {
-          const backRes = await store.dispatch('saveDiary', diary.value?.diaryIdx)
-          console.log(backRes.data)
-          store.commit('setDiary', backRes.data.result)
-          state.value.canLeaveSite = true
-          changeCanLeaveSite()
-          router.push({ name: 'diary', params: { id: backRes.data.result.diaryIdx } })
-        } else {
-          alert('Cannot save diary(Server error).')
-        }
-        */
-        const curDate = new Date().getFullYear() + '-' + (new Date().getMonth() + 1)
-        const backRes = await store.dispatch('saveDiary', diary.value?.diaryIdx)
-        console.log(backRes)
         state.value.canLeaveSite = true
         changeCanLeaveSite()
-        backRes.data ? router.push({ name: 'diary', params: { date: curDate, id: backRes.data.result.diaryIdx || diary.value.diaryIdx } }) : alert('Fail to save diary.')
+        const response = await store.dispatch('saveDiaryInMachine')
+        response.data ? store.commit('addDiaryResult', response.data.result) : alert('Cannot save diary(MServer error).')
+        const curDate = dayjs(new Date()).format('YYYY-MM')
+        const backRes = await store.dispatch('saveDiary', diary.value?.diaryIdx)
+        backRes.data ? router.push({ name: 'diary', params: { date: curDate, id: backRes.data.result.diaryIdx || diary.value.diaryIdx } }) : alert('Cannot save diary(DServer error).')
       } catch (err) {
         console.log(err)
       }

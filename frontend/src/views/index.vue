@@ -1,7 +1,8 @@
 <template>
   <div class="wrapper">
     <my-header></my-header>
-    <router-view></router-view>
+    <Spinner v-show="isLoading" class="spinner"></Spinner>
+    <router-view v-show="!isLoading"></router-view>
     <div class="btns" v-show="!isLoading">
       <router-link :to="{ name: 'editor' }" class="write" v-show="$route.name !== 'editor'">
         <button><i class="material-icons">edit</i></button>
@@ -14,11 +15,13 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import MyHeader from '../components/MyHeader.vue'
+import Spinner from '../components/Spinner.vue'
 
 export default {
   name: 'index',
   components: {
-    MyHeader
+    MyHeader,
+    Spinner
   },
   setup() {
     const store = useStore()

@@ -95,7 +95,9 @@ export default {
   async saveDiaryInMachine ({ state, commit }) {
     try {
       commit('isSavingToggle', false)
-      const diary = JSON.stringify(state.diary)
+      let diary = { ...state.diary }
+      diary.content = diary.content.replace(/<[^>]*>/g, '')
+      diary = JSON.stringify(diary)
       const response = await axios.post('/predict', JSON.parse(diary))
       commit('isSavingToggle', true)
       return response
@@ -108,13 +110,11 @@ export default {
     try {
       commit('isSavingToggle', false)
       const uid = state.user.userIdx || sessionStorage.getItem('user')
-      let diary = { ...state.diary }
       let response = null
+      let diary = { ...state.diary }
       diary.userIdx = uid
       diary.tags = [...state.diary.tags].join(',')
-      diary.result.forEach(elem => {
-        diary[elem.sentiment] = elem.percent
-      })
+      diary.result.forEach(elem => { diary[elem.sentiment] = elem.percent })
       delete diary.result
       diary = JSON.stringify(diary)
       id

@@ -28,8 +28,7 @@
       </div>
 
       <div class="content">
-        <Spinner v-show="isLoading" class="spinner"></Spinner>
-        <diary-content v-show="!isLoading" :date="date"></diary-content>
+        <diary-content :date="date"></diary-content>
       </div>
 
     </div>
@@ -40,21 +39,18 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import DiaryContent from '../../components/Diaries.vue'
-import Spinner from '../../components/Spinner.vue'
 
 const colors = { happy: 'orange', sad: 'indigo', angry: 'red' }
 
 export default {
   name: 'diaries',
   components: {
-    DiaryContent,
-    Spinner
+    DiaryContent
   },
   setup() {
     const store = useStore()
     const date = ref({ date: new Date().getFullYear() + '-' + (new Date().getMonth() + 1) })
     const count = ref({ happy: 0, sad: 0, angry: 0, count: 0, max: '' })
-    const isLoading = computed(() => store.state.isLoading)
     const attributes = computed(() => store.state.sortedDiaries[date.value.date].map(diary => ({
       dates: diary.createdAt,
       highlight: { color: colors[diary.result[0].sentiment], fillMode: 'light' },
@@ -82,7 +78,6 @@ export default {
     return {
       date,
       count,
-      isLoading,
       attributes,
       pageChange
     }
@@ -96,7 +91,7 @@ export default {
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin:50px 0;
+  margin: 50px 0;
 }
 
 .wrapper {
@@ -116,7 +111,7 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  flex:0.99;
+  flex: 0.99;
 
   .today {
     width: 100%;
@@ -147,12 +142,12 @@ export default {
         display: flex;
         align-items: center;
         border-radius: 100px;
-        font-size:16px;
-        font-weight:500;
+        font-size: 16px;
+        font-weight: 500;
         letter-spacing: 0.1rem;
-        
+
         i {
-          font-size:20px;
+          font-size: 20px;
         }
       }
 
@@ -177,7 +172,7 @@ export default {
   background: #fff;
   margin-left: 5px;
   width: 100%;
-  flex:1;
+  flex: 1;
 }
 
 
@@ -251,10 +246,13 @@ export default {
   background-color: #fed7d7;
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 1s;
 }
-.fade-enter, .fade-leave-to {
+
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>
