@@ -19,7 +19,7 @@ const routes = [
       { path: '/account', name: 'account', component: account, meta: { title: 'Account', requiredAuth: true } },
       { path: '/diaries', name: 'diaries', component: diaries, meta: { title: 'Diaries', requiredAuth: true } },
       { path: '/diaries/:date/:id', name: 'diary', component: diary, props: true, meta: { requiredAuth: true } },
-      { path: '/diaries/editor/:date?/:id?', name: 'editor', component: editor, meta: { requiredAuth: true } }
+      { path: '/diaries/editor/:date?/:id?', name: 'editor', component: editor, meta: { title: 'Editor', requiredAuth: true } }
     ]
   },
   { path: '/login', name: 'login', component: login, meta: { title: 'Login' } },

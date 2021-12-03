@@ -95,11 +95,8 @@ export default {
     state.diary.tags.push(tag.replace(/,/g, ''))
   },
 
-  unsetDiary: (state, data) => {
-    const newDiaries = [...state.diaries]
-    const idx = state.diaries.findIndex((diary) => diary.id === data.id)
-    if (idx !== -1) { newDiaries.splice(idx, 1) }
-    state.diaries = newDiaries
+  unsetDiary: (state) => {
+    state.diary = { title: '', content: '', tags: [], result: [], vid: '', sentiment: '' }
   },
 
   unsetDiaryTag: (state, index) => {
@@ -109,10 +106,6 @@ export default {
   // toggle
   isLoadingToggle: (state, flag) => {
     state.isLoading = flag
-  },
-
-  isSavingToggle: (state, flag) => {
-    state.isSaving = flag
   },
 
   isUpdatedToggle: (state, flag) => {

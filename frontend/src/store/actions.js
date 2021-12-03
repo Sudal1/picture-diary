@@ -76,30 +76,14 @@ export default {
     }
   },
 
-  async getDiary ({ commit, state }, id) {
-    try {
-      const startTime = beginLoading(commit)
-      if (router.currentRoute.value.hash) {
-        commit('isLoadingToggle', false)
-      }
-      document.title = 'Loading...'
-      const response = await axios.get(`/app/diary/${id}`)
-      commit('setDiary', response.data)
-      document.title = state.diary.title
-      endLoading(commit, startTime, 'isLoadingToggle')
-    } catch (err) {
-      console.log(err)
-    }
-  },
-
   async saveDiaryInMachine ({ state, commit }) {
     try {
-      commit('isSavingToggle', false)
+      const startTime = beginLoading(commit)
       let diary = { ...state.diary }
       diary.content = diary.content.replace(/<[^>]*>/g, '')
       diary = JSON.stringify(diary)
       const response = await axios.post('/predict', JSON.parse(diary))
-      commit('isSavingToggle', true)
+      endLoading(commit, startTime, 'isLoadingToggle')
       return response
     } catch (err) {
       console.log(err)
@@ -108,7 +92,7 @@ export default {
 
   async saveDiary ({ state, commit }, id) {
     try {
-      commit('isSavingToggle', false)
+      const startTime = beginLoading(commit)
       const uid = state.user.userIdx || sessionStorage.getItem('user')
       let response = null
       let diary = { ...state.diary }
@@ -120,7 +104,7 @@ export default {
       id
         ? response = await axios.patch(`/app/diaries/${uid}/${id}`, JSON.parse(diary))
         : response = await axios.post(`/app/diaries/${uid}`, JSON.parse(diary))
-      commit('isSavingToggle', true)
+      endLoading(commit, startTime, 'isLoadingToggle')
       commit('isUpdatedToggle', false)
       return response
     } catch (err) {

@@ -11,8 +11,8 @@
           </div>
           <div class="youtube">
             <youtube-iframe
-              :key="JSON.stringify(diary.vid)"
-              :video-id="diary.vid"
+              :key="JSON.stringify(vid)"
+              :video-id="vid"
               :player-width="518"
               :player-height="292"
               :player-parameters="Player"
@@ -30,10 +30,9 @@
             <div v-for="keyword in state.happyKeyword" :key="keyword">
               <p><i :class="keyword.icon"></i>{{ keyword.sentiment }}</p>
               <k-progress class="progress"
-                status="error" 
                 type="line"
                 :border="true"
-                :color="'#8aa594'"
+                :color="keyword.sentiment === diary.sentiment ? '#8aa594' : '#ddd'"
                 :percent="keyword.percent"
                 :line-height="14">
               </k-progress>
@@ -42,10 +41,9 @@
             <div v-for="keyword in state.otherKeywords" :key="keyword">
               <p><i :class="keyword.icon"></i>{{ keyword.sentiment }}</p>
               <k-progress class="progress"
-                status="warning" 
                 type="line"
                 :border="true"
-                :color="'#ddd'"
+                :color="keyword.sentiment === diary.sentiment ? '#8aa594' : '#ddd'"
                 :percent="keyword.percent"
                 :line-height="14">
               </k-progress>
@@ -78,22 +76,19 @@
             <li>#{{ tag }}</li>
           </ul>
         </div>
-
       </div>
 
     </div>
     <Dialog ref="Dialog"></Dialog>
-
     <div class="page">
       <button @click="prevPage"><i class="material-icons" :style="[curIdx>0 ? {'color':'var(--point)','cursor':'pointer'} : {'color':'#ddd','cursor':'default'}]">arrow_back_ios_new</i></button>
       <button @click="nextPage"><i class="material-icons" :style="[curIdx<curDateDiaries.length-1 ? {'color':'var(--point)','cursor':'pointer'} : {'color':'#ddd','cursor':'default'}]">arrow_forward_ios</i></button>
     </div>
-
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, computed, reactive } from 'vue'
+import { defineComponent, ref, reactive, computed, onBeforeUnmount, onBeforeUpdate, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Dialog from '../../components/Dialog.vue'
@@ -114,6 +109,7 @@ export default defineComponent({
     const store = useStore()
     const Dialog = ref(null)
     const Player = {
+      origin: 'http://localhost:8080',
       autoplay: 0,
       controls: 1,
       disablekb: 0,
@@ -125,17 +121,32 @@ export default defineComponent({
     const curDateDiaries = computed(() => store.getters.getCurDateDiaries(curDate.value))
     const curIdx = computed(() => curDateDiaries.value.findIndex(diary => String(diary.diaryIdx) === props.id))
     const diary = computed(() => curDateDiaries.value[curIdx.value])
+    const vid = ref('')
 
     store.commit('setDiary', diary.value)
     store.commit('setDiaryKeywordIcon', diary.value)
-
+    console.log(diary.value)
+    
     const state = reactive({
-      happyKeyword: computed(() => diary.value.result.filter(keyword => keyword.sentiment === 'happy')),
-      otherKeywords: computed(() => diary.value.result.filter(keyword => keyword.sentiment !== 'happy')),
-      year: computed(() => diary.value.createdAt.slice(0, 4)),
-      month: computed(() => months[diary.value.createdAt.slice(5, 7) - 1]),
-      day: computed(() => diary.value.createdAt.slice(9, 10)),
-      time: computed(() => diary.value.createdAt.slice(-8))
+      happyKeyword: computed(() => diary.value?.result.filter(keyword => keyword.sentiment === 'happy')),
+      otherKeywords: computed(() => diary.value?.result.filter(keyword => keyword.sentiment !== 'happy')),
+      year: computed(() => diary.value?.createdAt.slice(0, 4)),
+      month: computed(() => months[diary.value?.createdAt.slice(5, 7) - 1]),
+      day: computed(() => diary.value?.createdAt.slice(9, 10)),
+      time: computed(() => diary.value?.createdAt.slice(-8))
+    })
+
+    onBeforeMount(() => {
+      document.title = diary.value.title
+      vid.value = diary.value?.vid
+    })
+
+    onBeforeUpdate(() => {
+      vid.value = diary.value?.vid
+    })
+
+    onBeforeUnmount(() => {
+      store.commit('unsetDiary')
     })
     
     const submit = async () => {
@@ -170,6 +181,7 @@ export default defineComponent({
       curIdx,
       curDate,
       curDateDiaries,
+      vid,
       diary,
       state,
       submit,

@@ -16,8 +16,7 @@ export default createStore({
     tag: '',
     tags: [],
     isLoading: false,
-    isUpdated: false,
-    isSaving: false
+    isUpdated: false
   },
   getters,
   actions,
