@@ -11,6 +11,7 @@
           </div>
           <div class="youtube">
             <youtube-iframe
+              :key="JSON.stringify(diary.vid)"
               :video-id="diary.vid"
               :player-width="518"
               :player-height="292"
@@ -92,14 +93,14 @@
 </template>
 
 <script>
-import { ref, computed, reactive } from 'vue'
+import { defineComponent, ref, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Dialog from '../../components/Dialog.vue'
 
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 
-export default {
+export default defineComponent({
   name: 'diary',
   components: {
     Dialog
@@ -124,6 +125,10 @@ export default {
     const curDateDiaries = computed(() => store.getters.getCurDateDiaries(curDate.value))
     const curIdx = computed(() => curDateDiaries.value.findIndex(diary => String(diary.diaryIdx) === props.id))
     const diary = computed(() => curDateDiaries.value[curIdx.value])
+
+    store.commit('setDiary', diary.value)
+    store.commit('setDiaryKeywordIcon', diary.value)
+
     const state = reactive({
       happyKeyword: computed(() => diary.value.result.filter(keyword => keyword.sentiment === 'happy')),
       otherKeywords: computed(() => diary.value.result.filter(keyword => keyword.sentiment !== 'happy')),
@@ -132,9 +137,6 @@ export default {
       day: computed(() => diary.value.createdAt.slice(9, 10)),
       time: computed(() => diary.value.createdAt.slice(-8))
     })
-
-    store.commit('setDiary', diary.value)
-    store.commit('setDiaryKeywordIcon', diary.value)
     
     const submit = async () => {
       try {
@@ -175,7 +177,7 @@ export default {
       nextPage
     }
   }
-}
+})
 </script>
 
 <style lang="scss" rel="stylesheet/scss" scoped>
