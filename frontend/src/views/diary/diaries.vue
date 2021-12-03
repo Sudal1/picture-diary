@@ -54,7 +54,6 @@ export default {
     const attributes = computed(() => store.state.sortedDiaries[date.value.date].map(diary => ({
       dates: diary.createdAt,
       highlight: { color: colors[diary.result[0].sentiment], fillMode: 'light' },
-      popover: { label: diary.title, visibility: 'click' },
       keyword: diary.result[0].sentiment
     })))
     

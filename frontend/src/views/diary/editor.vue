@@ -146,7 +146,7 @@ export default defineComponent({
         changeCanLeaveSite()
         const response = await store.dispatch('saveDiaryInMachine')
         response.data ? store.commit('addDiaryResult', response.data.result) : alert('Cannot save diary(MServer error).')
-        const curDate = dayjs(new Date()).format('YYYY-MM')
+        const curDate = diary.value.createdAt ? dayjs(diary.value.createdAt).format('YYYY-MM') : dayjs(new Date()).format('YYYY-MM')
         const backRes = await store.dispatch('saveDiary', diary.value?.diaryIdx)
         backRes.data ? router.push({ name: 'diary', params: { date: curDate, id: backRes.data.result.diaryIdx || diary.value.diaryIdx } }) : alert('Cannot save diary(DServer error).')
       } catch (err) {

@@ -11,8 +11,8 @@
           </div>
           <div class="youtube">
             <youtube-iframe
-              :key="JSON.stringify(vid)"
-              :video-id="vid"
+              :key="JSON.stringify(diary.vid)"
+              :video-id="diary.vid"
               :player-width="518"
               :player-height="292"
               :player-parameters="Player"
@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, reactive, computed, onBeforeUnmount, onBeforeUpdate, onBeforeMount } from 'vue'
+import { defineComponent, ref, reactive, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Dialog from '../../components/Dialog.vue'
@@ -121,11 +121,9 @@ export default defineComponent({
     const curDateDiaries = computed(() => store.getters.getCurDateDiaries(curDate.value))
     const curIdx = computed(() => curDateDiaries.value.findIndex(diary => String(diary.diaryIdx) === props.id))
     const diary = computed(() => curDateDiaries.value[curIdx.value])
-    const vid = ref('')
 
     store.commit('setDiary', diary.value)
     store.commit('setDiaryKeywordIcon', diary.value)
-    console.log(diary.value)
     
     const state = reactive({
       happyKeyword: computed(() => diary.value?.result.filter(keyword => keyword.sentiment === 'happy')),
@@ -138,15 +136,6 @@ export default defineComponent({
 
     onBeforeMount(() => {
       document.title = diary.value?.title
-      vid.value = diary.value?.vid
-    })
-
-    onBeforeUpdate(() => {
-      vid.value = diary.value?.vid
-    })
-
-    onBeforeUnmount(() => {
-      store.commit('unsetDiary')
     })
     
     const submit = async () => {
@@ -181,7 +170,6 @@ export default defineComponent({
       curIdx,
       curDate,
       curDateDiaries,
-      vid,
       diary,
       state,
       submit,
