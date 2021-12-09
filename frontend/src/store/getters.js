@@ -17,5 +17,9 @@ export default {
     } else {
       return []
     }
+  },
+
+  getCurDateSortedDiaries: (state) => (date) => {
+    return [...state.sortedDiaries[date]].sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
   }
 }

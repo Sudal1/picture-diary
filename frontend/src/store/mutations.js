@@ -29,8 +29,8 @@ export default {
     state.diary = diary
   },
 
-  setDiaryKeywordIcon: (state, diary) => {
-    for (const keyword of diary.result) {
+  setDiaryKeywordIcon: (state) => {
+    for (const keyword of state.diary.result) {
       if (keyword.sentiment === 'happy') {
         keyword.icon = 'xi-emoticon-happy-o'
       } else if (keyword.sentiment === 'sad') {

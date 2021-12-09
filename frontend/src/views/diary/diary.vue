@@ -81,14 +81,18 @@
     </div>
     <Dialog ref="Dialog"></Dialog>
     <div class="page">
-      <button @click="prevPage"><i class="material-icons" :style="[curIdx>0 ? {'color':'var(--point)','cursor':'pointer'} : {'color':'#ddd','cursor':'default'}]">arrow_back_ios_new</i></button>
-      <button @click="nextPage"><i class="material-icons" :style="[curIdx<curDateDiaries.length-1 ? {'color':'var(--point)','cursor':'pointer'} : {'color':'#ddd','cursor':'default'}]">arrow_forward_ios</i></button>
+      <button @click="prevPage" :disabled="curIdx<=0">
+        <i class="material-icons" :style="[curIdx>0 ? {'color':'var(--point)','cursor':'pointer'} : {'color':'#ddd','cursor':'default'}]">arrow_back_ios_new</i>
+      </button>
+      <button @click="nextPage" :disabled="curIdx>=maxIdx">
+        <i class="material-icons" :style="[curIdx<maxIdx ? {'color':'var(--point)','cursor':'pointer'} : {'color':'#ddd','cursor':'default'}]">arrow_forward_ios</i>
+      </button>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, reactive, computed, onBeforeMount } from 'vue'
+import { defineComponent, ref, toRef, reactive, computed, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import Dialog from '../../components/Dialog.vue'
@@ -109,7 +113,7 @@ export default defineComponent({
     const store = useStore()
     const Dialog = ref(null)
     const Player = {
-      origin: 'http://localhost:8080',
+      host: 'http://localhost:8080',
       autoplay: 0,
       controls: 1,
       disablekb: 0,
@@ -117,21 +121,28 @@ export default defineComponent({
       start: 1,
       ref: 0
     }
-    const curDate = computed(() => props.date)
-    const curDateDiaries = computed(() => store.getters.getCurDateDiaries(curDate.value))
-    const curIdx = computed(() => curDateDiaries.value.findIndex(diary => String(diary.diaryIdx) === props.id))
-    const diary = computed(() => curDateDiaries.value[curIdx.value])
+    const curDate = toRef(props.date)
+    const maxIdx = ref(store.state.sortedDiaries[props.date].length - 1)
+    const curIdx = ref(store.getters.getCurDateSortedDiaries(props.date).findIndex(diary => diary.diaryIdx.toString() === props.id))
+    const diary = computed({
+      get: () => store.getters.getCurDateSortedDiaries(props.date)[curIdx.value] || { title: '', content: '', tags: [], result: [], vid: '', createdAt: new Date() },
+      set: val => store.commit('setDiary', val)
+    })
 
     store.commit('setDiary', diary.value)
-    store.commit('setDiaryKeywordIcon', diary.value)
+    store.commit('setDiaryKeywordIcon')
     
     const state = reactive({
-      happyKeyword: computed(() => diary.value?.result.filter(keyword => keyword.sentiment === 'happy')),
-      otherKeywords: computed(() => diary.value?.result.filter(keyword => keyword.sentiment !== 'happy')),
-      year: computed(() => diary.value?.createdAt.slice(0, 4)),
-      month: computed(() => months[diary.value?.createdAt.slice(5, 7) - 1]),
-      day: computed(() => diary.value?.createdAt.slice(9, 10)),
-      time: computed(() => diary.value?.createdAt.slice(-8))
+      happyKeyword: computed(() => diary.value.result.filter(keyword => keyword.sentiment === 'happy')),
+      otherKeywords: computed(() => diary.value.result.filter(keyword => keyword.sentiment !== 'happy')),
+      year: computed(() => diary.value.createdAt.getFullYear()),
+      month: computed(() => months[diary.value.createdAt.getMonth()]),
+      day: computed(() => diary.value.createdAt.getDate()),
+      time: computed(
+        () => diary.value.createdAt.getHours() < 12
+          ?  'AM ' + diary.value.createdAt.getHours() + ':' + diary.value.createdAt.getMinutes()
+          :  'PM ' + diary.value.createdAt.getHours() + ':' + diary.value.createdAt.getMinutes()
+      )
     })
 
     onBeforeMount(() => {
@@ -155,21 +166,21 @@ export default defineComponent({
     }
 
     const prevPage = () => {
-      const prevIdx = curIdx.value - 1
-      if (curDateDiaries.value[prevIdx]) { router.push({ name: 'diary', params: { date: curDate.value, id: curDateDiaries.value[prevIdx].diaryIdx } }) }
+      curIdx.value--
+      router.push({ name: 'diary', params: { date: props.date, id: store.state.sortedDiaries[props.date][curIdx.value].diaryIdx } })
     }
 
     const nextPage = () => {
-      const nextIdx = curIdx.value + 1
-      if (curDateDiaries.value[nextIdx]) { router.push({ name: 'diary', params: { date: curDate.value, id: curDateDiaries.value[nextIdx].diaryIdx } }) }
+      curIdx.value++
+      router.push({ name: 'diary', params: { date: props.date, id: store.state.sortedDiaries[props.date][curIdx.value].diaryIdx } })
     }
 
     return {
       Dialog,
       Player,
-      curIdx,
       curDate,
-      curDateDiaries,
+      maxIdx,
+      curIdx,
       diary,
       state,
       submit,
@@ -372,7 +383,6 @@ export default defineComponent({
 
     .time {
       font-style: italic;
-      text-transform: lowercase;
       width: 100%;
     }
   }
